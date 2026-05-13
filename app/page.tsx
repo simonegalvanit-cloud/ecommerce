@@ -1,5 +1,5 @@
 'use client'
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import Nav from '@/components/Nav'
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -131,6 +131,9 @@ const COLORS = [
 
 function fmt(n: number) { return n.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
 
+// ── Scroll-reveal CSS injected via <style> tag ────────────────────────────────
+const scrollRevealCSS = `.scroll-reveal{opacity:0;transform:translateY(22px);transition:opacity .55s ease,transform .55s ease}.scroll-reveal.revealed{opacity:1;transform:translateY(0)}.modal-drag-handle{display:block}@media(min-width:641px){.modal-drag-handle{display:none}}`
+
 // ── Main Page ────────────────────────────────────────────────────────────────
 export default function StorefrontPage() {
   const [cartCount, setCartCount]   = useState(0)
@@ -146,6 +149,38 @@ export default function StorefrontPage() {
   const [selPrints, setSelPrints]       = useState<Set<string>>(new Set(['Senza Stampa']))
   const [qty, setQty]                   = useState(250)
   const [fileOk, setFileOk]             = useState(false)
+
+  // ── IntersectionObserver for scroll-reveal ──────────────────────────────────
+  const observerRef = useRef<IntersectionObserver | null>(null)
+
+  useEffect(() => {
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed')
+            observerRef.current?.unobserve(entry.target)
+          }
+        })
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+    )
+
+    const targets = document.querySelectorAll('.scroll-reveal')
+    targets.forEach(el => observerRef.current?.observe(el))
+
+    return () => observerRef.current?.disconnect()
+  }, [])
+
+  // Re-run observer when filtered products change (new cards mount)
+  const reObserve = useCallback(() => {
+    requestAnimationFrame(() => {
+      const targets = document.querySelectorAll('.scroll-reveal:not(.revealed)')
+      targets.forEach(el => observerRef.current?.observe(el))
+    })
+  }, [])
+
+  useEffect(() => { reObserve() }, [activeCat, search, reObserve])
 
   const showToast = useCallback((msg: string) => {
     setToast(msg)
@@ -211,15 +246,18 @@ export default function StorefrontPage() {
 
   return (
     <>
+      {/* ── Scroll-reveal styles ── */}
+      <style>{scrollRevealCSS}</style>
+
       <Nav cartCount={cartCount} onCartClick={() => showToast(cartCount === 0 ? 'Il carrello è vuoto' : `${cartCount} articolo/i nel carrello`)} activeLink="shop" />
 
       {/* ── HERO ── */}
       <section className="hero">
         <div className="hero-inner">
           <div className="hero-left">
-            <h1>Packaging<br />professionale,<br />al giusto prezzo.</h1>
-            <p className="hero-sub">Shopper, scatole pizza, buste, alveolari e molto altro. Ordina online con MOQ accessibili e spedizione rapida in tutta Italia.</p>
-            <div className="hero-actions">
+            <h1 className="animate-fade-up">Packaging<br />professionale,<br />al giusto prezzo.</h1>
+            <p className="hero-sub animate-fade-up delay-1">Shopper, scatole pizza, buste, alveolari e molto altro. Ordina online con MOQ accessibili e spedizione rapida in tutta Italia.</p>
+            <div className="hero-actions animate-fade-up delay-2">
               <button className="btn-primary" onClick={() => document.querySelector('.catbar')?.scrollIntoView({ behavior: 'smooth' })}>
                 Scopri i prodotti
               </button>
@@ -229,11 +267,11 @@ export default function StorefrontPage() {
           <div className="hero-right">
             <div className="hero-cards">
               {[
-                { label: 'Shopper & Cartotecnica', title: 'Shopper Lusso', price: 'da €0,65', moq: 'MOQ 250 pz' },
-                { label: 'Imballaggi Industriali', title: 'Scatola Americana', price: 'da €0,38', moq: 'MOQ 100 pz' },
-                { label: 'BrioGreenPack',          title: 'Scatola Eco 100%', price: 'da €0,45', moq: 'MOQ 100 pz' },
+                { label: 'Shopper & Cartotecnica', title: 'Shopper Lusso', price: 'da €0,65', moq: 'MOQ 250 pz', delay: 'delay-3' },
+                { label: 'Imballaggi Industriali', title: 'Scatola Americana', price: 'da €0,38', moq: 'MOQ 100 pz', delay: 'delay-4' },
+                { label: 'BrioGreenPack',          title: 'Scatola Eco 100%', price: 'da €0,45', moq: 'MOQ 100 pz', delay: 'delay-5' },
               ].map(c => (
-                <div key={c.title} className="hero-card" onClick={() => openModal(PRODUCTS.find(p => p.cat === c.label) || PRODUCTS[0])}>
+                <div key={c.title} className={`hero-card animate-fade-up ${c.delay}`} onClick={() => openModal(PRODUCTS.find(p => p.cat === c.label) || PRODUCTS[0])}>
                   <span className="hc-label">{c.label}</span>
                   <span className="hc-title">{c.title}</span>
                   <span className="hc-price">{c.price}</span>
@@ -252,7 +290,7 @@ export default function StorefrontPage() {
           ].map((n, i) => (
             <div key={i} style={{ display: 'contents' }}>
               {i > 0 && <div className="hero-num-div" />}
-              <div className="hero-num-item">
+              <div className={`hero-num-item animate-fade-up delay-${i + 1}`}>
                 <div className="hero-num-val">{n.val}</div>
                 <div className="hero-num-lbl">{n.lbl}</div>
               </div>
@@ -265,7 +303,19 @@ export default function StorefrontPage() {
       <div className="search-wrap">
         <div className="search-bar">
           <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-          <input type="text" placeholder="Cerca prodotti (es. scatola pizza, shopper kraft…)" value={search} onChange={e => setSearch(e.target.value)} />
+          <input
+            type="text"
+            placeholder="Cerca prodotti (es. scatola pizza, shopper kraft…)"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+          {search && (
+            <button
+              onClick={() => setSearch('')}
+              style={{ background: 'none', border: 'none', color: 'var(--ink-4)', cursor: 'pointer', fontSize: 16, padding: '0 2px', lineHeight: 1, fontFamily: 'var(--f)' }}
+              aria-label="Cancella ricerca"
+            >✕</button>
+          )}
         </div>
       </div>
 
@@ -285,8 +335,8 @@ export default function StorefrontPage() {
           { icon: '🎨', title: 'Stampa Personalizzata', desc: 'Fino a 6 colori di stampa flessografica o digitale' },
           { icon: '📦', title: 'MOQ Accessibili',   desc: 'Ordina da 50 pz — ideale per PMI e startup' },
           { icon: '♻',  title: 'Linea Eco Certificata', desc: 'Materiali riciclati e biodegradabili CONAI' },
-        ].map(t => (
-          <div key={t.title} className="trust-item">
+        ].map((t, i) => (
+          <div key={t.title} className={`trust-item scroll-reveal`} style={{ transitionDelay: `${i * 0.07}s` }}>
             <div className="trust-icon">{t.icon}</div>
             <div>
               <div className="trust-title">{t.title}</div>
@@ -301,43 +351,64 @@ export default function StorefrontPage() {
         <div className="section-head">
           <div>
             <div className="section-title">Catalogo Prodotti</div>
-            <div className="section-sub">{filteredProducts.length} prodotti trovati</div>
+            <div className="section-sub">{filteredProducts.length} prodott{filteredProducts.length === 1 ? 'o' : 'i'} trovati</div>
           </div>
           <a href="#" className="section-link">Vedi tutto il catalogo →</a>
         </div>
         <div className="pgrid">
-          {filteredProducts.map(p => (
-            <div key={p.key} className="pcard" onClick={() => openModal(p)}>
-              {p.badge && <div className={`pcard-badge ${p.badge.type}`}>{p.badge.label}</div>}
-              <div className="pcard-img" style={p.catKey === 'eco' ? { background: '#edf3ee' } : undefined}>
-                {p.svg}
-                <div className="pcard-img-overlay">
-                  <button className="overlay-btn">Personalizza</button>
-                </div>
-              </div>
-              <div className="pcard-body">
-                <div className="pcard-cat">{p.cat}</div>
-                <div className="pcard-name">{p.name}</div>
-                <div className="pcard-desc">{p.desc}</div>
-                <div className="pcard-foot">
-                  <div>
-                    <div className="pcard-price"><sup>€</sup>{p.price.toFixed(2).replace('.', ',')}<sub> / pz</sub></div>
-                    <div className="pcard-moq">MOQ {p.moq} pz</div>
-                  </div>
-                  <button className="btn-config" onClick={e => { e.stopPropagation(); openModal(p) }}>
-                    Configura
-                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
-                  </button>
-                </div>
-              </div>
+          {filteredProducts.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '64px 20px', gridColumn: '1/-1' }}>
+              <div style={{ fontSize: 48, marginBottom: 16 }}>🔍</div>
+              <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>Nessun prodotto trovato</div>
+              <div style={{ fontSize: 14, color: 'var(--ink-3)', marginBottom: 24 }}>Prova con un&apos;altra categoria o parola chiave</div>
+              <button
+                style={{
+                  background: 'var(--accent)', color: '#fff', border: 'none',
+                  fontFamily: 'var(--f)', fontSize: 14, fontWeight: 700,
+                  padding: '11px 24px', borderRadius: 'var(--r)', cursor: 'pointer',
+                  boxShadow: 'var(--shadow-accent)', transition: 'all .2s',
+                }}
+                onClick={() => { setSearch(''); setActiveCat('all') }}
+              >
+                Mostra tutti i prodotti
+              </button>
             </div>
-          ))}
+          ) : (
+            filteredProducts.map((p, i) => (
+              <div key={p.key} className="pcard scroll-reveal" style={{ transitionDelay: `${i * 0.06}s` }} onClick={() => openModal(p)}>
+                {p.badge && <div className={`pcard-badge ${p.badge.type}`}>{p.badge.label}</div>}
+                <div className="pcard-img" style={p.catKey === 'eco' ? { background: '#edf3ee' } : undefined}>
+                  <div style={{ transition: 'transform .3s var(--ease-out)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} className="pcard-svg-wrap">
+                    {p.svg}
+                  </div>
+                  <div className="pcard-img-overlay">
+                    <button className="overlay-btn">Personalizza</button>
+                  </div>
+                </div>
+                <div className="pcard-body">
+                  <div className="pcard-cat">{p.cat}</div>
+                  <div className="pcard-name">{p.name}</div>
+                  <div className="pcard-desc">{p.desc}</div>
+                  <div className="pcard-foot">
+                    <div>
+                      <div className="pcard-price"><sup>€</sup>{p.price.toFixed(2).replace('.', ',')}<sub> / pz</sub></div>
+                      <div className="pcard-moq">MOQ {p.moq} pz</div>
+                    </div>
+                    <button className="btn-config" onClick={e => { e.stopPropagation(); openModal(p) }}>
+                      Configura
+                      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </section>
 
       {/* ── ECO BAND ── */}
       <div className="eco-band">
-        <div>
+        <div className="scroll-reveal">
           <div className="eco-tag">Linea BrioGreenPack</div>
           <h2 className="eco-title">Packaging con<br />un&apos;<em>anima green</em></h2>
           <p className="eco-body">Il nostro impegno: ogni linea ha un&apos;alternativa sostenibile. Stessa qualità e configurabilità — materiali riciclati o biodegradabili certificati, senza compromessi.</p>
@@ -349,8 +420,8 @@ export default function StorefrontPage() {
             { icon: '🌿', title: 'Biodegradabile',    body: 'Materiali che si decompongono naturalmente' },
             { icon: '✓',  title: 'Certificato CONAI', body: 'Piena conformità e tracciabilità del contributo' },
             { icon: '⬡',  title: 'Food Safe',         body: 'Materiali eco certificati per il contatto alimentare' },
-          ].map(c => (
-            <div key={c.title} className="eco-card">
+          ].map((c, i) => (
+            <div key={c.title} className={`eco-card scroll-reveal`} style={{ transitionDelay: `${i * 0.08}s` }}>
               <div className="eco-card-icon">{c.icon}</div>
               <div className="eco-card-title">{c.title}</div>
               <div className="eco-card-body">{c.body}</div>
@@ -362,20 +433,20 @@ export default function StorefrontPage() {
       {/* ── FOOTER ── */}
       <footer>
         <div className="footer-top">
-          <div>
+          <div className="scroll-reveal">
             <div className="footer-logo">
               <span style={{ fontSize: 18, fontWeight: 800, color: 'rgba(255,255,255,0.7)', letterSpacing: '1.5px', textTransform: 'uppercase' }}>BRIOPACK</span>
             </div>
             <div className="footer-tagline">Lo stato dell&apos;arte nel packaging. Progettiamo e produciamo imballaggi su misura per aziende di ogni settore, in tutta Italia.</div>
             <div className="footer-contact">C.da Sodera, 38 — 66030 Poggiofiorito (CH)<br />+39 0871 869378<br />info@briopack.com</div>
           </div>
-          <div>
+          <div className="scroll-reveal" style={{ transitionDelay: '0.1s' }}>
             <div className="footer-col-title">Prodotti</div>
             <ul className="footer-links">
               {['Imballaggi Industriali','Shopper & Cartotecnica','Wine Packaging','Food Delivery','E-commerce','BrioGreenPack'].map(l => <li key={l}><a href="#">{l}</a></li>)}
             </ul>
           </div>
-          <div>
+          <div className="scroll-reveal" style={{ transitionDelay: '0.18s' }}>
             <div className="footer-col-title">Azienda</div>
             <ul className="footer-links">
               {['Chi Siamo','Contatti','Richiedi Preventivo','Area Amministrativa'].map(l => <li key={l}><a href="#">{l}</a></li>)}
@@ -392,6 +463,11 @@ export default function StorefrontPage() {
       <div className={`overlay ${modalProduct ? 'open' : ''}`} onClick={e => { if (e.target === e.currentTarget) closeModal() }}>
         <div className="modal" onClick={e => e.stopPropagation()}>
           {modalProduct && <>
+            {/* Mobile drag handle — hidden on desktop via CSS */}
+            <div
+              className="modal-drag-handle"
+              style={{ width: 40, height: 4, background: 'var(--border-3)', borderRadius: 2, margin: '12px auto 0', display: 'block' }}
+            />
             <div className="modal-head">
               <div className="modal-head-left">
                 <div className="modal-cat-tag">{modalProduct.cat}</div>
