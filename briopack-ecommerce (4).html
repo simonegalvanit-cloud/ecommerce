@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Briopack — Packaging su Misura</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a1a;
+  --ink-2: #2e2e2e;
+  --ink-3: #5c5c5c;
+  --ink-4: #9e9e9e;
+  --surface: #faf8f6;
+  --surface-2: #f4f1ed;
+  --surface-3: #ece7e0;
+  --white: #ffffff;
+  --accent: #e8721a;
+  --accent-2: #f08a3a;
+  --accent-3: #f5a05a;
+  --accent-bg: #fff4ec;
+  --accent-border: rgba(232,114,26,0.25);
+  --green-dark: #1e4230;
+  --green-mid: #2d5a3d;
+  --green-light: #e6f0e9;
+  --border: rgba(0,0,0,0.08);
+  --border-2: rgba(0,0,0,0.13);
+  --border-3: rgba(0,0,0,0.20);
+  --r: 6px; --r-lg: 12px; --r-xl: 20px;
+  --shadow: 0 2px 8px rgba(0,0,0,0.07), 0 8px 24px rgba(0,0,0,0.05);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.06);
+  --f: 'Outfit', sans-serif;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--f);background:var(--surface);color:var(--ink);font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased;}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:200;height:64px;background:var(--accent);display:flex;align-items:center;justify-content:space-between;padding:0 48px;border-bottom:1px solid rgba(0,0,0,0.1);}
+.logo{font-size:17px;font-weight:800;color:#fff;letter-spacing:1.5px;text-transform:uppercase;display:flex;align-items:center;gap:10px;}
+.logo-pip{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.7);flex-shrink:0;}
+.nav-center{display:flex;gap:2px;}
+.nav-link{color:rgba(255,255,255,0.72);font-size:13.5px;font-weight:500;padding:6px 14px;border-radius:var(--r);text-decoration:none;transition:all .18s;}
+.nav-link:hover{color:#fff;background:rgba(255,255,255,0.15);}
+.nav-link.active{color:#fff;background:rgba(255,255,255,0.18);}
+.nav-right{display:flex;align-items:center;}
+.cart-pill{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);color:#fff;font-size:13px;font-weight:500;padding:7px 16px;border-radius:100px;cursor:pointer;transition:all .18s;font-family:var(--f);}
+.cart-pill:hover{background:rgba(255,255,255,0.28);}
+.cart-badge{background:#fff;color:var(--accent);font-size:11px;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#e8721a 0%,#f5a05a 60%,#f8b870 100%);padding:64px 48px 0;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 60% 80% at 100% 0%,rgba(255,255,255,0.13) 0%,transparent 60%);}
+.hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:flex-end;padding-bottom:52px;}
+.hero-left{position:relative;z-index:1;}
+.hero h1{font-size:54px;font-weight:800;color:#fff;line-height:1.06;letter-spacing:-2.5px;margin-bottom:20px;text-shadow:0 1px 4px rgba(0,0,0,0.1);}
+.hero-sub{color:rgba(255,255,255,0.8);font-size:15.5px;font-weight:400;line-height:1.72;max-width:420px;margin-bottom:32px;}
+.hero-actions{display:flex;gap:12px;align-items:center;}
+.btn-primary{background:#fff;color:var(--accent);border:none;padding:13px 26px;font-family:var(--f);font-size:14px;font-weight:700;border-radius:var(--r);cursor:pointer;transition:all .2s;}
+.btn-primary:hover{background:rgba(255,255,255,0.92);transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,0,0,0.15);}
+.btn-secondary{color:rgba(255,255,255,0.85);font-size:14px;font-weight:500;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.4);padding-bottom:1px;transition:all .18s;}
+.btn-secondary:hover{color:#fff;border-bottom-color:#fff;}
+.hero-right{position:relative;z-index:1;display:flex;flex-direction:column;gap:10px;align-self:flex-end;}
+.hero-cards{display:flex;flex-direction:column;gap:10px;}
+.hero-card{background:rgba(255,255,255,0.15);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.3);border-radius:var(--r-lg);padding:16px 20px;display:flex;align-items:center;gap:0;cursor:pointer;transition:all .22s;}
+.hero-card:hover{background:rgba(255,255,255,0.22);transform:translateX(4px);}
+.hc-label{font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:rgba(255,255,255,0.6);width:140px;flex-shrink:0;}
+.hc-title{font-size:15px;font-weight:700;color:#fff;flex:1;}
+.hc-price{font-size:14px;font-weight:600;color:#fff;text-align:right;white-space:nowrap;}
+.hc-moq{font-size:10px;color:rgba(255,255,255,0.55);text-align:right;white-space:nowrap;margin-left:16px;}
+.hero-nums{display:flex;align-items:center;gap:0;margin-top:0;background:rgba(0,0,0,0.12);border-top:1px solid rgba(255,255,255,0.15);}
+.hero-num-item{flex:1;padding:20px 0;text-align:center;}
+.hero-num-div{width:1px;height:32px;background:rgba(255,255,255,0.18);}
+.hero-num-val{font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.5px;}
+.hero-num-lbl{font-size:11px;color:rgba(255,255,255,0.6);font-weight:400;margin-top:2px;}
+
+/* CAT BAR */
+.catbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 48px;display:flex;gap:0;overflow-x:auto;position:sticky;top:64px;z-index:100;}
+.catbar::-webkit-scrollbar{display:none;}
+.cat{display:flex;align-items:center;gap:7px;padding:0 16px;height:48px;font-size:13px;font-weight:500;color:var(--ink-3);border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;transition:all .18s;user-select:none;}
+.cat:hover{color:var(--ink);border-bottom-color:var(--border-3);}
+.cat.active{color:var(--accent);border-bottom-color:var(--accent);}
+.cat-dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:0.35;flex-shrink:0;}
+.cat.active .cat-dot{opacity:1;}
+
+/* TRUST BAR */
+.trust{background:var(--white);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:28px 48px;display:grid;grid-template-columns:repeat(4,1fr);gap:0;}
+.trust-item{display:flex;align-items:center;gap:14px;padding:0 24px;border-right:1px solid var(--border);}
+.trust-item:first-child{padding-left:0;}
+.trust-item:last-child{border-right:none;}
+.trust-icon{width:36px;height:36px;border-radius:var(--r);background:var(--surface-2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.trust-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px;}
+.trust-desc{font-size:11.5px;color:var(--ink-3);font-weight:300;line-height:1.45;}
+
+/* TRUST BAR - removed */
+
+/* SECTIONS */
+.section{padding:52px 48px;}
+.section-alt{background:var(--surface-2);}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;}
+.section-title{font-size:21px;font-weight:700;letter-spacing:-0.5px;}
+.section-link{font-size:13px;font-weight:500;color:var(--accent);text-decoration:none;display:flex;align-items:center;gap:4px;transition:gap .15s;}
+.section-link:hover{gap:8px;}
+
+/* SEARCH BAR */
+.search-wrap{padding:20px 48px 0;background:var(--white);}
+.search-bar{display:flex;align-items:center;gap:12px;background:var(--surface-2);border:1.5px solid var(--border-2);border-radius:var(--r-lg);padding:10px 16px;max-width:480px;transition:border-color .18s;}
+.search-bar:focus-within{border-color:var(--accent);background:#fff;}
+.search-bar input{border:none;background:transparent;outline:none;font-family:var(--f);font-size:14px;color:var(--ink);width:100%;}
+.search-bar input::placeholder{color:var(--ink-4);}
+.search-icon{color:var(--ink-4);flex-shrink:0;}
+
+/* PRODUCT GRID */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;}
+.pcard{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;cursor:pointer;transition:all .22s;position:relative;display:flex;flex-direction:column;}
+.pcard:hover{border-color:rgba(232,114,26,0.4);box-shadow:0 4px 20px rgba(232,114,26,0.12),0 1px 4px rgba(0,0,0,0.06);}
+.pcard-badge{position:absolute;top:12px;left:12px;z-index:2;font-size:10px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;padding:3px 9px;border-radius:100px;}
+.pcard-badge.top{background:var(--accent);color:#fff;}
+.pcard-badge.eco{background:var(--green-mid);color:#fff;}
+.pcard-img{background:var(--surface-2);height:180px;display:flex;align-items:center;justify-content:center;transition:background .22s;}
+.pcard:hover .pcard-img{background:var(--surface-3);}
+.pcard-body{padding:15px 17px 17px;display:flex;flex-direction:column;flex:1;}
+.pcard-cat{font-size:10px;font-weight:600;letter-spacing:0.7px;text-transform:uppercase;color:var(--ink-4);margin-bottom:5px;}
+.pcard-name{font-size:15px;font-weight:600;letter-spacing:-0.3px;margin-bottom:6px;color:var(--ink);line-height:1.35;}
+.pcard-desc{font-size:12.5px;color:var(--ink-3);line-height:1.55;margin-bottom:14px;font-weight:300;flex:1;}
+.pcard-foot{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;}
+.pcard-price-wrap{}
+.pcard-price{font-size:20px;font-weight:700;letter-spacing:-0.5px;color:var(--ink);line-height:1;}
+.pcard-price sup{font-size:12px;font-weight:500;vertical-align:super;}
+.pcard-price sub{font-size:12px;font-weight:400;color:var(--ink-3);}
+.pcard-moq{font-size:11px;color:var(--ink-4);margin-top:3px;}
+.btn-config{display:flex;align-items:center;gap:5px;background:var(--accent);color:#fff;border:none;padding:9px 16px;border-radius:var(--r);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .18s;font-family:var(--f);white-space:nowrap;}
+.btn-config:hover{background:var(--accent-2);}
+.btn-config svg{width:12px;height:12px;flex-shrink:0;}
+/* Nav logo */
+.logo img{display:block;}
+
+/* ECO BAND */
+.eco-band{background:var(--green-dark);color:#fff;padding:64px 48px;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;}
+.eco-tag{display:inline-block;font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,0.38);margin-bottom:16px;}
+.eco-title{font-size:36px;font-weight:700;letter-spacing:-1px;line-height:1.1;margin-bottom:16px;}
+.eco-title em{color:#7ecfa3;font-style:normal;}
+.eco-body{color:rgba(255,255,255,0.52);font-size:15px;font-weight:300;line-height:1.7;margin-bottom:28px;}
+.btn-eco{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:12px 22px;border-radius:var(--r);font-family:var(--f);font-size:13.5px;font-weight:500;cursor:pointer;transition:all .18s;}
+.btn-eco:hover{background:rgba(255,255,255,0.17);}
+.eco-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.eco-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:var(--r-lg);padding:20px;}
+.eco-card-icon{font-size:20px;margin-bottom:10px;}
+.eco-card-title{font-size:14px;font-weight:600;margin-bottom:4px;}
+.eco-card-body{font-size:12px;color:rgba(255,255,255,0.42);font-weight:300;line-height:1.55;}
+
+/* FOOTER */
+footer{background:var(--ink);color:#fff;padding:56px 48px 36px;}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr;gap:48px;margin-bottom:48px;padding-bottom:48px;border-bottom:1px solid rgba(255,255,255,0.07);}
+.footer-logo{font-size:15px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:9px;}
+.footer-tagline{font-size:13px;color:rgba(255,255,255,0.35);font-weight:300;line-height:1.65;max-width:260px;margin-bottom:20px;}
+.footer-contact{font-size:12px;color:rgba(255,255,255,0.28);line-height:2;}
+.footer-col-title{font-size:10.5px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:16px;}
+.footer-links{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.footer-links a{color:rgba(255,255,255,0.48);text-decoration:none;font-size:13px;font-weight:300;transition:color .18s;}
+.footer-links a:hover{color:rgba(255,255,255,0.9);}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;}
+.footer-legal{font-size:11px;color:rgba(255,255,255,0.2);}
+
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:500;backdrop-filter:blur(3px);align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto;}
+.overlay.open{display:flex;}
+.modal{background:var(--white);border-radius:var(--r-xl);width:100%;max-width:920px;box-shadow:0 32px 80px rgba(0,0,0,0.28);overflow:hidden;animation:rise .3s cubic-bezier(.16,1,.3,1);}
+@keyframes rise{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:22px 28px 18px;border-bottom:1px solid var(--border);background:var(--surface);}
+.modal-head-left{}
+.modal-cat-tag{font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--accent);margin-bottom:4px;}
+.modal-name{font-size:19px;font-weight:700;letter-spacing:-0.4px;}
+.modal-steps{display:flex;align-items:center;gap:6px;margin-top:12px;}
+.modal-step{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--ink-4);font-weight:500;}
+.modal-step.done{color:var(--green-mid);}
+.modal-step.active{color:var(--accent);font-weight:600;}
+.step-num{width:18px;height:18px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;}
+.modal-step.done .step-num{background:var(--green-mid);border-color:var(--green-mid);color:#fff;}
+.modal-step.active .step-num{background:var(--accent);border-color:var(--accent);color:#fff;}
+.step-sep{width:16px;height:1px;background:var(--border-2);}
+.modal-close{width:32px;height:32px;border-radius:50%;border:1px solid var(--border-2);background:var(--white);cursor:pointer;font-size:15px;color:var(--ink-3);display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;margin-top:2px;}
+.modal-close:hover{background:var(--surface-3);color:var(--ink);}
+.modal-body{display:grid;grid-template-columns:268px 1fr;}
+.modal-preview{background:var(--surface-2);padding:28px 22px;border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;gap:18px;}
+.preview-vis{width:155px;height:155px;border-radius:var(--r-lg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:1.5px dashed var(--border-3);transition:border-color .2s;}
+.preview-vis svg{width:60px;height:60px;opacity:.65;}
+.price-box{width:100%;background:linear-gradient(135deg,var(--accent) 0%,var(--accent-2) 100%);border-radius:var(--r-lg);padding:18px 20px;text-align:center;}
+.price-box-lbl{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.65);margin-bottom:6px;}
+.price-box-val{font-size:28px;font-weight:700;color:#fff;letter-spacing:-1px;}
+.price-box-sub{font-size:10.5px;color:rgba(255,255,255,0.6);margin-top:3px;}
+.sum-rows{width:100%;}
+.sum-row{display:flex;justify-content:space-between;font-size:12.5px;padding:7px 0;border-bottom:1px solid var(--border);color:var(--ink-3);}
+.sum-row:last-child{border:none;font-weight:600;color:var(--ink);font-size:13.5px;}
+.modal-config{padding:26px 26px 0;overflow-y:auto;max-height:560px;}
+.cfg-section{margin-bottom:24px;}
+.cfg-label{font-size:10.5px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--ink-4);margin-bottom:11px;display:flex;align-items:center;gap:10px;}
+.cfg-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.size-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.size-btn{border:1px solid var(--border-2);border-radius:var(--r);padding:10px 8px;text-align:center;cursor:pointer;transition:all .15s;background:transparent;font-family:var(--f);}
+.size-btn:hover{border-color:var(--accent);background:var(--accent-bg);}
+.size-btn.sel{border-color:var(--accent);background:var(--accent-bg);}
+.size-btn-name{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:2px;}
+.size-btn-dim{font-size:10px;color:var(--ink-4);}
+.color-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;padding-bottom:18px;}
+.color-swatch{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2.5px solid transparent;transition:all .15s;position:relative;}
+.color-swatch.sel{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-bg);transform:scale(1.15);}
+.swatch-lbl{position:absolute;bottom:-17px;left:50%;transform:translateX(-50%);font-size:9px;white-space:nowrap;color:var(--ink-4);pointer-events:none;}
+.chips{display:flex;gap:7px;flex-wrap:wrap;}
+.chip{border:1px solid var(--border-2);border-radius:100px;padding:6px 14px;font-size:12.5px;font-weight:400;cursor:pointer;transition:all .15s;background:transparent;font-family:var(--f);color:var(--ink-2);}
+.chip:hover{border-color:var(--accent);color:var(--accent);}
+.chip.sel{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:500;}
+.qty-wrap{display:flex;flex-direction:column;gap:10px;}
+.qty-presets{display:flex;gap:7px;}
+.qty-preset{border:1px solid var(--border-2);border-radius:var(--r);padding:7px 14px;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;background:transparent;font-family:var(--f);color:var(--ink);}
+.qty-preset:hover{border-color:var(--accent);}
+.qty-preset.sel{background:var(--accent);color:#fff;border-color:var(--accent);}
+.qty-stepper{display:inline-flex;align-items:center;border:1px solid var(--border-2);border-radius:var(--r);overflow:hidden;}
+.qty-btn{width:38px;height:38px;border:none;background:var(--surface-2);cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;transition:background .15s;color:var(--ink);}
+.qty-btn:hover{background:var(--surface-3);}
+.qty-input{width:64px;text-align:center;border:none;outline:none;font-family:var(--f);font-size:14px;font-weight:600;color:var(--ink);background:#fff;padding:8px 0;}
+.upload-zone{border:1.5px dashed var(--border-3);border-radius:var(--r-lg);padding:22px;text-align:center;cursor:pointer;transition:all .2s;background:var(--surface);}
+.upload-zone:hover{border-color:var(--accent);background:var(--accent-bg);}
+.upload-icon-wrap{font-size:22px;margin-bottom:7px;opacity:.4;}
+.upload-main{font-size:13.5px;color:var(--ink);font-weight:500;margin-bottom:3px;}
+.upload-sub{font-size:11px;color:var(--ink-4);}
+.upload-ok{display:none;margin-top:10px;background:var(--green-light);color:var(--green-mid);border-radius:var(--r);padding:9px 14px;font-size:12.5px;font-weight:500;}
+.modal-foot{padding:18px 26px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--surface);}
+.btn-quote-sm{background:transparent;border:1px solid var(--border-2);color:var(--ink-3);padding:11px 20px;border-radius:var(--r);font-family:var(--f);font-size:13px;cursor:pointer;transition:all .15s;}
+.btn-quote-sm:hover{border-color:var(--border-3);color:var(--ink);}
+.btn-addcart{display:flex;align-items:center;gap:8px;background:var(--accent);color:#fff;border:none;padding:12px 26px;border-radius:var(--r);font-family:var(--f);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:-0.2px;}
+.btn-addcart:hover{background:var(--accent-2);transform:translateY(-1px);box-shadow:0 4px 16px rgba(232,114,26,.4);}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;right:28px;z-index:1000;background:var(--ink);color:#fff;display:flex;align-items:center;gap:10px;padding:12px 20px;border-radius:var(--r-lg);font-size:13.5px;font-weight:500;border-left:3px solid var(--accent);box-shadow:var(--shadow-lg);transform:translateY(16px);opacity:0;transition:all .35s cubic-bezier(.16,1,.3,1);pointer-events:none;}
+.toast.show{transform:translateY(0);opacity:1;}
+
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border-3);border-radius:3px;}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">
+    <img src="data:image/png;base64,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" alt="Briopack" style="height:32px;width:auto;">
+  </div>
+  <div class="nav-center">
+    <a href="#" class="nav-link active">Shop</a>
+    <a href="#" class="nav-link">Industriale</a>
+    <a href="#" class="nav-link">Food & Wine</a>
+    <a href="#" class="nav-link">E-commerce</a>
+    <a href="#" class="nav-link">BrioGreenPack</a>
+  </div>
+  <div class="nav-right">
+    <button class="cart-pill" onclick="openCart()">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      Carrello <span class="cart-badge" id="cart-count">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-left">
+      <h1>Packaging<br>professionale<br>per ogni esigenza</h1>
+      <p class="hero-sub">Scatole, shopper, imballaggi food e molto altro — scegli il prodotto, personalizzalo e ordinalo direttamente online. Consegniamo in tutta Italia.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="document.querySelector('.catbar').scrollIntoView({behavior:'smooth'})">Sfoglia i Prodotti</button>
+        <a href="mailto:info@briopack.com" class="btn-secondary">Richiedi Preventivo</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-cards">
+        <div class="hero-card hero-card-1">
+          <div class="hc-label">Imballaggi Industriali</div>
+          <div class="hc-title">Scatola Americana</div>
+          <div class="hc-price">da €0,38 / pz</div>
+          <div class="hc-moq">MOQ 100 pz</div>
+        </div>
+        <div class="hero-card hero-card-2">
+          <div class="hc-label">Shopper & Cartotecnica</div>
+          <div class="hc-title">Shopper Lusso</div>
+          <div class="hc-price">da €0,65 / pz</div>
+          <div class="hc-moq">MOQ 250 pz</div>
+        </div>
+        <div class="hero-card hero-card-3">
+          <div class="hc-label">Wine Packaging</div>
+          <div class="hc-title">Scatola Bottiglie</div>
+          <div class="hc-price">da €1,20 / pz</div>
+          <div class="hc-moq">MOQ 50 pz</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-nums">
+    <div class="hero-num-item"><div class="hero-num-val">500+</div><div class="hero-num-lbl">Prodotti disponibili</div></div>
+    <div class="hero-num-div"></div>
+    <div class="hero-num-item"><div class="hero-num-val">6</div><div class="hero-num-lbl">Colori di stampa</div></div>
+    <div class="hero-num-div"></div>
+    <div class="hero-num-item"><div class="hero-num-val">30+</div><div class="hero-num-lbl">Anni di esperienza</div></div>
+    <div class="hero-num-div"></div>
+    <div class="hero-num-item"><div class="hero-num-val">Italia</div><div class="hero-num-lbl">Consegna nazionale</div></div>
+  </div>
+</section>
+
+<!-- SEARCH + FILTER -->
+<div class="search-wrap">
+  <div class="search-bar">
+    <svg class="search-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    <input type="text" placeholder="Cerca prodotto, categoria..." oninput="searchProducts(this.value)">
+  </div>
+</div>
+
+<!-- CATEGORY BAR -->
+<div class="catbar">
+  <div class="cat active" onclick="filterCat(this,'all')"><span class="cat-dot"></span>Tutti</div>
+  <div class="cat" onclick="filterCat(this,'industrial')"><span class="cat-dot"></span>Imballaggi Industriali</div>
+  <div class="cat" onclick="filterCat(this,'shopper')"><span class="cat-dot"></span>Shopper & Cartotecnica</div>
+  <div class="cat" onclick="filterCat(this,'food')"><span class="cat-dot"></span>Food Delivery</div>
+  <div class="cat" onclick="filterCat(this,'wine')"><span class="cat-dot"></span>Wine Packaging</div>
+  <div class="cat" onclick="filterCat(this,'ecom')"><span class="cat-dot"></span>E-commerce</div>
+  <div class="cat" onclick="filterCat(this,'eco')"><span class="cat-dot"></span>🌿 BrioGreenPack</div>
+</div>
+
+<!-- PRODUCTS -->
+<section class="section">
+  <div class="section-head">
+    <div class="section-title">I Nostri Prodotti</div>
+    <a href="#" class="section-link">Vedi tutto →</a>
+  </div>
+  <div class="pgrid">
+
+    <div class="pcard" data-cat="industrial" onclick="openModal('americanbox')">
+      <div class="pcard-badge top">Più venduto</div>
+      <div class="pcard-img">
+        <svg viewBox="0 0 110 110" fill="none" style="width:108px">
+          <rect x="15" y="36" width="80" height="62" rx="3" fill="#ede9e2" stroke="#b8924a" stroke-width="1.5"/>
+          <polygon points="15,36 55,18 95,36 55,54" fill="#e6e0d4" stroke="#b8924a" stroke-width="1.5"/>
+          <line x1="15" y1="36" x2="15" y2="98" stroke="#b8924a" stroke-width="0.8"/>
+          <line x1="95" y1="36" x2="95" y2="98" stroke="#b8924a" stroke-width="0.8"/>
+          <rect x="34" y="54" width="42" height="30" rx="2" fill="none" stroke="#b8924a" stroke-width="1" stroke-dasharray="3,2.5"/>
+        </svg>
+      </div>
+      <div class="pcard-body">
+        <div class="pcard-cat">Imballaggi Industriali</div>
+        <div class="pcard-name">Scatola Americana — Ondulato</div>
+        <div class="pcard-desc">Cartone ondulato con stampa flessografica fino a 6 colori. Disponibile da XS a XXL, personalizzabile su misura.</div>
+        <div class="pcard-foot">
+          <div><div class="pcard-price"><sup>€</sup>0,38<sub> / pz</sub></div><div class="pcard-moq">MOQ 100 pz</div></div>
+          <button class="btn-config" onclick="openModal('americanbox')">Configura <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="pcard" data-cat="shopper" onclick="openModal('shopper')">
+      <div class="pcard-img">
+        <svg viewBox="0 0 110 110" fill="none" style="width:108px">
+          <rect x="28" y="42" width="54" height="58" rx="3" fill="#ede9e2" stroke="#b8924a" stroke-width="1.5"/>
+          <path d="M42 42 Q42 26 55 26 Q68 26 68 42" stroke="#b8924a" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <rect x="38" y="60" width="34" height="22" rx="2" fill="none" stroke="#b8924a" stroke-width="1" stroke-dasharray="3,2.5"/>
+        </svg>
+      </div>
+      <div class="pcard-body">
+        <div class="pcard-cat">Shopper & Cartotecnica</div>
+        <div class="pcard-name">Shopper Lusso in Carta</div>
+        <div class="pcard-desc">Borsa in carta con manico ritorto. Stampa litografica o digitale, plastificazione opaca o lucida.</div>
+        <div class="pcard-foot">
+          <div><div class="pcard-price"><sup>€</sup>0,65<sub> / pz</sub></div><div class="pcard-moq">MOQ 250 pz</div></div>
+          <button class="btn-config" onclick="openModal('shopper')">Configura <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="pcard" data-cat="wine" onclick="openModal('winebox')">
+      <div class="pcard-img">
+        <svg viewBox="0 0 110 110" fill="none" style="width:108px">
+          <rect x="22" y="25" width="66" height="74" rx="3" fill="#ede9e2" stroke="#b8924a" stroke-width="1.5"/>
+          <line x1="29" y1="52" x2="29" y2="88" stroke="#b8924a" stroke-width="0.8" stroke-dasharray="2,3.5"/>
+          <line x1="40" y1="52" x2="40" y2="88" stroke="#b8924a" stroke-width="0.8" stroke-dasharray="2,3.5"/>
+          <line x1="55" y1="52" x2="55" y2="88" stroke="#b8924a" stroke-width="0.8" stroke-dasharray="2,3.5"/>
+          <line x1="70" y1="52" x2="70" y2="88" stroke="#b8924a" stroke-width="0.8" stroke-dasharray="2,3.5"/>
+          <rect x="30" y="30" width="50" height="18" rx="2" fill="none" stroke="#b8924a" stroke-width="1" stroke-dasharray="3,2.5"/>
+        </svg>
+        <div class="pcard-img-overlay"><button class="overlay-btn" onclick="openModal('winebox')">Personalizza</button></div>
+      </div>
+      <div class="pcard-body">
+        <div class="pcard-cat">Wine Packaging</div>
+        <div class="pcard-name">Scatola Bottiglie da 1 a 6</div>
+        <div class="pcard-desc">Ondulato con alveari separatori. Da 1 a 6 bottiglie verticali o orizzontali. Stampa personalizzata.</div>
+        <div class="pcard-foot">
+          <div><div class="pcard-price"><sup>€</sup>1,20<sub> / pz</sub></div><div class="pcard-moq">MOQ 50 pz</div></div>
+          <button class="btn-config" onclick="openModal('winebox')">Configura <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="pcard" data-cat="food" onclick="openModal('food')">
+      <div class="pcard-img">
+        <svg viewBox="0 0 110 110" fill="none" style="width:108px">
+          <rect x="18" y="46" width="74" height="50" rx="4" fill="#ede9e2" stroke="#b8924a" stroke-width="1.5"/>
+          <path d="M18 58 L55 38 L92 58" stroke="#b8924a" stroke-width="1.5" fill="none"/>
+          <rect x="36" y="60" width="38" height="24" rx="2" fill="none" stroke="#b8924a" stroke-width="1" stroke-dasharray="3,2.5"/>
+        </svg>
+      </div>
+      <div class="pcard-body">
+        <div class="pcard-cat">Food Delivery</div>
+        <div class="pcard-name">Scatola Food-Grade</div>
+        <div class="pcard-desc">Certificata per il contatto alimentare. Scatole e buste in carta e cartone per delivery e take away.</div>
+        <div class="pcard-foot">
+          <div><div class="pcard-price"><sup>€</sup>0,28<sub> / pz</sub></div><div class="pcard-moq">MOQ 200 pz</div></div>
+          <button class="btn-config" onclick="openModal('food')">Configura <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="pcard" data-cat="eco" onclick="openModal('eco')">
+      <div class="pcard-badge eco">Eco</div>
+      <div class="pcard-img" style="background:#edf3ee">
+        <svg viewBox="0 0 110 110" fill="none" style="width:108px">
+          <rect x="15" y="34" width="80" height="65" rx="4" fill="#d4e6d9" stroke="#2d5a3d" stroke-width="1.5"/>
+          <polygon points="15,34 55,16 95,34 55,52" fill="#c6deca" stroke="#2d5a3d" stroke-width="1.5"/>
+          <circle cx="55" cy="74" r="14" fill="none" stroke="#2d5a3d" stroke-width="1.5"/>
+          <path d="M49 74 Q53 67 59 74 Q55 81 49 74" fill="#2d5a3d" opacity="0.5"/>
+        </svg>
+      </div>
+      <div class="pcard-body">
+        <div class="pcard-cat">BrioGreenPack</div>
+        <div class="pcard-name">Scatola 100% Riciclata</div>
+        <div class="pcard-desc">Packaging eco-certificato da materiale riciclato. Stessa qualità, stessa configurabilità, zero impatto.</div>
+        <div class="pcard-foot">
+          <div><div class="pcard-price"><sup>€</sup>0,45<sub> / pz</sub></div><div class="pcard-moq">MOQ 100 pz</div></div>
+          <button class="btn-config" onclick="openModal('eco')">Configura <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="pcard" data-cat="ecom" onclick="openModal('mailer')">
+      <div class="pcard-img">
+        <svg viewBox="0 0 110 110" fill="none" style="width:108px">
+          <rect x="15" y="30" width="80" height="68" rx="4" fill="#ede9e2" stroke="#b8924a" stroke-width="1.5"/>
+          <path d="M15 52 L95 52" stroke="#b8924a" stroke-width="0.8"/>
+          <path d="M55 30 L55 52" stroke="#b8924a" stroke-width="0.8"/>
+          <rect x="30" y="60" width="50" height="26" rx="2" fill="none" stroke="#b8924a" stroke-width="1" stroke-dasharray="3,2.5"/>
+          <path d="M44 30 Q44 22 55 22 Q66 22 66 30" stroke="#b8924a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="pcard-body">
+        <div class="pcard-cat">E-commerce</div>
+        <div class="pcard-name">Scatola Self-Seal Mailer</div>
+        <div class="pcard-desc">Chiusura a click, nastro antieffrazione. Ideale per spedizioni corriere di qualsiasi tipo di prodotto.</div>
+        <div class="pcard-foot">
+          <div><div class="pcard-price"><sup>€</sup>0,52<sub> / pz</sub></div><div class="pcard-moq">MOQ 100 pz</div></div>
+          <button class="btn-config" onclick="openModal('mailer')">Configura <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ECO BAND -->
+<div class="eco-band">
+  <div>
+    <div class="eco-tag">Linea BrioGreenPack</div>
+    <h2 class="eco-title">Packaging con<br>un'<em>anima green</em></h2>
+    <p class="eco-body">Il nostro impegno: ogni linea ha un'alternativa sostenibile. Stessa qualità e configurabilità — materiali riciclati o biodegradabili certificati, senza compromessi.</p>
+    <button class="btn-eco">Scopri la Linea Eco →</button>
+  </div>
+  <div class="eco-grid">
+    <div class="eco-card"><div class="eco-card-icon">♻</div><div class="eco-card-title">100% Riciclato</div><div class="eco-card-body">Cartone ondulato da fibre riciclate post-consumo</div></div>
+    <div class="eco-card"><div class="eco-card-icon">🌿</div><div class="eco-card-title">Biodegradabile</div><div class="eco-card-body">Materiali che si decompongono naturalmente</div></div>
+    <div class="eco-card"><div class="eco-card-icon">✓</div><div class="eco-card-title">Certificato CONAI</div><div class="eco-card-body">Piena conformità e tracciabilità del contributo</div></div>
+    <div class="eco-card"><div class="eco-card-icon">⬡</div><div class="eco-card-title">Food Safe</div><div class="eco-card-body">Materiali eco certificati per il contatto alimentare</div></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-logo">
+        <img src="data:image/png;base64,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" alt="Briopack" style="height:26px;width:auto;opacity:0.85;">
+      </div>
+      <div class="footer-tagline">Lo stato dell'arte nel packaging. Progettiamo e produciamo imballaggi su misura per aziende di ogni settore, in tutta Italia.</div>
+      <div class="footer-contact">C.da Sodera, 38 — 66030 Poggiofiorito (CH)<br>+39 0871 869378<br>info@briopack.com</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Prodotti</div>
+      <ul class="footer-links">
+        <li><a href="#">Imballaggi Industriali</a></li>
+        <li><a href="#">Shopper & Cartotecnica</a></li>
+        <li><a href="#">Wine Packaging</a></li>
+        <li><a href="#">Food Delivery</a></li>
+        <li><a href="#">E-commerce</a></li>
+        <li><a href="#">BrioGreenPack</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Azienda</div>
+      <ul class="footer-links">
+        <li><a href="#">Chi Siamo</a></li>
+        <li><a href="#">Contatti</a></li>
+        <li><a href="#">Richiedi Preventivo</a></li>
+        <li><a href="#">Area Amministrativa</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-legal">© 2025 Briopack Srl — P.IVA 02540090699 — REA 186673 Chieti</div>
+    <div class="footer-legal">Privacy Policy · Cookie Policy</div>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay" onclick="handleOverlay(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-head">
+      <div class="modal-head-left">
+        <div class="modal-cat-tag" id="m-cat">Imballaggi Industriali</div>
+        <div class="modal-name" id="m-name">Scatola Americana — Ondulato</div>
+        <div class="modal-steps">
+          <div class="modal-step active"><span class="step-num">1</span>Misura & Colore</div>
+          <div class="step-sep"></div>
+          <div class="modal-step"><span class="step-num">2</span>Stampa & Qty</div>
+          <div class="step-sep"></div>
+          <div class="modal-step"><span class="step-num">3</span>Logo & Ordine</div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-preview">
+        <div class="preview-vis">
+          <svg viewBox="0 0 80 80" fill="none" style="opacity:.65">
+            <rect x="8" y="22" width="64" height="52" rx="3" fill="#ede9e2" stroke="#b8924a" stroke-width="1.5"/>
+            <polygon points="8,22 40,8 72,22 40,36" fill="#e6e0d4" stroke="#b8924a" stroke-width="1.5"/>
+          </svg>
+          <span style="font-size:9.5px;color:var(--ink-4);font-weight:500;letter-spacing:.5px">ANTEPRIMA</span>
+        </div>
+        <div class="price-box">
+          <div class="price-box-lbl">Prezzo unitario</div>
+          <div class="price-box-val" id="price-val">€0,38</div>
+          <div class="price-box-sub">IVA esclusa · varia con la quantità</div>
+        </div>
+        <div class="sum-rows">
+          <div class="sum-row"><span>Prezzo unitario</span><span id="s-unit">€0,38</span></div>
+          <div class="sum-row"><span>Quantità</span><span id="s-qty">250 pz</span></div>
+          <div class="sum-row"><span>Impianti stampa</span><span id="s-setup">€0,00</span></div>
+          <div class="sum-row"><span>Totale (IVA esclusa)</span><span id="s-total">€95,00</span></div>
+        </div>
+      </div>
+      <div class="modal-config">
+        <div class="cfg-section">
+          <div class="cfg-label">Misura</div>
+          <div class="size-grid">
+            <button class="size-btn sel" onclick="selectSize(this,0.38)"><div class="size-btn-name">XS</div><div class="size-btn-dim">200×150×100 mm</div></button>
+            <button class="size-btn" onclick="selectSize(this,0.48)"><div class="size-btn-name">S</div><div class="size-btn-dim">300×200×150 mm</div></button>
+            <button class="size-btn" onclick="selectSize(this,0.62)"><div class="size-btn-name">M</div><div class="size-btn-dim">400×300×200 mm</div></button>
+            <button class="size-btn" onclick="selectSize(this,0.78)"><div class="size-btn-name">L</div><div class="size-btn-dim">500×400×300 mm</div></button>
+            <button class="size-btn" onclick="selectSize(this,0.98)"><div class="size-btn-name">XL</div><div class="size-btn-dim">600×450×350 mm</div></button>
+            <button class="size-btn" onclick="selectSize(this,null)"><div class="size-btn-name">Custom</div><div class="size-btn-dim">misura libera</div></button>
+          </div>
+        </div>
+        <div class="cfg-section">
+          <div class="cfg-label">Colore Scatola</div>
+          <div class="color-row">
+            <div class="color-swatch sel" style="background:#d4c8b0" onclick="selColor(this)"><span class="swatch-lbl">Naturale</span></div>
+            <div class="color-swatch" style="background:#f5f4f2;border:1px solid #ddd" onclick="selColor(this)"><span class="swatch-lbl">Bianco</span></div>
+            <div class="color-swatch" style="background:#1e1e1c" onclick="selColor(this)"><span class="swatch-lbl">Nero</span></div>
+            <div class="color-swatch" style="background:#1a4228" onclick="selColor(this)"><span class="swatch-lbl">Verde</span></div>
+            <div class="color-swatch" style="background:#7c2032" onclick="selColor(this)"><span class="swatch-lbl">Bordeaux</span></div>
+            <div class="color-swatch" style="background:#1c3a5e" onclick="selColor(this)"><span class="swatch-lbl">Blu</span></div>
+          </div>
+        </div>
+        <div class="cfg-section">
+          <div class="cfg-label">Stampa & Finitura</div>
+          <div class="chips">
+            <button class="chip sel" onclick="toggleChip(this)">Senza Stampa</button>
+            <button class="chip" onclick="toggleChip(this)">Flexo 1 colore</button>
+            <button class="chip" onclick="toggleChip(this)">Flexo 4 colori</button>
+            <button class="chip" onclick="toggleChip(this)">Stampa Digitale</button>
+            <button class="chip" onclick="toggleChip(this)">Plastif. Opaca</button>
+            <button class="chip" onclick="toggleChip(this)">Plastif. Lucida</button>
+            <button class="chip" onclick="toggleChip(this)">Lucidatura UV</button>
+            <button class="chip" onclick="toggleChip(this)">Stampa a Caldo</button>
+          </div>
+        </div>
+        <div class="cfg-section">
+          <div class="cfg-label">Quantità</div>
+          <div class="qty-wrap">
+            <div class="qty-presets">
+              <button class="qty-preset" onclick="setQty(this,100)">100</button>
+              <button class="qty-preset sel" onclick="setQty(this,250)">250</button>
+              <button class="qty-preset" onclick="setQty(this,500)">500</button>
+              <button class="qty-preset" onclick="setQty(this,1000)">1.000</button>
+              <button class="qty-preset" onclick="setQty(this,5000)">5.000</button>
+            </div>
+            <div class="qty-stepper">
+              <button class="qty-btn" onclick="stepQty(-50)">−</button>
+              <input class="qty-input" id="qty-input" type="number" value="250" min="100" step="50" oninput="calcPrice()">
+              <button class="qty-btn" onclick="stepQty(50)">+</button>
+            </div>
+          </div>
+        </div>
+        <div class="cfg-section" style="padding-bottom:28px">
+          <div class="cfg-label">Logo / Artwork</div>
+          <div class="upload-zone" onclick="document.getElementById('file-in').click()">
+            <div class="upload-icon-wrap">⬆</div>
+            <div class="upload-main">Carica il tuo file logo o grafica</div>
+            <div class="upload-sub">SVG · AI · EPS · PDF · PNG — max 50 MB</div>
+          </div>
+          <input type="file" id="file-in" accept=".svg,.ai,.eps,.pdf,.png" style="display:none" onchange="handleFile(event)">
+          <div class="upload-ok" id="upload-ok">✓ File caricato — il team invierà una bozza di stampa</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-quote-sm">Richiedi Preventivo Personalizzato</button>
+      <button class="btn-addcart" onclick="addToCart()">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        Aggiungi al Carrello
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toast-msg">Prodotto aggiunto al carrello</span>
+</div>
+
+<script>
+let cartCount=0,basePrice=0.38,currentQty=250;
+const products={
+  americanbox:{name:'Scatola Americana — Ondulato',cat:'Imballaggi Industriali',price:0.38},
+  shopper:{name:'Shopper Lusso in Carta',cat:'Shopper & Cartotecnica',price:0.65},
+  winebox:{name:'Scatola Bottiglie da 1 a 6',cat:'Wine Packaging',price:1.20},
+  food:{name:'Scatola Food-Grade',cat:'Food Delivery',price:0.28},
+  eco:{name:'Scatola 100% Riciclata',cat:'BrioGreenPack',price:0.45},
+  mailer:{name:'Scatola Self-Seal Mailer',cat:'E-commerce',price:0.52},
+  box:{name:'Scatola Personalizzata',cat:'Imballaggi Industriali',price:0.38},
+};
+function openModal(key){
+  const p=products[key]||products.box;
+  basePrice=p.price;
+  document.getElementById('m-name').textContent=p.name;
+  document.getElementById('m-cat').textContent=p.cat;
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+  calcPrice();
+}
+function closeModal(){
+  document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+function handleOverlay(e){if(e.target===document.getElementById('overlay'))closeModal();}
+function selectSize(el,price){
+  document.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  if(price){basePrice=price;calcPrice();}
+}
+function selColor(el){
+  document.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('sel'));
+  el.classList.add('sel');
+}
+function toggleChip(el){
+  if(el.textContent.trim()==='Senza Stampa'){
+    document.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));
+    el.classList.add('sel');
+  } else {
+    document.querySelector('.chip').classList.remove('sel');
+    el.classList.toggle('sel');
+  }
+  calcPrice();
+}
+function setQty(el,qty){
+  document.querySelectorAll('.qty-preset').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  currentQty=qty;
+  document.getElementById('qty-input').value=qty;
+  calcPrice();
+}
+function stepQty(d){
+  let v=Math.max(100,(parseInt(document.getElementById('qty-input').value)||100)+d);
+  document.getElementById('qty-input').value=v;
+  currentQty=v;
+  document.querySelectorAll('.qty-preset').forEach(b=>b.classList.remove('sel'));
+  calcPrice();
+}
+function calcPrice(){
+  currentQty=Math.max(100,parseInt(document.getElementById('qty-input').value)||250);
+  let u=basePrice;
+  if(currentQty>=5000)u*=0.68;
+  else if(currentQty>=1000)u*=0.80;
+  else if(currentQty>=500)u*=0.90;
+  const chips=[...document.querySelectorAll('.chip.sel')].map(c=>c.textContent.trim());
+  let setup=0;
+  if(chips.some(c=>c.includes('Flexo')))setup=45;
+  if(chips.some(c=>c.includes('Digitale')))setup=80;
+  if(chips.some(c=>c.includes('UV')||c.includes('Caldo')))setup+=30;
+  const total=u*currentQty+setup;
+  const fmt=n=>n.toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('price-val').textContent='€'+fmt(u);
+  document.getElementById('s-unit').textContent='€'+fmt(u);
+  document.getElementById('s-qty').textContent=currentQty.toLocaleString('it-IT')+' pz';
+  document.getElementById('s-setup').textContent='€'+fmt(setup);
+  document.getElementById('s-total').textContent='€'+fmt(total);
+}
+function handleFile(e){if(e.target.files.length)document.getElementById('upload-ok').style.display='block';}
+function addToCart(){
+  cartCount++;
+  document.getElementById('cart-count').textContent=cartCount;
+  closeModal();
+  toast('Prodotto aggiunto al carrello');
+}
+function openCart(){toast(cartCount===0?'Il carrello è vuoto':cartCount+' articolo/i nel carrello');}
+function toast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toast-msg').textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+function searchProducts(q){
+  const term=q.toLowerCase().trim();
+  document.querySelectorAll('.pcard').forEach(c=>{
+    const text=c.textContent.toLowerCase();
+    c.style.display=(!term||text.includes(term))?'':'none';
+  });
+}
+function filterCat(el,cat){
+  document.querySelectorAll('.cat').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.pcard').forEach(c=>{
+    c.style.display=(cat==='all'||c.dataset.cat===cat)?'':'none';
+  });
+}
+</script>
+</body>
+</html>
