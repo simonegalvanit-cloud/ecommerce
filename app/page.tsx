@@ -136,47 +136,43 @@ const DISC_TIERS = [
   { min: 5000, max: Infinity, label: '5.000+', disc: '-32%' },
 ]
 
-// Trust bar icons as components
-const TrustItems: { icon: ReactNode; title: string; desc: string }[] = [
+// Marquee ticker items (duplicated in markup for seamless loop)
+const MARQUEE_ITEMS = [
+  { label: 'Spedizione in 48–72h', icon: <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg> },
+  { label: 'Stampa fino a 6 colori', icon: <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="20" cy="13.5" r="2.5"/><circle cx="13.5" cy="20" r="2.5"/><circle cx="6.5" cy="20" r="2.5"/><circle cx="10" cy="13.5" r="2.5"/></svg> },
+  { label: 'MOQ da 50 pezzi', icon: <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg> },
+  { label: 'Linea Eco CONAI', icon: <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg> },
+  { label: '30+ anni di esperienza', icon: <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg> },
+  { label: '500+ prodotti disponibili', icon: <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> },
+  { label: 'Consegna in tutta Italia', icon: <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg> },
+  { label: 'Misure personalizzate su misura', icon: <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round"><path d="M21 3H3v7l9 11 9-11V3z"/><line x1="3" y1="10" x2="21" y2="10"/></svg> },
+]
+
+// Feature band data
+const FEAT_ITEMS = [
   {
-    icon: (
-      <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="1" y="3" width="15" height="13" rx="2"/>
-        <path d="M16 8h4l3 3v5h-7V8z"/>
-        <circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
-      </svg>
-    ),
+    bg: 'var(--accent-bg)', color: 'var(--accent)', stat: '48h',
     title: 'Spedizione Rapida',
-    desc: 'Consegna in 48–72h su tutto il territorio nazionale',
+    desc: 'Consegna garantita in 48–72h su tutto il territorio nazionale',
+    icon: <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>,
   },
   {
-    icon: (
-      <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
-      </svg>
-    ),
-    title: 'Stampa Personalizzata',
-    desc: 'Fino a 6 colori di stampa flessografica o digitale',
+    bg: 'var(--blue-bg)', color: 'var(--blue)', stat: '6',
+    title: 'Colori di Stampa',
+    desc: 'Flessografica o digitale, fino a 6 colori su ogni prodotto',
+    icon: <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>,
   },
   {
-    icon: (
-      <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
-        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>
-      </svg>
-    ),
-    title: 'MOQ Accessibili',
-    desc: 'Ordina da 50 pz — ideale per PMI e startup',
+    bg: 'var(--accent-bg)', color: 'var(--accent)', stat: '50 pz',
+    title: 'MOQ Minimo',
+    desc: 'Ordina da soli 50 pezzi — pensato per PMI e nuove realtà',
+    icon: <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>,
   },
   {
-    icon: (
-      <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M7 16.5c-3.5 0-5-2-5-4s1.5-4 5-4c1 0 2 .5 3 1.5 1-1 2-1.5 3-1.5 3.5 0 5 2 5 4s-1.5 4-5 4c-1 0-2-.5-3-1.5-1 1-2 1.5-3 1.5z"/>
-        <path d="M12 8.5V4M12 4l-2 2M12 4l2 2"/>
-      </svg>
-    ),
-    title: 'Linea Eco Certificata',
-    desc: 'Materiali riciclati e biodegradabili CONAI',
+    bg: 'var(--green-bg)', color: 'var(--green)', stat: '100%',
+    title: 'Eco Certificato',
+    desc: 'Linea BrioGreenPack in materiale riciclato, certificata CONAI',
+    icon: <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>,
   },
 ]
 
@@ -200,6 +196,9 @@ export default function StorefrontPage() {
   const [selPrints, setSelPrints]       = useState<Set<string>>(new Set(['Senza Stampa']))
   const [qty, setQty]                   = useState(250)
   const [fileOk, setFileOk]             = useState(false)
+  const [customL, setCustomL]           = useState('')
+  const [customW, setCustomW]           = useState('')
+  const [customH, setCustomH]           = useState('')
 
   const prevTotalRef = useRef<number>(0)
   const [pricePopKey, setPricePopKey] = useState(0)
@@ -249,6 +248,7 @@ export default function StorefrontPage() {
     setSelPrints(new Set(['Senza Stampa']))
     setQty(250)
     setFileOk(false)
+    setCustomL(''); setCustomW(''); setCustomH('')
     document.body.style.overflow = 'hidden'
   }, [])
 
@@ -257,9 +257,11 @@ export default function StorefrontPage() {
     document.body.style.overflow = ''
   }, [])
 
+  const isCustom = SIZES[selSizeIdx]?.label === 'Custom'
+
   // Price calculation
   const calcUnit = () => {
-    let u = basePrice
+    let u = basePrice + (isCustom ? 0.10 : 0)
     if (qty >= 5000) u *= 0.68
     else if (qty >= 1000) u *= 0.80
     else if (qty >= 500)  u *= 0.90
@@ -395,15 +397,33 @@ export default function StorefrontPage() {
         })}
       </div>
 
-      {/* ── TRUST BAR ── */}
-      <div className="trust">
-        {TrustItems.map((t, i) => (
-          <div key={t.title} className="trust-item scroll-reveal" style={{ transitionDelay: `${i * 0.07}s` }}>
-            <div className="trust-icon">{t.icon}</div>
-            <div>
-              <div className="trust-title">{t.title}</div>
-              <div className="trust-desc">{t.desc}</div>
-            </div>
+      {/* ── MARQUEE TICKER ── */}
+      <div className="marquee-band" aria-hidden>
+        <div className="marquee-track">
+          {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
+            <span key={i} style={{ display: 'contents' }}>
+              <span className="marquee-item">
+                {item.icon}
+                {item.label}
+              </span>
+              <span className="marquee-sep">·</span>
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* ── FEATURE BAND ── */}
+      <div className="feat-band">
+        {FEAT_ITEMS.map((f, i) => (
+          <div
+            key={f.title}
+            className="feat-card scroll-reveal"
+            style={{ '--feat-bg': f.bg, '--feat-color': f.color, transitionDelay: `${i * 0.07}s` } as React.CSSProperties}
+          >
+            <div className="feat-icon-wrap">{f.icon}</div>
+            <div className="feat-stat">{f.stat}</div>
+            <div className="feat-title">{f.title}</div>
+            <div className="feat-desc">{f.desc}</div>
           </div>
         ))}
       </div>
@@ -590,6 +610,14 @@ export default function StorefrontPage() {
                   <div className="price-box-sub">IVA esclusa · varia con la quantità</div>
                 </div>
                 <div className="sum-rows">
+                  <div className="sum-row">
+                    <span>Misura</span>
+                    <span style={{ fontWeight: 600, color: 'var(--ink)' }}>
+                      {isCustom && customL && customW && customH
+                        ? `${customL}×${customW}×${customH} mm`
+                        : SIZES[selSizeIdx]?.label}
+                    </span>
+                  </div>
                   <div className="sum-row"><span>Prezzo unitario</span><span>€{fmt(unit)}</span></div>
                   <div className="sum-row"><span>Quantità</span><span>{qty.toLocaleString('it-IT')} pz</span></div>
                   <div className="sum-row"><span>Impianti stampa</span><span>{setup > 0 ? `€${fmt(setup)}` : '—'}</span></div>
@@ -611,6 +639,33 @@ export default function StorefrontPage() {
                       </button>
                     ))}
                   </div>
+
+                  {/* Custom size inputs */}
+                  {isCustom && (
+                    <div className="custom-dims">
+                      <div className="custom-dims-label">Inserisci le dimensioni in millimetri</div>
+                      <div className="custom-dims-grid">
+                        <div>
+                          <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: 'var(--ink-4)', marginBottom: 5, textTransform: 'uppercase', letterSpacing: 0.4 }}>Lunghezza</label>
+                          <input type="number" value={customL} onChange={e => setCustomL(e.target.value)} placeholder="es. 400" min={50} max={2000} />
+                        </div>
+                        <div>
+                          <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: 'var(--ink-4)', marginBottom: 5, textTransform: 'uppercase', letterSpacing: 0.4 }}>Larghezza</label>
+                          <input type="number" value={customW} onChange={e => setCustomW(e.target.value)} placeholder="es. 300" min={50} max={2000} />
+                        </div>
+                        <div>
+                          <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: 'var(--ink-4)', marginBottom: 5, textTransform: 'uppercase', letterSpacing: 0.4 }}>Altezza</label>
+                          <input type="number" value={customH} onChange={e => setCustomH(e.target.value)} placeholder="es. 250" min={20} max={1000} />
+                        </div>
+                      </div>
+                      <div className="custom-surcharge">
+                        <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                        </svg>
+                        +€0,10/pz per misure personalizzate
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Color */}
