@@ -288,7 +288,7 @@ export default function StorefrontPage() {
             <h1 className="animate-fade-up">Packaging<br />su misura,<br />senza compromessi.</h1>
             <p className="hero-sub animate-fade-up delay-1">Scatole, shopper, wine box e packaging food-grade personalizzabili online. MOQ accessibili, stampa professionale, spedizione nazionale.</p>
             <div className="hero-actions animate-fade-up delay-2">
-              <button className="btn-primary" onClick={() => document.querySelector('.catbar')?.scrollIntoView({ behavior: 'smooth' })}>
+              <button className="btn-primary" onClick={() => document.querySelector('.catalog-zone')?.scrollIntoView({ behavior: 'smooth' })}>
                 Scopri i prodotti
               </button>
               <button className="btn-secondary">Richiedi preventivo</button>
@@ -316,56 +316,38 @@ export default function StorefrontPage() {
           <div className="hero-scroll-dot" />
         </div>
 
-        <div className="hero-nums">
-          {[
-            { val: '500+', lbl: 'Prodotti disponibili' },
-            { val: '6',    lbl: 'Colori di stampa' },
-            { val: '30+',  lbl: 'Anni di esperienza' },
-            { val: '100%', lbl: 'Made in Italy' },
-          ].map((n, i) => (
-            <div key={i} style={{ display: 'contents' }}>
-              {i > 0 && <div className="hero-num-div" />}
-              <div className={`hero-num-item animate-fade-up delay-${i + 1}`}>
-                <div className="hero-num-val">{n.val}</div>
-                <div className="hero-num-lbl">{n.lbl}</div>
-              </div>
-            </div>
-          ))}
-        </div>
       </section>
 
-      {/* ── SEARCH ── */}
-      <div className="search-wrap">
-        <div className="search-bar">
+      {/* ── CATALOG ZONE ── */}
+      <div className="catalog-zone">
+        <div className="catalog-searchbar">
           <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
           <input
             type="text"
-            placeholder="Cerca prodotti (es. scatola pizza, shopper kraft…)"
+            placeholder="Cerca prodotti, es. shopper kraft, scatola pizza…"
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
           {search && (
-            <button
-              onClick={() => setSearch('')}
-              style={{ background: 'none', border: 'none', color: 'var(--ink-4)', cursor: 'pointer', fontSize: 16, padding: '0 2px', lineHeight: 1, fontFamily: 'var(--f)' }}
-              aria-label="Cancella ricerca"
-            >✕</button>
+            <button className="catalog-clear" onClick={() => setSearch('')} aria-label="Cancella ricerca">
+              <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
           )}
+          <button className="catalog-search-btn" aria-label="Cerca">
+            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          </button>
         </div>
-      </div>
-
-      {/* ── CAT BAR ── */}
-      <div className="catbar">
-        {CATEGORIES.map(c => {
-          const count = c.key === 'all' ? PRODUCTS.length : PRODUCTS.filter(p => p.catKey === c.key).length
-          return (
-            <div key={c.key} className={`cat ${activeCat === c.key ? 'active' : ''}`} onClick={() => setActiveCat(c.key)}>
-              <span className="cat-dot" />
-              {c.label}
-              <span className="cat-count">{count}</span>
-            </div>
-          )
-        })}
+        <div className="catalog-cats">
+          {CATEGORIES.map(c => {
+            const count = c.key === 'all' ? PRODUCTS.length : PRODUCTS.filter(p => p.catKey === c.key).length
+            return (
+              <button key={c.key} className={`catalog-pill${activeCat === c.key ? ' active' : ''}`} onClick={() => setActiveCat(c.key)}>
+                {c.label}
+                <span className="cpill-count">{count}</span>
+              </button>
+            )
+          })}
+        </div>
       </div>
 
 
