@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter, usePathname } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
@@ -63,12 +64,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Sidebar */}
       <aside style={{ width: 220, flexShrink: 0, background: '#1a1a1a', display: 'flex', flexDirection: 'column', height: '100vh', position: 'sticky', top: 0, overflowY: 'auto' }}>
         {/* Logo */}
-        <div style={{ padding: '20px 20px 16px', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
-          <div style={{ fontSize: 16, fontWeight: 800, color: '#fff', letterSpacing: '1.5px', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--accent)', display: 'inline-block', flexShrink: 0 }} />
-            Briopack
-            <span style={{ fontSize: 9, fontWeight: 600, background: 'var(--accent)', color: '#fff', padding: '2px 6px', borderRadius: 3, letterSpacing: '0.5px', textTransform: 'uppercase', marginLeft: 'auto' }}>Admin</span>
-          </div>
+        <div style={{ padding: '20px 20px 16px', borderBottom: '1px solid rgba(255,255,255,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Image src="/logo.png" alt="Briopack" width={100} height={24} style={{ height: 24, width: 'auto', filter: 'brightness(0) invert(1)' }} />
+          <span style={{ fontSize: 9, fontWeight: 600, background: 'var(--accent)', color: '#fff', padding: '2px 6px', borderRadius: 3, letterSpacing: '0.5px', textTransform: 'uppercase', flexShrink: 0 }}>Admin</span>
         </div>
 
         {/* Nav */}
