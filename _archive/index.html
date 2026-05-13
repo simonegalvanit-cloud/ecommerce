@@ -44,9 +44,12 @@ nav{position:sticky;top:0;z-index:200;height:64px;background:var(--accent);displ
 .nav-link{color:rgba(255,255,255,0.72);font-size:13.5px;font-weight:500;padding:6px 14px;border-radius:var(--r);text-decoration:none;transition:all .18s;}
 .nav-link:hover{color:#fff;background:rgba(255,255,255,0.15);}
 .nav-link.active{color:#fff;background:rgba(255,255,255,0.18);}
-.nav-right{display:flex;align-items:center;}
+.nav-right{display:flex;align-items:center;gap:8px;}
 .cart-pill{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);color:#fff;font-size:13px;font-weight:500;padding:7px 16px;border-radius:100px;cursor:pointer;transition:all .18s;font-family:var(--f);}
 .cart-pill:hover{background:rgba(255,255,255,0.28);}
+.account-pill{display:flex;align-items:center;gap:7px;color:rgba(255,255,255,0.85);font-size:13px;font-weight:500;padding:7px 14px;border-radius:100px;cursor:pointer;transition:all .18s;font-family:var(--f);text-decoration:none;border:1px solid rgba(255,255,255,0.25);background:transparent;}
+.account-pill:hover{color:#fff;background:rgba(255,255,255,0.15);}
+.account-pip{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.6);}
 .cart-badge{background:#fff;color:var(--accent);font-size:11px;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
 
 /* HERO */
@@ -256,6 +259,10 @@ footer{background:var(--ink);color:#fff;padding:56px 48px 36px;}
     <a href="#" class="nav-link">BrioGreenPack</a>
   </div>
   <div class="nav-right">
+    <a id="accountBtn" href="login.html" class="account-pill" style="display:none">
+      <span class="account-pip"></span>
+      <span id="accountBtnLabel">Accedi</span>
+    </a>
     <button class="cart-pill" onclick="openCart()">
       <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
       Carrello <span class="cart-badge" id="cart-count">0</span>
@@ -740,6 +747,35 @@ function filterCat(el,cat){
     c.style.display=(cat==='all'||c.dataset.cat===cat)?'':'none';
   });
 }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(async () => {
+  const SUPABASE_URL  = 'YOUR_SUPABASE_URL';
+  const SUPABASE_ANON = 'YOUR_SUPABASE_ANON_KEY';
+  const { createClient } = supabase;
+  const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+  const btn   = document.getElementById('accountBtn');
+  const label = document.getElementById('accountBtnLabel');
+  btn.style.display = 'flex';
+
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    const { data: profile } = await sb.from('profiles').select('role,full_name').eq('id', session.user.id).single();
+    if (profile?.role === 'admin') {
+      label.textContent = 'Admin';
+      btn.href = 'admin.html';
+    } else {
+      label.textContent = (profile?.full_name || '').split(' ')[0] || 'Account';
+      btn.href = 'account.html';
+    }
+  } else {
+    label.textContent = 'Accedi';
+    btn.href = 'login.html';
+  }
+})();
 </script>
 </body>
 </html>

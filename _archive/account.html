@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Il mio account — Briopack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a1a; --ink-2: #2e2e2e; --ink-3: #5c5c5c; --ink-4: #9e9e9e;
+  --surface: #faf8f6; --surface-2: #f4f1ed; --surface-3: #ece7e0;
+  --white: #ffffff;
+  --accent: #e8721a; --accent-2: #f08a3a; --accent-bg: #fff4ec; --accent-border: rgba(232,114,26,0.25);
+  --border: rgba(0,0,0,0.08); --border-2: rgba(0,0,0,0.13);
+  --r: 6px; --r-lg: 12px; --r-xl: 20px;
+  --shadow: 0 2px 8px rgba(0,0,0,0.07), 0 8px 24px rgba(0,0,0,0.05);
+  --f: 'Outfit', sans-serif;
+  --green: #1e7e34; --green-bg: #e6f4ea;
+  --blue: #1565c0; --blue-bg: #e3f2fd;
+  --yellow: #f57f17; --yellow-bg: #fff8e1;
+  --red: #d93025; --red-bg: #fdecea;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--f);background:var(--surface);color:var(--ink);font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased;}
+
+nav{position:sticky;top:0;z-index:200;height:64px;background:var(--accent);display:flex;align-items:center;justify-content:space-between;padding:0 48px;border-bottom:1px solid rgba(0,0,0,0.1);}
+.logo{font-size:17px;font-weight:800;color:#fff;letter-spacing:1.5px;text-transform:uppercase;display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-pip{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.7);flex-shrink:0;}
+.nav-right{display:flex;align-items:center;gap:12px;}
+.nav-link{color:rgba(255,255,255,0.8);font-size:13.5px;font-weight:500;text-decoration:none;transition:color .18s;}
+.nav-link:hover{color:#fff;}
+.btn-nav{background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);color:#fff;font-size:13px;font-weight:600;padding:7px 16px;border-radius:100px;cursor:pointer;font-family:var(--f);transition:all .18s;}
+.btn-nav:hover{background:rgba(255,255,255,0.28);}
+
+.layout{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 64px);}
+
+/* sidebar */
+.sidebar{background:var(--white);border-right:1px solid var(--border);padding:32px 0;}
+.sidebar-user{padding:0 24px 24px;border-bottom:1px solid var(--border);margin-bottom:8px;}
+.sidebar-avatar{width:48px;height:48px;border-radius:50%;background:var(--accent-bg);border:2px solid var(--accent-border);display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:10px;}
+.sidebar-name{font-size:14px;font-weight:700;color:var(--ink);}
+.sidebar-email{font-size:12px;color:var(--ink-4);margin-top:1px;}
+.sidebar-role{display:inline-block;font-size:10.5px;font-weight:600;letter-spacing:0.4px;text-transform:uppercase;background:var(--accent-bg);color:var(--accent);padding:2px 8px;border-radius:100px;margin-top:6px;}
+
+.sidebar-nav{padding:0 8px;}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:9px 16px;border-radius:var(--r);font-size:13.5px;font-weight:500;color:var(--ink-3);cursor:pointer;transition:all .18s;border:none;background:transparent;width:100%;text-align:left;font-family:var(--f);}
+.sidebar-item:hover{background:var(--surface-2);color:var(--ink);}
+.sidebar-item.active{background:var(--accent-bg);color:var(--accent);font-weight:600;}
+.sidebar-item svg{width:16px;height:16px;flex-shrink:0;}
+
+/* main content */
+.main{padding:40px;}
+.section{display:none;}
+.section.active{display:block;}
+.section-title{font-size:20px;font-weight:700;color:var(--ink);letter-spacing:-0.4px;margin-bottom:6px;}
+.section-sub{font-size:13.5px;color:var(--ink-3);margin-bottom:28px;}
+
+/* cards */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:24px;}
+.card + .card{margin-top:16px;}
+.card-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;}
+.stat{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;}
+.stat-val{font-size:26px;font-weight:800;color:var(--ink);letter-spacing:-1px;}
+.stat-lbl{font-size:12px;color:var(--ink-4);margin-top:2px;}
+
+/* form */
+.form-group{margin-bottom:16px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+label{display:block;font-size:12px;font-weight:600;color:var(--ink-3);letter-spacing:0.3px;text-transform:uppercase;margin-bottom:6px;}
+input,select,textarea{width:100%;padding:10px 13px;font-family:var(--f);font-size:14.5px;color:var(--ink);background:var(--surface);border:1.5px solid var(--border-2);border-radius:var(--r);outline:none;transition:border-color .18s;}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);background:var(--white);}
+input:disabled{opacity:0.6;cursor:not-allowed;}
+
+.btn{padding:10px 20px;font-family:var(--f);font-size:14px;font-weight:600;border:none;border-radius:var(--r);cursor:pointer;transition:all .18s;}
+.btn-accent{background:var(--accent);color:#fff;}
+.btn-accent:hover{background:var(--accent-2);}
+.btn-ghost{background:transparent;color:var(--ink-3);border:1px solid var(--border-2);}
+.btn-ghost:hover{color:var(--ink);border-color:var(--border-2);}
+
+/* orders table */
+.orders-empty{text-align:center;padding:48px 24px;color:var(--ink-4);}
+.orders-empty-icon{font-size:40px;margin-bottom:12px;}
+.orders-empty p{font-size:14px;}
+.orders-list{display:flex;flex-direction:column;gap:12px;}
+.order-card{border:1px solid var(--border);border-radius:var(--r-lg);padding:18px 20px;display:flex;align-items:center;gap:16px;background:var(--white);}
+.order-id{font-size:12px;font-weight:700;color:var(--ink);font-family:monospace;background:var(--surface-2);padding:3px 8px;border-radius:4px;}
+.order-date{font-size:12.5px;color:var(--ink-4);flex:1;}
+.order-total{font-size:15px;font-weight:700;color:var(--ink);margin-right:12px;}
+.status-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:100px;text-transform:uppercase;letter-spacing:0.4px;}
+.status-pending{background:var(--yellow-bg);color:var(--yellow);}
+.status-confirmed,.status-processing{background:var(--blue-bg);color:var(--blue);}
+.status-shipped{background:var(--accent-bg);color:var(--accent);}
+.status-delivered{background:var(--green-bg);color:var(--green);}
+.status-cancelled{background:var(--red-bg);color:var(--red);}
+
+.alert{padding:10px 14px;border-radius:var(--r);font-size:13.5px;font-weight:500;margin-bottom:16px;}
+.alert.success{background:var(--green-bg);color:var(--green);}
+.alert.error{background:var(--red-bg);color:var(--red);}
+
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(0,0,0,0.15);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+@media(max-width:768px){
+  nav{padding:0 20px;}
+  .layout{grid-template-columns:1fr;}
+  .sidebar{border-right:none;border-bottom:1px solid var(--border);padding:20px 0;}
+  .sidebar-nav{display:flex;gap:4px;padding:0 16px;overflow-x:auto;}
+  .sidebar-item{white-space:nowrap;}
+  .main{padding:24px 20px;}
+  .stats{grid-template-columns:1fr 1fr;}
+  .form-row{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo"><span class="logo-pip"></span>Briopack</a>
+  <div class="nav-right">
+    <a href="index.html" class="nav-link">Negozio</a>
+    <button class="btn-nav" onclick="handleLogout()">Esci</button>
+  </div>
+</nav>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-user">
+      <div class="sidebar-avatar">👤</div>
+      <div class="sidebar-name" id="sbName">—</div>
+      <div class="sidebar-email" id="sbEmail">—</div>
+      <span class="sidebar-role">Cliente</span>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="sidebar-item active" onclick="goTo('dashboard', this)">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+        Dashboard
+      </button>
+      <button class="sidebar-item" onclick="goTo('orders', this)">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 2h2l2 8h6l2-6H5"/><circle cx="7" cy="13" r="1"/><circle cx="12" cy="13" r="1"/></svg>
+        I miei ordini
+      </button>
+      <button class="sidebar-item" onclick="goTo('profile', this)">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>
+        Profilo
+      </button>
+      <button class="sidebar-item" onclick="goTo('security', this)">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 1L3 3.5v5C3 11.9 5.2 14.5 8 15c2.8-.5 5-3.1 5-6.5v-5L8 1z"/></svg>
+        Sicurezza
+      </button>
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <div id="sec-dashboard" class="section active">
+      <div class="section-title">Benvenuto!</div>
+      <div class="section-sub" id="welcomeSub">Ecco il riepilogo del tuo account.</div>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-val" id="statOrders">—</div>
+          <div class="stat-lbl">Ordini totali</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val" id="statSpent">—</div>
+          <div class="stat-lbl">Spesa totale</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val" id="statPending">—</div>
+          <div class="stat-lbl">In lavorazione</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Ultimi ordini</div>
+        <div id="recentOrders"><span class="spinner"></span></div>
+      </div>
+    </div>
+
+    <!-- ORDERS -->
+    <div id="sec-orders" class="section">
+      <div class="section-title">I miei ordini</div>
+      <div class="section-sub">Storico completo dei tuoi ordini.</div>
+      <div id="ordersList"><span class="spinner"></span></div>
+    </div>
+
+    <!-- PROFILE -->
+    <div id="sec-profile" class="section">
+      <div class="section-title">Profilo</div>
+      <div class="section-sub">Aggiorna i tuoi dati personali e di fatturazione.</div>
+      <div id="profileAlert"></div>
+      <div class="card">
+        <div class="card-title">Informazioni personali</div>
+        <form onsubmit="saveProfile(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nome completo</label>
+              <input type="text" id="pFullName" placeholder="Mario Rossi">
+            </div>
+            <div class="form-group">
+              <label>Azienda</label>
+              <input type="text" id="pCompany" placeholder="Nome azienda">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Telefono</label>
+              <input type="tel" id="pPhone" placeholder="+39 000 000 0000">
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" id="pEmail" disabled>
+            </div>
+          </div>
+          <div class="card-title" style="margin-top:20px;">Indirizzo di spedizione</div>
+          <div class="form-group">
+            <label>Indirizzo</label>
+            <input type="text" id="pAddress" placeholder="Via Roma 1">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Città</label>
+              <input type="text" id="pCity" placeholder="Milano">
+            </div>
+            <div class="form-group">
+              <label>CAP</label>
+              <input type="text" id="pPostal" placeholder="20100">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Paese</label>
+            <input type="text" id="pCountry" value="Italia">
+          </div>
+          <button type="submit" class="btn btn-accent">Salva modifiche</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- SECURITY -->
+    <div id="sec-security" class="section">
+      <div class="section-title">Sicurezza</div>
+      <div class="section-sub">Gestisci la password del tuo account.</div>
+      <div id="secAlert"></div>
+      <div class="card">
+        <div class="card-title">Cambia password</div>
+        <form onsubmit="changePassword(event)">
+          <div class="form-group">
+            <label>Nuova password</label>
+            <input type="password" id="newPwd" placeholder="Minimo 6 caratteri" minlength="6" required>
+          </div>
+          <div class="form-group">
+            <label>Conferma password</label>
+            <input type="password" id="confirmPwd" placeholder="Ripeti la password" required>
+          </div>
+          <button type="submit" class="btn btn-accent">Aggiorna password</button>
+        </form>
+      </div>
+      <div class="card" style="margin-top:16px;">
+        <div class="card-title">Zona pericolosa</div>
+        <p style="font-size:13.5px;color:var(--ink-3);margin-bottom:16px;">Esci da tutti i dispositivi e torna alla home.</p>
+        <button class="btn btn-ghost" onclick="handleLogout()">Disconnettiti</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL  = 'YOUR_SUPABASE_URL';
+const SUPABASE_ANON = 'YOUR_SUPABASE_ANON_KEY';
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+let currentUser = null;
+let profile = null;
+
+// ── Auth gate ──────────────────────────────────────────────────
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { window.location.href = 'login.html?next=account.html'; return; }
+  currentUser = session.user;
+  await loadProfile();
+  await loadDashboard();
+})();
+
+// ── Navigation ─────────────────────────────────────────────────
+function goTo(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'orders') loadOrders('ordersList');
+}
+
+// ── Load profile ───────────────────────────────────────────────
+async function loadProfile() {
+  const { data } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+  profile = data || {};
+
+  document.getElementById('sbName').textContent  = profile.full_name || currentUser.email;
+  document.getElementById('sbEmail').textContent = currentUser.email;
+  document.getElementById('welcomeSub').textContent = `Ciao ${(profile.full_name || '').split(' ')[0] || 'cliente'}! Ecco il riepilogo del tuo account.`;
+
+  // Fill profile form
+  document.getElementById('pFullName').value = profile.full_name || '';
+  document.getElementById('pCompany').value  = profile.company   || '';
+  document.getElementById('pPhone').value    = profile.phone     || '';
+  document.getElementById('pEmail').value    = currentUser.email;
+  document.getElementById('pAddress').value  = profile.address   || '';
+  document.getElementById('pCity').value     = profile.city      || '';
+  document.getElementById('pPostal').value   = profile.postal_code || '';
+  document.getElementById('pCountry').value  = profile.country   || 'Italia';
+}
+
+// ── Dashboard ──────────────────────────────────────────────────
+async function loadDashboard() {
+  const { data: orders } = await sb.from('orders').select('*').eq('customer_id', currentUser.id);
+  const all = orders || [];
+  const spent   = all.reduce((s, o) => s + (o.total || 0), 0);
+  const pending = all.filter(o => ['pending','confirmed','processing','shipped'].includes(o.status)).length;
+
+  document.getElementById('statOrders').textContent  = all.length;
+  document.getElementById('statSpent').textContent   = '€' + spent.toFixed(2);
+  document.getElementById('statPending').textContent = pending;
+
+  renderOrders(all.slice(0, 5), 'recentOrders');
+}
+
+// ── Orders ─────────────────────────────────────────────────────
+async function loadOrders(containerId) {
+  document.getElementById(containerId).innerHTML = '<span class="spinner"></span>';
+  const { data } = await sb.from('orders').select('*').eq('customer_id', currentUser.id).order('created_at', { ascending: false });
+  renderOrders(data || [], containerId);
+}
+
+function renderOrders(orders, containerId) {
+  const el = document.getElementById(containerId);
+  if (!orders.length) {
+    el.innerHTML = `<div class="orders-empty"><div class="orders-empty-icon">📦</div><p>Nessun ordine ancora. <a href="index.html" style="color:var(--accent)">Inizia a fare acquisti!</a></p></div>`;
+    return;
+  }
+  const statusLabel = { pending:'In attesa', confirmed:'Confermato', processing:'In lavorazione', shipped:'Spedito', delivered:'Consegnato', cancelled:'Annullato' };
+  el.innerHTML = `<div class="orders-list">${orders.map(o => `
+    <div class="order-card">
+      <span class="order-id">#${o.id.slice(0,8).toUpperCase()}</span>
+      <span class="order-date">${new Date(o.created_at).toLocaleDateString('it-IT', {day:'2-digit',month:'short',year:'numeric'})}</span>
+      <span class="order-total">€${(o.total||0).toFixed(2)}</span>
+      <span class="status-badge status-${o.status}">${statusLabel[o.status] || o.status}</span>
+    </div>`).join('')}</div>`;
+}
+
+// ── Save profile ───────────────────────────────────────────────
+async function saveProfile(e) {
+  e.preventDefault();
+  const { error } = await sb.from('profiles').update({
+    full_name:   document.getElementById('pFullName').value,
+    company:     document.getElementById('pCompany').value,
+    phone:       document.getElementById('pPhone').value,
+    address:     document.getElementById('pAddress').value,
+    city:        document.getElementById('pCity').value,
+    postal_code: document.getElementById('pPostal').value,
+    country:     document.getElementById('pCountry').value,
+  }).eq('id', currentUser.id);
+
+  const el = document.getElementById('profileAlert');
+  if (error) {
+    el.innerHTML = `<div class="alert error">Errore: ${error.message}</div>`;
+  } else {
+    el.innerHTML = `<div class="alert success">Profilo aggiornato con successo.</div>`;
+    await loadProfile();
+    setTimeout(() => { el.innerHTML = ''; }, 3000);
+  }
+}
+
+// ── Change password ────────────────────────────────────────────
+async function changePassword(e) {
+  e.preventDefault();
+  const pwd1 = document.getElementById('newPwd').value;
+  const pwd2 = document.getElementById('confirmPwd').value;
+  const el = document.getElementById('secAlert');
+  if (pwd1 !== pwd2) { el.innerHTML = `<div class="alert error">Le password non coincidono.</div>`; return; }
+  const { error } = await sb.auth.updateUser({ password: pwd1 });
+  if (error) {
+    el.innerHTML = `<div class="alert error">${error.message}</div>`;
+  } else {
+    el.innerHTML = `<div class="alert success">Password aggiornata.</div>`;
+    document.getElementById('newPwd').value = '';
+    document.getElementById('confirmPwd').value = '';
+    setTimeout(() => { el.innerHTML = ''; }, 3000);
+  }
+}
+
+// ── Logout ─────────────────────────────────────────────────────
+async function handleLogout() {
+  await sb.auth.signOut();
+  window.location.href = 'index.html';
+}
+</script>
+</body>
+</html>

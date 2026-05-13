@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accedi — Briopack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a1a; --ink-2: #2e2e2e; --ink-3: #5c5c5c; --ink-4: #9e9e9e;
+  --surface: #faf8f6; --surface-2: #f4f1ed; --surface-3: #ece7e0;
+  --white: #ffffff;
+  --accent: #e8721a; --accent-2: #f08a3a; --accent-bg: #fff4ec; --accent-border: rgba(232,114,26,0.25);
+  --border: rgba(0,0,0,0.08); --border-2: rgba(0,0,0,0.13);
+  --r: 6px; --r-lg: 12px; --r-xl: 20px;
+  --shadow: 0 2px 8px rgba(0,0,0,0.07), 0 8px 24px rgba(0,0,0,0.05);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.13), 0 2px 8px rgba(0,0,0,0.06);
+  --f: 'Outfit', sans-serif;
+  --red: #d93025; --red-bg: #fdecea;
+  --green: #1e7e34; --green-bg: #e6f4ea;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--f);background:var(--surface);color:var(--ink);font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column;}
+
+nav{height:64px;background:var(--accent);display:flex;align-items:center;justify-content:space-between;padding:0 48px;border-bottom:1px solid rgba(0,0,0,0.1);}
+.logo{font-size:17px;font-weight:800;color:#fff;letter-spacing:1.5px;text-transform:uppercase;display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-pip{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.7);flex-shrink:0;}
+.nav-back{color:rgba(255,255,255,0.8);font-size:13.5px;font-weight:500;text-decoration:none;display:flex;align-items:center;gap:6px;transition:color .18s;}
+.nav-back:hover{color:#fff;}
+.nav-back svg{width:16px;height:16px;}
+
+.page{flex:1;display:flex;align-items:center;justify-content:center;padding:48px 24px;}
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-xl);padding:40px;width:100%;max-width:440px;box-shadow:var(--shadow-lg);}
+
+.card-header{text-align:center;margin-bottom:32px;}
+.card-icon{width:52px;height:52px;border-radius:var(--r-lg);background:var(--accent-bg);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:22px;}
+.card-title{font-size:22px;font-weight:700;color:var(--ink);letter-spacing:-0.5px;}
+.card-sub{font-size:13.5px;color:var(--ink-3);margin-top:4px;}
+
+/* tabs */
+.tabs{display:flex;gap:0;border:1px solid var(--border-2);border-radius:var(--r-lg);padding:3px;margin-bottom:28px;background:var(--surface-2);}
+.tab{flex:1;padding:9px 0;font-family:var(--f);font-size:13.5px;font-weight:600;color:var(--ink-3);background:transparent;border:none;border-radius:var(--r);cursor:pointer;transition:all .18s;}
+.tab.active{background:var(--white);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,0.1);}
+
+/* form */
+.form-group{margin-bottom:16px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+label{display:block;font-size:12.5px;font-weight:600;color:var(--ink-3);letter-spacing:0.3px;text-transform:uppercase;margin-bottom:6px;}
+input{width:100%;padding:10px 13px;font-family:var(--f);font-size:14.5px;color:var(--ink);background:var(--surface);border:1.5px solid var(--border-2);border-radius:var(--r);outline:none;transition:border-color .18s;}
+input:focus{border-color:var(--accent);background:var(--white);}
+input::placeholder{color:var(--ink-4);}
+
+.btn{width:100%;padding:12px;font-family:var(--f);font-size:15px;font-weight:700;border:none;border-radius:var(--r);cursor:pointer;transition:all .2s;margin-top:4px;}
+.btn-accent{background:var(--accent);color:#fff;}
+.btn-accent:hover{background:var(--accent-2);transform:translateY(-1px);box-shadow:0 4px 16px rgba(232,114,26,0.35);}
+.btn-accent:disabled{opacity:0.6;cursor:not-allowed;transform:none;box-shadow:none;}
+
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--ink-4);font-size:12px;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+
+.alert{padding:10px 14px;border-radius:var(--r);font-size:13.5px;font-weight:500;margin-bottom:16px;display:none;}
+.alert.error{background:var(--red-bg);color:var(--red);border:1px solid rgba(217,48,37,0.2);}
+.alert.success{background:var(--green-bg);color:var(--green);border:1px solid rgba(30,126,52,0.2);}
+.alert.show{display:block;}
+
+.forgot{text-align:right;margin-top:-8px;margin-bottom:16px;}
+.forgot a{font-size:12.5px;color:var(--ink-3);text-decoration:none;}
+.forgot a:hover{color:var(--accent);}
+
+.footer-note{text-align:center;font-size:12.5px;color:var(--ink-4);margin-top:20px;line-height:1.55;}
+.footer-note a{color:var(--accent);text-decoration:none;}
+
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+@media(max-width:480px){
+  nav{padding:0 20px;}
+  .card{padding:28px 20px;}
+  .form-row{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo"><span class="logo-pip"></span>Briopack</a>
+  <a href="index.html" class="nav-back">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 3L5 8l5 5"/></svg>
+    Torna al negozio
+  </a>
+</nav>
+
+<div class="page">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">📦</div>
+      <div class="card-title">Bentornato</div>
+      <div class="card-sub">Accedi al tuo account Briopack</div>
+    </div>
+
+    <!-- tabs -->
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('login')">Accedi</button>
+      <button class="tab" onclick="switchTab('register')">Registrati</button>
+    </div>
+
+    <div id="alert" class="alert"></div>
+
+    <!-- LOGIN FORM -->
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="loginEmail" placeholder="tua@email.it" required autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password">
+      </div>
+      <div class="forgot"><a href="#" onclick="handleForgot(event)">Password dimenticata?</a></div>
+      <button type="submit" class="btn btn-accent" id="loginBtn">Accedi</button>
+      <div class="footer-note">Sei un amministratore? Accedi con le tue credenziali admin e verrai reindirizzato automaticamente.</div>
+    </form>
+
+    <!-- REGISTER FORM (hidden) -->
+    <form id="registerForm" style="display:none" onsubmit="handleRegister(event)">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nome</label>
+          <input type="text" id="regFirstName" placeholder="Mario" required>
+        </div>
+        <div class="form-group">
+          <label>Cognome</label>
+          <input type="text" id="regLastName" placeholder="Rossi" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Azienda (opzionale)</label>
+        <input type="text" id="regCompany" placeholder="Nome azienda">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="regEmail" placeholder="tua@email.it" required autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="regPassword" placeholder="Minimo 6 caratteri" required minlength="6" autocomplete="new-password">
+      </div>
+      <button type="submit" class="btn btn-accent" id="registerBtn">Crea account</button>
+      <div class="footer-note">Creando un account accetti i nostri <a href="#">Termini di servizio</a> e la <a href="#">Privacy Policy</a>.</div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL  = 'YOUR_SUPABASE_URL';
+const SUPABASE_ANON = 'YOUR_SUPABASE_ANON_KEY';
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+// ── Tab switching ──────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', (i === 0) === (tab === 'login')));
+  document.getElementById('loginForm').style.display    = tab === 'login'    ? '' : 'none';
+  document.getElementById('registerForm').style.display = tab === 'register' ? '' : 'none';
+  hideAlert();
+}
+
+function showAlert(msg, type = 'error') {
+  const el = document.getElementById('alert');
+  el.textContent = msg;
+  el.className = `alert ${type} show`;
+}
+function hideAlert() {
+  document.getElementById('alert').className = 'alert';
+}
+
+function setLoading(btnId, loading) {
+  const btn = document.getElementById(btnId);
+  btn.disabled = loading;
+  btn.innerHTML = loading ? '<span class="spinner"></span>Caricamento…' : btn.dataset.label;
+}
+
+// Store original labels
+document.getElementById('loginBtn').dataset.label = 'Accedi';
+document.getElementById('registerBtn').dataset.label = 'Crea account';
+
+// ── Redirect based on role ─────────────────────────────────────
+async function redirectAfterLogin(userId) {
+  const { data: profile } = await sb.from('profiles').select('role').eq('id', userId).single();
+  if (profile?.role === 'admin') {
+    window.location.href = 'admin.html';
+  } else {
+    const next = new URLSearchParams(window.location.search).get('next') || 'account.html';
+    window.location.href = next;
+  }
+}
+
+// ── Login ──────────────────────────────────────────────────────
+async function handleLogin(e) {
+  e.preventDefault();
+  hideAlert();
+  setLoading('loginBtn', true);
+  const email    = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  if (error) {
+    showAlert('Email o password non corretti. Riprova.');
+    setLoading('loginBtn', false);
+    return;
+  }
+  await redirectAfterLogin(data.user.id);
+}
+
+// ── Register ───────────────────────────────────────────────────
+async function handleRegister(e) {
+  e.preventDefault();
+  hideAlert();
+  setLoading('registerBtn', true);
+
+  const firstName = document.getElementById('regFirstName').value.trim();
+  const lastName  = document.getElementById('regLastName').value.trim();
+  const company   = document.getElementById('regCompany').value.trim();
+  const email     = document.getElementById('regEmail').value.trim();
+  const password  = document.getElementById('regPassword').value;
+
+  const { data, error } = await sb.auth.signUp({
+    email, password,
+    options: { data: { full_name: `${firstName} ${lastName}`, company } }
+  });
+
+  if (error) {
+    showAlert(error.message);
+    setLoading('registerBtn', false);
+    return;
+  }
+
+  // Update company in profile (trigger already sets full_name)
+  if (data.user && company) {
+    await sb.from('profiles').update({ company }).eq('id', data.user.id);
+  }
+
+  // Supabase may require email confirmation depending on project settings
+  if (data.session) {
+    await redirectAfterLogin(data.user.id);
+  } else {
+    showAlert('Controlla la tua email per confermare l\'account, poi accedi.', 'success');
+    setLoading('registerBtn', false);
+  }
+}
+
+// ── Forgot password ────────────────────────────────────────────
+async function handleForgot(e) {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value.trim();
+  if (!email) { showAlert('Inserisci la tua email prima di procedere.'); return; }
+  const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/login.html' });
+  if (error) { showAlert(error.message); return; }
+  showAlert('Email di recupero inviata. Controlla la tua casella.', 'success');
+}
+
+// ── Check if already logged in ────────────────────────────────
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) await redirectAfterLogin(session.user.id);
+})();
+</script>
+</body>
+</html>
