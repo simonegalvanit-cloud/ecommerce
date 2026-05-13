@@ -1,5 +1,6 @@
 'use client'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
@@ -10,11 +11,11 @@ interface NavProps {
 }
 
 const NAV_LINKS = [
-  { href: '/',      label: 'Shop',          key: 'shop'  },
-  { href: '#',      label: 'Industriale',   key: 'ind'   },
-  { href: '#',      label: 'Food & Wine',   key: 'food'  },
-  { href: '#',      label: 'E-commerce',    key: 'ecom'  },
-  { href: '#',      label: 'BrioGreenPack', key: 'eco'   },
+  { href: '/',  label: 'Shop',          key: 'shop' },
+  { href: '#',  label: 'Industriale',   key: 'ind'  },
+  { href: '#',  label: 'Food & Wine',   key: 'food' },
+  { href: '#',  label: 'E-commerce',    key: 'ecom' },
+  { href: '#',  label: 'BrioGreenPack', key: 'eco'  },
 ]
 
 export default function Nav({ cartCount = 0, onCartClick, activeLink }: NavProps) {
@@ -61,9 +62,15 @@ export default function Nav({ cartCount = 0, onCartClick, activeLink }: NavProps
   return (
     <>
       <nav className={`site-nav${scrolled ? ' scrolled' : ''}`}>
-        <Link href="/" className="logo" onClick={() => setMenuOpen(false)}>
-          <span className="logo-pip" />
-          Briopack
+        <Link href="/" className="logo" onClick={() => setMenuOpen(false)} aria-label="Briopack home">
+          <Image
+            src="/logo.svg"
+            alt="Briopack Packaging"
+            width={148}
+            height={36}
+            priority
+            style={{ filter: 'brightness(0) invert(1)', height: 32, width: 'auto' }}
+          />
         </Link>
 
         {/* Desktop links */}
@@ -92,7 +99,6 @@ export default function Nav({ cartCount = 0, onCartClick, activeLink }: NavProps
             <span className={`cart-badge${badgeBump ? ' bump' : ''}`}>{cartCount}</span>
           </button>
 
-          {/* Hamburger */}
           <button
             className={`nav-hamburger${menuOpen ? ' open' : ''}`}
             onClick={() => setMenuOpen(o => !o)}
@@ -108,6 +114,9 @@ export default function Nav({ cartCount = 0, onCartClick, activeLink }: NavProps
       {menuOpen && (
         <div className="mobile-drawer open" onClick={() => setMenuOpen(false)}>
           <div className="mobile-drawer-panel" onClick={e => e.stopPropagation()}>
+            <div className="mobile-drawer-logo">
+              <Image src="/logo.svg" alt="Briopack" width={120} height={30} style={{ filter: 'brightness(0) invert(1)', height: 28, width: 'auto' }} />
+            </div>
             {NAV_LINKS.map(l => (
               <Link key={l.key} href={l.href} className="mobile-nav-link" onClick={() => setMenuOpen(false)}>
                 {l.label}
@@ -125,7 +134,8 @@ export default function Nav({ cartCount = 0, onCartClick, activeLink }: NavProps
                 </Link>
               )}
               <button className="mobile-nav-btn ghost" onClick={() => { setMenuOpen(false); onCartClick?.() }}>
-                🛒 Carrello ({cartCount})
+                <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+                Carrello ({cartCount})
               </button>
             </div>
           </div>

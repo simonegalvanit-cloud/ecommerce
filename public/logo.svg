@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 248 58" fill="none">
+  <!-- BRI -->
+  <text x="0" y="42" font-family="'Arial Black','Impact',Helvetica,sans-serif" font-weight="900" font-size="44" fill="#2c2c2c" letter-spacing="-1">BRI</text>
+  <!-- 3D box icon (3 visible faces, isometric cube) -->
+  <g transform="translate(107,26)">
+    <!-- Top face -->
+    <polygon points="0,-21  18,-10  0,1  -18,-10" fill="#f9b133"/>
+    <!-- Left face -->
+    <polygon points="-18,-10  0,1  0,21  -18,2" fill="#e8891a"/>
+    <!-- Right face -->
+    <polygon points="18,-10  0,1  0,21  18,2" fill="#c97010"/>
+    <!-- Subtle outline -->
+    <polygon points="0,-21  18,-10  18,2  0,21  -18,2  -18,-10" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="0.8"/>
+  </g>
+  <!-- PACK -->
+  <text x="130" y="42" font-family="'Arial Black','Impact',Helvetica,sans-serif" font-weight="900" font-size="44" fill="#9a9a9a" letter-spacing="-1">PACK</text>
+  <!-- PACKAGING -->
+  <text x="1" y="55" font-family="'Arial',Helvetica,sans-serif" font-size="9.5" font-weight="400" letter-spacing="3.5" fill="#c8c8c8">PACKAGING</text>
+</svg>

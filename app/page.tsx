@@ -1,5 +1,5 @@
 'use client'
-import { useState, useCallback, useEffect, useRef, ReactNode } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import Nav from '@/components/Nav'
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -136,49 +136,6 @@ const DISC_TIERS = [
   { min: 5000, max: Infinity, label: '5.000+', disc: '-32%' },
 ]
 
-// Trust bar icons as components
-const TrustItems: { icon: ReactNode; title: string; desc: string }[] = [
-  {
-    icon: (
-      <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="1" y="3" width="15" height="13" rx="2"/>
-        <path d="M16 8h4l3 3v5h-7V8z"/>
-        <circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
-      </svg>
-    ),
-    title: 'Spedizione Rapida',
-    desc: 'Consegna in 48–72h su tutto il territorio nazionale',
-  },
-  {
-    icon: (
-      <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
-      </svg>
-    ),
-    title: 'Stampa Personalizzata',
-    desc: 'Fino a 6 colori di stampa flessografica o digitale',
-  },
-  {
-    icon: (
-      <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
-        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>
-      </svg>
-    ),
-    title: 'MOQ Accessibili',
-    desc: 'Ordina da 50 pz — ideale per PMI e startup',
-  },
-  {
-    icon: (
-      <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M7 16.5c-3.5 0-5-2-5-4s1.5-4 5-4c1 0 2 .5 3 1.5 1-1 2-1.5 3-1.5 3.5 0 5 2 5 4s-1.5 4-5 4c-1 0-2-.5-3-1.5-1 1-2 1.5-3 1.5z"/>
-        <path d="M12 8.5V4M12 4l-2 2M12 4l2 2"/>
-      </svg>
-    ),
-    title: 'Linea Eco Certificata',
-    desc: 'Materiali riciclati e biodegradabili CONAI',
-  },
-]
 
 function fmt(n: number) { return n.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
 
@@ -200,6 +157,9 @@ export default function StorefrontPage() {
   const [selPrints, setSelPrints]       = useState<Set<string>>(new Set(['Senza Stampa']))
   const [qty, setQty]                   = useState(250)
   const [fileOk, setFileOk]             = useState(false)
+  const [customL, setCustomL]           = useState('')
+  const [customW, setCustomW]           = useState('')
+  const [customH, setCustomH]           = useState('')
 
   const prevTotalRef = useRef<number>(0)
   const [pricePopKey, setPricePopKey] = useState(0)
@@ -249,6 +209,7 @@ export default function StorefrontPage() {
     setSelPrints(new Set(['Senza Stampa']))
     setQty(250)
     setFileOk(false)
+    setCustomL(''); setCustomW(''); setCustomH('')
     document.body.style.overflow = 'hidden'
   }, [])
 
@@ -257,9 +218,11 @@ export default function StorefrontPage() {
     document.body.style.overflow = ''
   }, [])
 
+  const isCustom = SIZES[selSizeIdx]?.label === 'Custom'
+
   // Price calculation
   const calcUnit = () => {
-    let u = basePrice
+    let u = basePrice + (isCustom ? 0.10 : 0)
     if (qty >= 5000) u *= 0.68
     else if (qty >= 1000) u *= 0.80
     else if (qty >= 500)  u *= 0.90
@@ -315,12 +278,17 @@ export default function StorefrontPage() {
 
       {/* ── HERO ── */}
       <section className="hero">
+        {/* Floating orbs */}
+        <div className="hero-orb hero-orb-1" />
+        <div className="hero-orb hero-orb-2" />
+        <div className="hero-orb hero-orb-3" />
+
         <div className="hero-inner">
           <div className="hero-left">
-            <h1 className="animate-fade-up">Packaging<br />professionale,<br />al giusto prezzo.</h1>
-            <p className="hero-sub animate-fade-up delay-1">Shopper, scatole pizza, buste, alveolari e molto altro. Ordina online con MOQ accessibili e spedizione rapida in tutta Italia.</p>
+            <h1 className="animate-fade-up">Packaging<br />su misura,<br />senza compromessi.</h1>
+            <p className="hero-sub animate-fade-up delay-1">Scatole, shopper, wine box e packaging food-grade personalizzabili online. MOQ accessibili, stampa professionale, spedizione nazionale.</p>
             <div className="hero-actions animate-fade-up delay-2">
-              <button className="btn-primary" onClick={() => document.querySelector('.catbar')?.scrollIntoView({ behavior: 'smooth' })}>
+              <button className="btn-primary" onClick={() => document.querySelector('.catalog-zone')?.scrollIntoView({ behavior: 'smooth' })}>
                 Scopri i prodotti
               </button>
               <button className="btn-secondary">Richiedi preventivo</button>
@@ -343,76 +311,51 @@ export default function StorefrontPage() {
             </div>
           </div>
         </div>
-        <div className="hero-nums">
-          {[
-            { val: '500+',   lbl: 'Prodotti disponibili' },
-            { val: '6',      lbl: 'Colori di stampa' },
-            { val: '30+',    lbl: 'Anni di esperienza' },
-            { val: 'Italia', lbl: 'Consegna nazionale' },
-          ].map((n, i) => (
-            <div key={i} style={{ display: 'contents' }}>
-              {i > 0 && <div className="hero-num-div" />}
-              <div className={`hero-num-item animate-fade-up delay-${i + 1}`}>
-                <div className="hero-num-val">{n.val}</div>
-                <div className="hero-num-lbl">{n.lbl}</div>
-              </div>
-            </div>
-          ))}
+        {/* Scroll hint */}
+        <div className="hero-scroll">
+          <div className="hero-scroll-dot" />
         </div>
+
       </section>
 
-      {/* ── SEARCH ── */}
-      <div className="search-wrap">
-        <div className="search-bar">
+      {/* ── CATALOG ZONE ── */}
+      <div className="catalog-zone">
+        <div className="catalog-searchbar">
           <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
           <input
             type="text"
-            placeholder="Cerca prodotti (es. scatola pizza, shopper kraft…)"
+            placeholder="Cerca prodotti, es. shopper kraft, scatola pizza…"
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
           {search && (
-            <button
-              onClick={() => setSearch('')}
-              style={{ background: 'none', border: 'none', color: 'var(--ink-4)', cursor: 'pointer', fontSize: 16, padding: '0 2px', lineHeight: 1, fontFamily: 'var(--f)' }}
-              aria-label="Cancella ricerca"
-            >✕</button>
+            <button className="catalog-clear" onClick={() => setSearch('')} aria-label="Cancella ricerca">
+              <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
           )}
+          <button className="catalog-search-btn" aria-label="Cerca">
+            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          </button>
+        </div>
+        <div className="catalog-cats">
+          {CATEGORIES.map(c => {
+            const count = c.key === 'all' ? PRODUCTS.length : PRODUCTS.filter(p => p.catKey === c.key).length
+            return (
+              <button key={c.key} className={`catalog-pill${activeCat === c.key ? ' active' : ''}`} onClick={() => setActiveCat(c.key)}>
+                {c.label}
+                <span className="cpill-count">{count}</span>
+              </button>
+            )
+          })}
         </div>
       </div>
 
-      {/* ── CAT BAR ── */}
-      <div className="catbar">
-        {CATEGORIES.map(c => {
-          const count = c.key === 'all' ? PRODUCTS.length : PRODUCTS.filter(p => p.catKey === c.key).length
-          return (
-            <div key={c.key} className={`cat ${activeCat === c.key ? 'active' : ''}`} onClick={() => setActiveCat(c.key)}>
-              <span className="cat-dot" />
-              {c.label}
-              <span className="cat-count">{count}</span>
-            </div>
-          )
-        })}
-      </div>
-
-      {/* ── TRUST BAR ── */}
-      <div className="trust">
-        {TrustItems.map((t, i) => (
-          <div key={t.title} className="trust-item scroll-reveal" style={{ transitionDelay: `${i * 0.07}s` }}>
-            <div className="trust-icon">{t.icon}</div>
-            <div>
-              <div className="trust-title">{t.title}</div>
-              <div className="trust-desc">{t.desc}</div>
-            </div>
-          </div>
-        ))}
-      </div>
 
       {/* ── PRODUCTS ── */}
       <section className="section">
         <div className="section-head">
           <div>
-            <div className="section-title">Catalogo Prodotti</div>
+            <div className="section-title"><span className="section-title-gradient">Catalogo Prodotti</span></div>
             <div className="section-sub">{filteredProducts.length} prodott{filteredProducts.length === 1 ? 'o' : 'i'} trovati</div>
           </div>
           <a href="#" className="section-link">Vedi tutto il catalogo →</a>
@@ -437,7 +380,28 @@ export default function StorefrontPage() {
             </div>
           ) : (
             filteredProducts.map((p, i) => (
-              <div key={p.key} className="pcard scroll-reveal" style={{ transitionDelay: `${i * 0.06}s` }} onClick={() => openModal(p)}>
+              <div
+                key={p.key}
+                className="pcard scroll-reveal"
+                style={{ transitionDelay: `${i * 0.06}s` }}
+                onClick={() => openModal(p)}
+                onMouseMove={e => {
+                  const r = e.currentTarget.getBoundingClientRect()
+                  const x = (e.clientX - r.left) / r.width - 0.5
+                  const y = (e.clientY - r.top) / r.height - 0.5
+                  const el = e.currentTarget as HTMLElement
+                  el.style.transition = 'transform .08s ease, box-shadow .28s, border-color .28s'
+                  el.style.transform = `perspective(900px) rotateY(${x * 9}deg) rotateX(${-y * 9}deg) translateY(-6px) scale(1.01)`
+                  const glow = el.querySelector<HTMLElement>('.pcard-glow')
+                  if (glow) { glow.style.setProperty('--mx', `${(e.clientX - r.left) / r.width * 100}%`); glow.style.setProperty('--my', `${(e.clientY - r.top) / r.height * 100}%`) }
+                }}
+                onMouseLeave={e => {
+                  const el = e.currentTarget as HTMLElement
+                  el.style.transition = 'transform .55s var(--ease-out), box-shadow .28s, border-color .28s'
+                  el.style.transform = ''
+                }}
+              >
+                <div className="pcard-glow" />
                 {p.badge && <div className={`pcard-badge ${p.badge.type}`}>{p.badge.label}</div>}
                 <div className="pcard-img" style={p.catKey === 'eco' ? { background: '#edf3ee' } : undefined}>
                   <div style={{ transition: 'transform .3s var(--ease-out)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} className="pcard-svg-wrap">
@@ -590,6 +554,14 @@ export default function StorefrontPage() {
                   <div className="price-box-sub">IVA esclusa · varia con la quantità</div>
                 </div>
                 <div className="sum-rows">
+                  <div className="sum-row">
+                    <span>Misura</span>
+                    <span style={{ fontWeight: 600, color: 'var(--ink)' }}>
+                      {isCustom && customL && customW && customH
+                        ? `${customL}×${customW}×${customH} mm`
+                        : SIZES[selSizeIdx]?.label}
+                    </span>
+                  </div>
                   <div className="sum-row"><span>Prezzo unitario</span><span>€{fmt(unit)}</span></div>
                   <div className="sum-row"><span>Quantità</span><span>{qty.toLocaleString('it-IT')} pz</span></div>
                   <div className="sum-row"><span>Impianti stampa</span><span>{setup > 0 ? `€${fmt(setup)}` : '—'}</span></div>
@@ -611,6 +583,33 @@ export default function StorefrontPage() {
                       </button>
                     ))}
                   </div>
+
+                  {/* Custom size inputs */}
+                  {isCustom && (
+                    <div className="custom-dims">
+                      <div className="custom-dims-label">Inserisci le dimensioni in millimetri</div>
+                      <div className="custom-dims-grid">
+                        <div>
+                          <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: 'var(--ink-4)', marginBottom: 5, textTransform: 'uppercase', letterSpacing: 0.4 }}>Lunghezza</label>
+                          <input type="number" value={customL} onChange={e => setCustomL(e.target.value)} placeholder="es. 400" min={50} max={2000} />
+                        </div>
+                        <div>
+                          <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: 'var(--ink-4)', marginBottom: 5, textTransform: 'uppercase', letterSpacing: 0.4 }}>Larghezza</label>
+                          <input type="number" value={customW} onChange={e => setCustomW(e.target.value)} placeholder="es. 300" min={50} max={2000} />
+                        </div>
+                        <div>
+                          <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: 'var(--ink-4)', marginBottom: 5, textTransform: 'uppercase', letterSpacing: 0.4 }}>Altezza</label>
+                          <input type="number" value={customH} onChange={e => setCustomH(e.target.value)} placeholder="es. 250" min={20} max={1000} />
+                        </div>
+                      </div>
+                      <div className="custom-surcharge">
+                        <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                        </svg>
+                        +€0,10/pz per misure personalizzate
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Color */}
@@ -708,6 +707,20 @@ export default function StorefrontPage() {
           </>}
         </div>
       </div>
+
+      {/* ── MOBILE FAB CART ── */}
+      <button
+        className="fab-cart"
+        onClick={() => showToast(cartCount === 0 ? 'Il carrello è vuoto' : `${cartCount} articolo/i nel carrello`)}
+        aria-label={`Carrello (${cartCount} articoli)`}
+      >
+        <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 01-8 0"/>
+        </svg>
+        {cartCount > 0 && <span className="fab-badge">{cartCount}</span>}
+      </button>
 
       {/* ── TOAST ── */}
       <div className={`toast ${toast ? 'show' : ''}`}>
