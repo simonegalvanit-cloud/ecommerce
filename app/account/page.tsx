@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, FormEvent, ReactElement } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
@@ -217,14 +218,16 @@ export default function AccountPage() {
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--surface)' }}>
       {/* Nav */}
       <nav className="site-nav">
-        <Link href="/" className="logo"><span className="logo-pip" />Briopack</Link>
+        <Link href="/" className="logo" aria-label="Briopack home">
+          <Image src="/logo.png" alt="Briopack" width={120} height={30} style={{ height: 28, width: 'auto' }} />
+        </Link>
         <div className="nav-right">
-          <Link href="/" className="nav-link" style={{ color: 'rgba(255,255,255,0.8)' }}>Negozio</Link>
+          <Link href="/" className="nav-link">Negozio</Link>
           <button
             onClick={handleLogout}
             style={{
-              background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.28)',
-              color: '#fff', fontSize: 13, fontWeight: 600, padding: '7px 16px',
+              background: 'var(--surface)', border: '1.5px solid var(--border-2)',
+              color: 'var(--ink-2)', fontSize: 13, fontWeight: 600, padding: '7px 16px',
               borderRadius: 100, cursor: 'pointer', fontFamily: 'var(--f)',
               transition: 'all .18s', display: 'flex', alignItems: 'center', gap: 6,
             }}

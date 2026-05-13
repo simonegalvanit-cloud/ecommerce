@@ -1,6 +1,7 @@
 'use client'
 import { useState, FormEvent, Suspense } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
@@ -110,13 +111,8 @@ function LoginForm() {
 
           {/* Top: logo + tagline */}
           <div className="animate-fade-up" style={{ position: 'relative', zIndex: 1 }}>
-            <div style={{
-              fontSize: 20, fontWeight: 800, color: '#fff',
-              letterSpacing: '2.5px', textTransform: 'uppercase',
-              display: 'flex', alignItems: 'center', gap: 10, marginBottom: 36,
-            }}>
-              <span style={{ width: 9, height: 9, borderRadius: '50%', background: 'rgba(255,255,255,0.85)', flexShrink: 0 }} />
-              Briopack
+            <div style={{ marginBottom: 36 }}>
+              <Image src="/logo.png" alt="Briopack" width={140} height={34} style={{ height: 34, width: 'auto', filter: 'brightness(0) invert(1)' }} />
             </div>
 
             <div style={{ fontSize: 30, fontWeight: 800, color: '#fff', lineHeight: 1.22, letterSpacing: '-0.8px', marginBottom: 16 }}>
@@ -194,10 +190,9 @@ function LoginForm() {
             <div style={{
               display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%',
             }}>
-              <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--accent)', letterSpacing: '2px', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--accent)', flexShrink: 0 }} />
-                Briopack
-              </div>
+              <Link href="/">
+                <Image src="/logo.png" alt="Briopack" width={110} height={26} style={{ height: 26, width: 'auto' }} />
+              </Link>
               <Link href="/" style={{ fontSize: 12.5, color: 'var(--ink-4)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 5 }}>
                 <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
                   <path d="M8 1.5L3 6.5L8 11.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
@@ -212,20 +207,8 @@ function LoginForm() {
 
             {/* Header */}
             <div style={{ marginBottom: 32 }}>
-              <div style={{
-                width: 54, height: 54, borderRadius: 'var(--r-lg)',
-                background: 'var(--accent-bg)',
-                border: '1.5px solid var(--accent-border)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                marginBottom: 20,
-                boxShadow: '0 4px 14px rgba(232,114,26,0.15)',
-              }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <rect x="3" y="3" width="7" height="7" rx="1.5" fill="var(--accent)" opacity="0.9"/>
-                  <rect x="14" y="3" width="7" height="7" rx="1.5" fill="var(--accent)" opacity="0.6"/>
-                  <rect x="3" y="14" width="7" height="7" rx="1.5" fill="var(--accent)" opacity="0.6"/>
-                  <rect x="14" y="14" width="7" height="7" rx="1.5" fill="var(--accent)" opacity="0.3"/>
-                </svg>
+              <div style={{ marginBottom: 20 }}>
+                <Image src="/logo.png" alt="Briopack" width={130} height={32} style={{ height: 32, width: 'auto' }} />
               </div>
               <div style={{ fontSize: 24, fontWeight: 800, color: 'var(--ink)', letterSpacing: '-0.6px', marginBottom: 6 }}>
                 {tab === 'login' ? 'Bentornato' : 'Crea un account'}
