@@ -1,5 +1,5 @@
 'use client'
-import { useState, FormEvent } from 'react'
+import { useState, FormEvent, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -7,6 +7,14 @@ import { createClient } from '@/lib/supabase/client'
 type Tab = 'login' | 'register'
 
 export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
+  )
+}
+
+function LoginForm() {
   const router       = useRouter()
   const searchParams = useSearchParams()
   const next         = searchParams.get('next') || '/account'
