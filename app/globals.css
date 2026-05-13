@@ -1189,9 +1189,9 @@ tbody tr:hover td { background: var(--surface); }
 /* Form side */
 .checkout-form {
   padding: 48px 56px;
-  max-width: 640px;
+  max-width: 600px;
   width: 100%;
-  justify-self: end;
+  justify-self: center;
 }
 .checkout-title {
   font-size: 24px; font-weight: 800; color: var(--ink);
@@ -1340,4 +1340,103 @@ tbody tr:hover td { background: var(--surface); }
 @media (max-width: 500px) {
   .checkout-row { grid-template-columns: 1fr; }
   .checkout-row-3 { grid-template-columns: 1fr 80px 60px; }
+}
+
+/* ─── PRODUCT PAGE ───────────────────────────────────────────────────────── */
+.cfg-breadcrumb {
+  display: flex; align-items: center; gap: 6px;
+  padding: 14px 40px; font-size: 12.5px; color: var(--ink-4);
+  border-bottom: 1px solid var(--border-1);
+}
+.cfg-breadcrumb a { color: var(--ink-4); text-decoration: none; transition: color .15s; }
+.cfg-breadcrumb a:hover { color: var(--accent); }
+.cfg-breadcrumb span { color: var(--ink-2); font-weight: 600; }
+
+.cfg-page-wrap {
+  max-width: 1200px; margin: 0 auto;
+  padding: 40px 40px 80px;
+}
+
+.cfg-page-layout {
+  display: grid; grid-template-columns: 380px 1fr; gap: 56px; align-items: start;
+}
+
+/* Preview side */
+.cfg-page-preview { position: sticky; top: calc(var(--nav-h) + 24px); }
+.cfg-page-visual {
+  position: relative;
+  background: var(--surface); border: 1.5px solid var(--border-1);
+  border-radius: var(--r-lg); overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  height: 280px; margin-bottom: 24px;
+}
+.cfg-page-visual-inner {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface);
+}
+.cfg-page-info { padding: 0 4px; }
+.cfg-page-cat {
+  font-size: 11px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 8px;
+}
+.cfg-page-name {
+  font-size: 24px; font-weight: 800; color: var(--ink);
+  letter-spacing: -0.5px; line-height: 1.2; margin-bottom: 12px;
+}
+.cfg-page-desc { font-size: 13.5px; color: var(--ink-3); line-height: 1.6; margin-bottom: 24px; }
+
+.cfg-page-price-box {
+  background: var(--accent-bg); border: 1.5px solid var(--accent-border);
+  border-radius: var(--r); padding: 16px 20px; margin-bottom: 20px;
+}
+.cfg-page-price-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: var(--ink-4); margin-bottom: 4px; }
+.cfg-page-price { font-size: 36px; font-weight: 900; color: var(--accent); letter-spacing: -1px; line-height: 1; margin-bottom: 4px; }
+.cfg-page-price-note { font-size: 11.5px; color: var(--ink-4); }
+
+.cfg-sum-rows { display: flex; flex-direction: column; gap: 0; }
+.cfg-sum-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0; font-size: 13px; color: var(--ink-3);
+  border-bottom: 1px solid var(--border-1);
+}
+.cfg-sum-row span:last-child { font-weight: 600; color: var(--ink-2); }
+.cfg-sum-total { font-weight: 700; color: var(--ink) !important; border-bottom: none; padding-top: 10px; }
+.cfg-sum-total span { font-size: 14px !important; }
+
+/* Configurator side */
+.cfg-page-form { min-width: 0; }
+
+.cfg-page-cta {
+  display: flex; flex-direction: column; gap: 10px;
+  position: sticky; bottom: 20px;
+  background: #fff; padding: 16px 0 0;
+  border-top: 1px solid var(--border-1);
+  margin-top: 8px;
+}
+.cfg-addcart-btn {
+  width: 100%; padding: 15px 24px; border-radius: var(--r);
+  background: var(--ink); border: none; color: #fff;
+  font-size: 15px; font-weight: 700; font-family: var(--f);
+  cursor: pointer; transition: all .22s;
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+}
+.cfg-addcart-btn:hover { background: var(--ink-2); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,0,0,0.18); }
+.cfg-addcart-btn.added { background: #2e7d32; }
+.cfg-buynow-btn {
+  width: 100%; padding: 14px 24px; border-radius: var(--r);
+  background: var(--accent); border: none; color: #fff;
+  font-size: 15px; font-weight: 700; font-family: var(--f);
+  cursor: pointer; transition: all .22s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  box-shadow: 0 4px 18px rgba(232,114,26,0.3);
+}
+.cfg-buynow-btn:hover { background: var(--accent-h); transform: translateY(-1px); box-shadow: 0 6px 24px rgba(232,114,26,0.4); }
+
+@media (max-width: 900px) {
+  .cfg-page-layout { grid-template-columns: 1fr; }
+  .cfg-page-preview { position: static; }
+  .cfg-page-visual { height: 220px; }
+  .cfg-page-wrap { padding: 24px 20px 60px; }
+  .cfg-breadcrumb { padding: 12px 20px; }
 }
