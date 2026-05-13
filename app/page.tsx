@@ -1,6 +1,8 @@
 'use client'
 import { useState, useCallback, useEffect, useRef } from 'react'
 import Nav from '@/components/Nav'
+import CartDrawer from '@/components/CartDrawer'
+import { useCart } from '@/lib/cart-context'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 interface Product {
@@ -144,7 +146,7 @@ const scrollRevealCSS = `.scroll-reveal{opacity:0;transform:translateY(22px);tra
 
 // ── Main Page ────────────────────────────────────────────────────────────────
 export default function StorefrontPage() {
-  const [cartCount, setCartCount]   = useState(0)
+  const { cartOpen, setCartOpen, addItem, cartCount } = useCart()
   const [toast, setToast]           = useState<string | null>(null)
   const [activeCat, setActiveCat]   = useState('all')
   const [search, setSearch]         = useState('')
@@ -259,9 +261,16 @@ export default function StorefrontPage() {
   }
 
   const addToCart = () => {
-    setCartCount(c => c + 1)
+    addItem({
+      id: `${modalProduct!.key}-${SIZES[selSizeIdx]?.label}`,
+      name: modalProduct!.name,
+      cat: modalProduct!.cat,
+      size: isCustom ? `${customL}×${customW}×${customH} cm` : (SIZES[selSizeIdx]?.label ?? ''),
+      qty,
+      unitPrice: calcUnit(),
+      setupCost: calcSetup(),
+    })
     closeModal()
-    showToast('Prodotto aggiunto al carrello')
   }
 
   const filteredProducts = PRODUCTS.filter(p =>
@@ -274,7 +283,7 @@ export default function StorefrontPage() {
       {/* ── Scroll-reveal styles ── */}
       <style>{scrollRevealCSS}</style>
 
-      <Nav cartCount={cartCount} onCartClick={() => showToast(cartCount === 0 ? 'Il carrello è vuoto' : `${cartCount} articolo/i nel carrello`)} activeLink="shop" />
+      <Nav cartCount={cartCount} onCartClick={() => setCartOpen(true)} activeLink="shop" />
 
       {/* ── HERO ── */}
       <section className="hero">
@@ -291,7 +300,6 @@ export default function StorefrontPage() {
               <button className="btn-primary" onClick={() => document.querySelector('.catalog-zone')?.scrollIntoView({ behavior: 'smooth' })}>
                 Scopri i prodotti
               </button>
-              <button className="btn-secondary">Richiedi preventivo</button>
             </div>
           </div>
           <div className="hero-right">
@@ -711,7 +719,7 @@ export default function StorefrontPage() {
       {/* ── MOBILE FAB CART ── */}
       <button
         className="fab-cart"
-        onClick={() => showToast(cartCount === 0 ? 'Il carrello è vuoto' : `${cartCount} articolo/i nel carrello`)}
+        onClick={() => setCartOpen(true)}
         aria-label={`Carrello (${cartCount} articoli)`}
       >
         <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round">
@@ -721,6 +729,9 @@ export default function StorefrontPage() {
         </svg>
         {cartCount > 0 && <span className="fab-badge">{cartCount}</span>}
       </button>
+
+      {/* ── CART DRAWER ── */}
+      <CartDrawer />
 
       {/* ── TOAST ── */}
       <div className={`toast ${toast ? 'show' : ''}`}>
