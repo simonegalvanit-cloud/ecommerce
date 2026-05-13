@@ -405,6 +405,8 @@ nav.site-nav.scrolled {
   opacity: 0; transition: opacity .22s; backdrop-filter: blur(2px);
 }
 .pcard:hover .pcard-img-overlay { opacity: 1; }
+.pcard-svg-wrap { transition: transform .3s var(--ease-out); }
+.pcard:hover .pcard-svg-wrap { transform: scale(1.07); }
 .overlay-btn {
   background: #fff; color: var(--accent); font-family: var(--f);
   font-size: 13.5px; font-weight: 700; padding: 9px 20px;
