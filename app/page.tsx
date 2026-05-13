@@ -1,5 +1,5 @@
 'use client'
-import { useState, useCallback, useEffect, useRef } from 'react'
+import { useState, useCallback, useEffect, useRef, ReactNode } from 'react'
 import Nav from '@/components/Nav'
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -101,12 +101,12 @@ const PRODUCTS: Product[] = [
 
 const CATEGORIES = [
   { key: 'all',        label: 'Tutti' },
-  { key: 'industrial', label: 'Imballaggi Industriali' },
-  { key: 'shopper',   label: 'Shopper & Cartotecnica' },
+  { key: 'industrial', label: 'Industriale' },
+  { key: 'shopper',   label: 'Shopper' },
   { key: 'food',      label: 'Food Delivery' },
-  { key: 'wine',      label: 'Wine Packaging' },
+  { key: 'wine',      label: 'Wine' },
   { key: 'ecom',      label: 'E-commerce' },
-  { key: 'eco',       label: '🌿 BrioGreenPack' },
+  { key: 'eco',       label: 'BrioGreenPack' },
 ]
 
 const SIZES = [
@@ -129,6 +129,57 @@ const COLORS = [
   { label: 'Blu',      hex: '#1c3a5e' },
 ]
 
+const DISC_TIERS = [
+  { min: 100,  max: 499,  label: '100–499', disc: null },
+  { min: 500,  max: 999,  label: '500–999', disc: '-10%' },
+  { min: 1000, max: 4999, label: '1.000–4.999', disc: '-20%' },
+  { min: 5000, max: Infinity, label: '5.000+', disc: '-32%' },
+]
+
+// Trust bar icons as components
+const TrustItems: { icon: ReactNode; title: string; desc: string }[] = [
+  {
+    icon: (
+      <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="1" y="3" width="15" height="13" rx="2"/>
+        <path d="M16 8h4l3 3v5h-7V8z"/>
+        <circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+      </svg>
+    ),
+    title: 'Spedizione Rapida',
+    desc: 'Consegna in 48–72h su tutto il territorio nazionale',
+  },
+  {
+    icon: (
+      <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+      </svg>
+    ),
+    title: 'Stampa Personalizzata',
+    desc: 'Fino a 6 colori di stampa flessografica o digitale',
+  },
+  {
+    icon: (
+      <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>
+      </svg>
+    ),
+    title: 'MOQ Accessibili',
+    desc: 'Ordina da 50 pz — ideale per PMI e startup',
+  },
+  {
+    icon: (
+      <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.7" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M7 16.5c-3.5 0-5-2-5-4s1.5-4 5-4c1 0 2 .5 3 1.5 1-1 2-1.5 3-1.5 3.5 0 5 2 5 4s-1.5 4-5 4c-1 0-2-.5-3-1.5-1 1-2 1.5-3 1.5z"/>
+        <path d="M12 8.5V4M12 4l-2 2M12 4l2 2"/>
+      </svg>
+    ),
+    title: 'Linea Eco Certificata',
+    desc: 'Materiali riciclati e biodegradabili CONAI',
+  },
+]
+
 function fmt(n: number) { return n.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
 
 // ── Scroll-reveal CSS injected via <style> tag ────────────────────────────────
@@ -149,6 +200,9 @@ export default function StorefrontPage() {
   const [selPrints, setSelPrints]       = useState<Set<string>>(new Set(['Senza Stampa']))
   const [qty, setQty]                   = useState(250)
   const [fileOk, setFileOk]             = useState(false)
+
+  const prevTotalRef = useRef<number>(0)
+  const [pricePopKey, setPricePopKey] = useState(0)
 
   // ── IntersectionObserver for scroll-reveal ──────────────────────────────────
   const observerRef = useRef<IntersectionObserver | null>(null)
@@ -221,6 +275,14 @@ export default function StorefrontPage() {
   const unit  = calcUnit()
   const setup = calcSetup()
   const total = unit * qty + setup
+
+  // Trigger price pop animation on total change
+  useEffect(() => {
+    if (modalProduct && total !== prevTotalRef.current) {
+      setPricePopKey(k => k + 1)
+      prevTotalRef.current = total
+    }
+  }, [total, modalProduct])
 
   const togglePrint = (opt: string) => {
     if (opt === 'Senza Stampa') { setSelPrints(new Set(['Senza Stampa'])); return }
@@ -321,22 +383,22 @@ export default function StorefrontPage() {
 
       {/* ── CAT BAR ── */}
       <div className="catbar">
-        {CATEGORIES.map(c => (
-          <div key={c.key} className={`cat ${activeCat === c.key ? 'active' : ''}`} onClick={() => setActiveCat(c.key)}>
-            <span className="cat-dot" />{c.label}
-          </div>
-        ))}
+        {CATEGORIES.map(c => {
+          const count = c.key === 'all' ? PRODUCTS.length : PRODUCTS.filter(p => p.catKey === c.key).length
+          return (
+            <div key={c.key} className={`cat ${activeCat === c.key ? 'active' : ''}`} onClick={() => setActiveCat(c.key)}>
+              <span className="cat-dot" />
+              {c.label}
+              <span className="cat-count">{count}</span>
+            </div>
+          )
+        })}
       </div>
 
       {/* ── TRUST BAR ── */}
       <div className="trust">
-        {[
-          { icon: '🚚', title: 'Spedizione Rapida', desc: 'Consegna in 48–72h su tutto il territorio nazionale' },
-          { icon: '🎨', title: 'Stampa Personalizzata', desc: 'Fino a 6 colori di stampa flessografica o digitale' },
-          { icon: '📦', title: 'MOQ Accessibili',   desc: 'Ordina da 50 pz — ideale per PMI e startup' },
-          { icon: '♻',  title: 'Linea Eco Certificata', desc: 'Materiali riciclati e biodegradabili CONAI' },
-        ].map((t, i) => (
-          <div key={t.title} className={`trust-item scroll-reveal`} style={{ transitionDelay: `${i * 0.07}s` }}>
+        {TrustItems.map((t, i) => (
+          <div key={t.title} className="trust-item scroll-reveal" style={{ transitionDelay: `${i * 0.07}s` }}>
             <div className="trust-icon">{t.icon}</div>
             <div>
               <div className="trust-title">{t.title}</div>
@@ -416,12 +478,41 @@ export default function StorefrontPage() {
         </div>
         <div className="eco-grid">
           {[
-            { icon: '♻', title: '100% Riciclato',    body: 'Cartone ondulato da fibre riciclate post-consumo' },
-            { icon: '🌿', title: 'Biodegradabile',    body: 'Materiali che si decompongono naturalmente' },
-            { icon: '✓',  title: 'Certificato CONAI', body: 'Piena conformità e tracciabilità del contributo' },
-            { icon: '⬡',  title: 'Food Safe',         body: 'Materiali eco certificati per il contatto alimentare' },
+            {
+              icon: (
+                <svg width="22" height="22" fill="none" stroke="#7ec891" strokeWidth="1.6" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
+                  <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+                </svg>
+              ),
+              title: '100% Riciclato', body: 'Cartone ondulato da fibre riciclate post-consumo',
+            },
+            {
+              icon: (
+                <svg width="22" height="22" fill="none" stroke="#7ec891" strokeWidth="1.6" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+              ),
+              title: 'Biodegradabile', body: 'Materiali che si decompongono naturalmente',
+            },
+            {
+              icon: (
+                <svg width="22" height="22" fill="none" stroke="#7ec891" strokeWidth="1.6" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              ),
+              title: 'Certificato CONAI', body: 'Piena conformità e tracciabilità del contributo',
+            },
+            {
+              icon: (
+                <svg width="22" height="22" fill="none" stroke="#7ec891" strokeWidth="1.6" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+                </svg>
+              ),
+              title: 'Food Safe', body: 'Materiali eco certificati per il contatto alimentare',
+            },
           ].map((c, i) => (
-            <div key={c.title} className={`eco-card scroll-reveal`} style={{ transitionDelay: `${i * 0.08}s` }}>
+            <div key={c.title} className="eco-card scroll-reveal" style={{ transitionDelay: `${i * 0.08}s` }}>
               <div className="eco-card-icon">{c.icon}</div>
               <div className="eco-card-title">{c.title}</div>
               <div className="eco-card-body">{c.body}</div>
@@ -490,19 +581,19 @@ export default function StorefrontPage() {
               {/* Preview panel */}
               <div className="modal-preview">
                 <div className="preview-vis">
-                  {modalProduct.svg}
-                  <span style={{ fontSize: '9.5px', color: 'var(--ink-4)', fontWeight: 500, letterSpacing: '.5px' }}>ANTEPRIMA</span>
+                  <div style={{ transform: 'scale(1.1)' }}>{modalProduct.svg}</div>
+                  <span className="preview-vis-label">ANTEPRIMA</span>
                 </div>
                 <div className="price-box">
                   <div className="price-box-lbl">Prezzo unitario</div>
-                  <div className="price-box-val">€{fmt(unit)}</div>
+                  <div key={pricePopKey} className="price-box-val price-pop">€{fmt(unit)}</div>
                   <div className="price-box-sub">IVA esclusa · varia con la quantità</div>
                 </div>
                 <div className="sum-rows">
                   <div className="sum-row"><span>Prezzo unitario</span><span>€{fmt(unit)}</span></div>
                   <div className="sum-row"><span>Quantità</span><span>{qty.toLocaleString('it-IT')} pz</span></div>
-                  <div className="sum-row"><span>Impianti stampa</span><span>€{fmt(setup)}</span></div>
-                  <div className="sum-row"><span>Totale (IVA esclusa)</span><span>€{fmt(total)}</span></div>
+                  <div className="sum-row"><span>Impianti stampa</span><span>{setup > 0 ? `€${fmt(setup)}` : '—'}</span></div>
+                  <div className="sum-row"><span>Totale IVA esclusa</span><span>€{fmt(total)}</span></div>
                 </div>
               </div>
 
@@ -529,8 +620,12 @@ export default function StorefrontPage() {
                     {COLORS.map((c, i) => (
                       <div key={c.label} className={`color-swatch ${selColor === i ? 'sel' : ''}`}
                         style={{ background: c.hex, border: c.border ? '1px solid #ddd' : undefined }}
+                        title={c.label}
                         onClick={() => setSelColor(i)} />
                     ))}
+                  </div>
+                  <div className="color-selected-label">
+                    Colore selezionato: <strong>{COLORS[selColor].label}</strong>
                   </div>
                 </div>
 
@@ -562,13 +657,35 @@ export default function StorefrontPage() {
                       <button className="qty-btn" onClick={() => setQty(q => q + 50)}>+</button>
                     </div>
                   </div>
+                  {/* Discount tiers */}
+                  <div className="disc-tiers">
+                    {DISC_TIERS.map(t => {
+                      const active = qty >= t.min && qty <= t.max
+                      return (
+                        <div key={t.label} className={`disc-tier${active ? ' active' : ''}`}>
+                          <div className="dt-qty">{t.label}</div>
+                          {t.disc ? (
+                            <div className="dt-disc">{t.disc}</div>
+                          ) : (
+                            <div className="dt-label">base</div>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
                 </div>
 
                 {/* File upload */}
                 <div className="cfg-section" style={{ paddingBottom: 28 }}>
                   <div className="cfg-label">Logo / Artwork</div>
                   <div className="upload-zone" onClick={() => document.getElementById('file-upload')?.click()}>
-                    <div className="upload-icon-wrap">⬆</div>
+                    <div className="upload-icon-wrap">
+                      <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="16 16 12 12 8 16"/>
+                        <line x1="12" y1="12" x2="12" y2="21"/>
+                        <path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/>
+                      </svg>
+                    </div>
                     <div className="upload-main">Carica il tuo file logo o grafica</div>
                     <div className="upload-sub">SVG · AI · EPS · PDF · PNG — max 50 MB</div>
                   </div>
