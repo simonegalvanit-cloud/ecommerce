@@ -4,7 +4,10 @@ import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
-const NAV_ITEMS = [
+type NavItem = { href: string; label: string; icon: string; external?: boolean }
+type NavGroup = { section: string; items: NavItem[] }
+
+const NAV_ITEMS: NavGroup[] = [
   { section: 'Principale', items: [
     { href: '/admin',          label: 'Dashboard', icon: '⊞' },
     { href: '/admin/products', label: 'Prodotti',  icon: '📦' },
