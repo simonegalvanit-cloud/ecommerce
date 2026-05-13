@@ -64,12 +64,12 @@ export default function Nav({ cartCount = 0, onCartClick, activeLink }: NavProps
       <nav className={`site-nav${scrolled ? ' scrolled' : ''}`}>
         <Link href="/" className="logo" onClick={() => setMenuOpen(false)} aria-label="Briopack home">
           <Image
-            src="/logo.svg"
+            src="/logo.png"
             alt="Briopack Packaging"
             width={148}
             height={36}
             priority
-            style={{ filter: 'brightness(0) invert(1)', height: 32, width: 'auto' }}
+            style={{ height: 32, width: 'auto' }}
           />
         </Link>
 
@@ -115,7 +115,7 @@ export default function Nav({ cartCount = 0, onCartClick, activeLink }: NavProps
         <div className="mobile-drawer open" onClick={() => setMenuOpen(false)}>
           <div className="mobile-drawer-panel" onClick={e => e.stopPropagation()}>
             <div className="mobile-drawer-logo">
-              <Image src="/logo.svg" alt="Briopack" width={120} height={30} style={{ filter: 'brightness(0) invert(1)', height: 28, width: 'auto' }} />
+              <Image src="/logo.png" alt="Briopack" width={120} height={30} style={{ height: 28, width: 'auto' }} />
             </div>
             {NAV_LINKS.map(l => (
               <Link key={l.key} href={l.href} className="mobile-nav-link" onClick={() => setMenuOpen(false)}>
