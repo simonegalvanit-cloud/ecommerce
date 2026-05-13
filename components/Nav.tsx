@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 interface NavProps {
@@ -9,9 +9,21 @@ interface NavProps {
   activeLink?: string
 }
 
+const NAV_LINKS = [
+  { href: '/',      label: 'Shop',          key: 'shop'  },
+  { href: '#',      label: 'Industriale',   key: 'ind'   },
+  { href: '#',      label: 'Food & Wine',   key: 'food'  },
+  { href: '#',      label: 'E-commerce',    key: 'ecom'  },
+  { href: '#',      label: 'BrioGreenPack', key: 'eco'   },
+]
+
 export default function Nav({ cartCount = 0, onCartClick, activeLink }: NavProps) {
   const [accountLabel, setAccountLabel] = useState<string | null>(null)
   const [accountHref, setAccountHref]   = useState('/login')
+  const [scrolled, setScrolled]         = useState(false)
+  const [menuOpen, setMenuOpen]         = useState(false)
+  const [badgeBump, setBadgeBump]       = useState(false)
+  const prevCount = useRef(cartCount)
 
   useEffect(() => {
     const sb = createClient()
@@ -19,45 +31,108 @@ export default function Nav({ cartCount = 0, onCartClick, activeLink }: NavProps
       if (!session) { setAccountLabel('Accedi'); return }
       const { data: profile } = await sb.from('profiles').select('role,full_name').eq('id', session.user.id).single()
       if (profile?.role === 'admin') {
-        setAccountLabel('Admin')
-        setAccountHref('/admin')
+        setAccountLabel('Admin'); setAccountHref('/admin')
       } else {
         const first = (profile?.full_name || '').split(' ')[0] || 'Account'
-        setAccountLabel(first)
-        setAccountHref('/account')
+        setAccountLabel(first); setAccountHref('/account')
       }
     })
   }, [])
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  useEffect(() => {
+    if (cartCount !== prevCount.current && cartCount > 0) {
+      setBadgeBump(true)
+      setTimeout(() => setBadgeBump(false), 350)
+    }
+    prevCount.current = cartCount
+  }, [cartCount])
+
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [menuOpen])
+
   return (
-    <nav className="site-nav">
-      <Link href="/" className="logo">
-        <span className="logo-pip" />
-        Briopack
-      </Link>
+    <>
+      <nav className={`site-nav${scrolled ? ' scrolled' : ''}`}>
+        <Link href="/" className="logo" onClick={() => setMenuOpen(false)}>
+          <span className="logo-pip" />
+          Briopack
+        </Link>
 
-      <div className="nav-center">
-        <Link href="/" className={`nav-link ${activeLink === 'shop' ? 'active' : ''}`}>Shop</Link>
-        <Link href="#" className="nav-link">Industriale</Link>
-        <Link href="#" className="nav-link">Food & Wine</Link>
-        <Link href="#" className="nav-link">E-commerce</Link>
-        <Link href="#" className="nav-link">BrioGreenPack</Link>
-      </div>
+        {/* Desktop links */}
+        <div className="nav-center">
+          {NAV_LINKS.map(l => (
+            <Link key={l.key} href={l.href} className={`nav-link${activeLink === l.key ? ' active' : ''}`}>
+              {l.label}
+            </Link>
+          ))}
+        </div>
 
-      <div className="nav-right">
-        {accountLabel && (
-          <Link href={accountHref} className="account-pill">
-            <span className="account-pip" />
-            {accountLabel}
-          </Link>
-        )}
-        <button className="cart-pill" onClick={onCartClick}>
-          <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
-            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
-          </svg>
-          Carrello <span className="cart-badge">{cartCount}</span>
-        </button>
-      </div>
-    </nav>
+        <div className="nav-right">
+          {accountLabel && (
+            <Link href={accountHref} className="account-pill">
+              <span className="account-pip" />
+              {accountLabel}
+            </Link>
+          )}
+          <button className="cart-pill" onClick={onCartClick} aria-label={`Carrello (${cartCount} articoli)`}>
+            <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" aria-hidden>
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <path d="M16 10a4 4 0 01-8 0"/>
+            </svg>
+            <span className="hidden sm:inline">Carrello</span>
+            <span className={`cart-badge${badgeBump ? ' bump' : ''}`}>{cartCount}</span>
+          </button>
+
+          {/* Hamburger */}
+          <button
+            className={`nav-hamburger${menuOpen ? ' open' : ''}`}
+            onClick={() => setMenuOpen(o => !o)}
+            aria-label={menuOpen ? 'Chiudi menu' : 'Apri menu'}
+            aria-expanded={menuOpen}
+          >
+            <span /><span /><span />
+          </button>
+        </div>
+      </nav>
+
+      {/* Mobile drawer */}
+      {menuOpen && (
+        <div className="mobile-drawer open" onClick={() => setMenuOpen(false)}>
+          <div className="mobile-drawer-panel" onClick={e => e.stopPropagation()}>
+            {NAV_LINKS.map(l => (
+              <Link key={l.key} href={l.href} className="mobile-nav-link" onClick={() => setMenuOpen(false)}>
+                {l.label}
+              </Link>
+            ))}
+            <div className="mobile-nav-divider" />
+            <div className="mobile-nav-actions">
+              {accountLabel ? (
+                <Link href={accountHref} className="mobile-nav-btn primary" onClick={() => setMenuOpen(false)}>
+                  {accountLabel === 'Admin' ? '⚙ Admin' : `👤 ${accountLabel}`}
+                </Link>
+              ) : (
+                <Link href="/login" className="mobile-nav-btn primary" onClick={() => setMenuOpen(false)}>
+                  Accedi
+                </Link>
+              )}
+              <button className="mobile-nav-btn ghost" onClick={() => { setMenuOpen(false); onCartClick?.() }}>
+                🛒 Carrello ({cartCount})
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="nav-spacer" />
+    </>
   )
 }
