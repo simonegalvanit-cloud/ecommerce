@@ -38,6 +38,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const [adminName, setAdminName] = useState('Admin')
   const [ready, setReady] = useState(false)
+  const [newOrders, setNewOrders] = useState(0)
 
   useEffect(() => {
     // Cookie is httpOnly — if middleware allowed through, bypass is valid
@@ -45,16 +46,31 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     if (storedName) {
       setAdminName(storedName)
       setReady(true)
-      return
+    } else {
+      ;(async () => {
+        const { data: { session } } = await sb.auth.getSession()
+        if (!session) { router.push('/admin-panel'); return }
+        const { data: profile } = await sb.from('profiles').select('role,full_name').eq('id', session.user.id).single()
+        if (!profile || profile.role !== 'admin') { router.push('/admin-panel'); return }
+        setAdminName(profile.full_name || session.user.email || 'Admin')
+        setReady(true)
+      })()
     }
-    ;(async () => {
-      const { data: { session } } = await sb.auth.getSession()
-      if (!session) { router.push('/admin-panel'); return }
-      const { data: profile } = await sb.from('profiles').select('role,full_name').eq('id', session.user.id).single()
-      if (!profile || profile.role !== 'admin') { router.push('/admin-panel'); return }
-      setAdminName(profile.full_name || session.user.email || 'Admin')
-      setReady(true)
-    })()
+  }, [])
+
+  // Poll for new orders every 30s
+  useEffect(() => {
+    async function checkNewOrders() {
+      const lastSeen = localStorage.getItem('bp_admin_orders_seen') || new Date(0).toISOString()
+      const { count } = await sb
+        .from('orders')
+        .select('*', { count: 'exact', head: true })
+        .gt('created_at', lastSeen)
+      setNewOrders(count ?? 0)
+    }
+    checkNewOrders()
+    const t = setInterval(checkNewOrders, 30000)
+    return () => clearInterval(t)
   }, [])
 
   async function handleLogout() {
@@ -102,13 +118,26 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     </a>
                   )
                 }
+                const isOrders = item.href === '/admin/orders'
+                const badge = isOrders && newOrders > 0
                 return (
                   <Link key={item.href} href={item.href}
+                    onClick={() => {
+                      if (isOrders) {
+                        localStorage.setItem('bp_admin_orders_seen', new Date().toISOString())
+                        setNewOrders(0)
+                      }
+                    }}
                     style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '8px 12px', borderRadius: 8, fontSize: 13, fontWeight: isActive ? 600 : 500, color: isActive ? '#fff' : 'rgba(255,255,255,0.5)', background: isActive ? 'rgba(232,114,26,0.18)' : 'transparent', cursor: 'pointer', transition: 'all .15s', textDecoration: 'none' }}
                     onMouseEnter={e => { if (!isActive) { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.06)'; (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.8)' }}}
                     onMouseLeave={e => { if (!isActive) { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.5)' }}}>
                     <span style={{ color: isActive ? 'var(--accent)' : undefined }}>{item.icon}</span>
                     {item.label}
+                    {badge && (
+                      <span style={{ marginLeft: 'auto', minWidth: 18, height: 18, borderRadius: 9, background: '#ef4444', color: '#fff', fontSize: 10.5, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 5px', flexShrink: 0 }}>
+                        {newOrders > 99 ? '99+' : newOrders}
+                      </span>
+                    )}
                   </Link>
                 )
               })}

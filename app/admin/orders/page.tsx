@@ -127,6 +127,7 @@ function exportReport(orders: Order[], dateFrom: string, dateTo: string) {
     @media print {
       body { background: #fff; }
       .no-print { display: none !important; }
+      .report-logo { filter: brightness(0) !important; }
       @page { margin: 15mm 12mm; }
     }
   </style>
@@ -143,7 +144,7 @@ function exportReport(orders: Order[], dateFrom: string, dateTo: string) {
   <!-- Header -->
   <div style="background:linear-gradient(135deg,#c45a14,#e8721a);padding:28px 40px;display:flex;justify-content:space-between;align-items:center;">
     <div style="display:flex;align-items:center;gap:14px;">
-      <img src="${window.location.origin}/logo.png" alt="Briopack" style="height:32px;width:auto;filter:brightness(0) invert(1);" />
+      <img src="${window.location.origin}/logo.png" alt="Briopack" class="report-logo" style="height:32px;width:auto;filter:brightness(0) invert(1);" />
       <div style="color:rgba(255,255,255,0.7);font-size:13px;border-left:1px solid rgba(255,255,255,0.3);padding-left:14px;">Report Ordini</div>
     </div>
     <div style="text-align:right;">

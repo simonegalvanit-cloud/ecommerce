@@ -293,8 +293,8 @@ export default function AccountPage() {
             ))}
           </nav>
 
-          {/* Bottom: go to shop */}
-          <div style={{ padding: '16px 10px 0', borderTop: '1px solid var(--border)', marginTop: 12 }}>
+          {/* Bottom: go to shop + logout */}
+          <div style={{ padding: '16px 10px 0', borderTop: '1px solid var(--border)', marginTop: 12, display: 'flex', flexDirection: 'column', gap: 4 }}>
             <Link href="/" className="sidebar-item" style={{ display: 'flex', textDecoration: 'none' }}>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M1 1h2.5l1.5 8h7l1.5-5H4"/>
@@ -303,6 +303,16 @@ export default function AccountPage() {
               </svg>
               Vai al negozio
             </Link>
+            <button
+              onClick={handleLogout}
+              className="sidebar-item"
+              style={{ width: '100%', textAlign: 'left', color: 'var(--red)', border: 'none', background: 'transparent', fontFamily: 'var(--f)', cursor: 'pointer' }}
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M10 5l4 3-4 3M14 8H6"/>
+              </svg>
+              Disconnettiti
+            </button>
           </div>
         </aside>
 
@@ -648,32 +658,6 @@ export default function AccountPage() {
                 </div>
               </div>
 
-              {/* Danger zone */}
-              <div className="card" style={{ border: '1.5px solid rgba(200,40,30,0.18)' }}>
-                <div className="card-header" style={{ borderBottomColor: 'rgba(200,40,30,0.12)' }}>
-                  <span className="card-title" style={{ color: 'var(--red)', display: 'flex', alignItems: 'center', gap: 7 }}>
-                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M7.5 1L1 13.5h13L7.5 1zM7.5 6v3.5M7.5 11.5v.5"/>
-                    </svg>
-                    Zona pericolosa
-                  </span>
-                </div>
-                <div className="card-body">
-                  <p style={{ fontSize: 13.5, color: 'var(--ink-3)', marginBottom: 16, lineHeight: 1.6 }}>
-                    Disconnettiti da questo dispositivo e torna alla home.
-                  </p>
-                  <button
-                    onClick={handleLogout}
-                    className="btn btn-danger"
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: 7 }}
-                  >
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-                      <path d="M9.5 1.5H12a1 1 0 011 1v9a1 1 0 01-1 1H9.5M6 10l3.5-3L6 4M9.5 7H2"/>
-                    </svg>
-                    Disconnettiti
-                  </button>
-                </div>
-              </div>
             </div>
           )}
 

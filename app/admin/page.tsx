@@ -56,7 +56,7 @@ function StatCard({ icon, value, label, bg }: { icon: React.ReactNode; value: Re
 export default function AdminDashboardPage() {
   const sb = createClient()
   const [customers, setCustomers] = useState(0)
-  const [pending, setPending]     = useState(0)
+  const [totalOrders, setTotalOrders] = useState(0)
   const [revenue, setRevenue]     = useState(0)
   const [recentOrders, setRecentOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
@@ -70,7 +70,7 @@ export default function AdminDashboardPage() {
       const orders = (ordersData || []) as Order[]
       const uniqueEmails = new Set(orders.map(o => (o as any).customer_email).filter(Boolean))
       setCustomers(uniqueEmails.size)
-      setPending(orders.filter(o => o.status === 'pending' || o.status === 'paid').length)
+      setTotalOrders(orders.filter(o => !['cancelled', 'refunded'].includes(o.status)).length)
       setRevenue(orders.filter(o => !['cancelled', 'refunded'].includes(o.status)).reduce((s, o) => s + (o.total_eur || 0), 0))
       setRecentOrders(orders.slice(0, 8))
       setLoading(false)
@@ -95,9 +95,9 @@ export default function AdminDashboardPage() {
         />
         <StatCard
           bg="var(--yellow-bg)"
-          value={loading ? '—' : pending}
-          label="Ordini in attesa"
-          icon={<svg width="18" height="18" fill="none" stroke="var(--yellow)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8"/><path d="M10 6v4l2.5 2.5"/></svg>}
+          value={loading ? '—' : totalOrders}
+          label="Ordini effettuati"
+          icon={<svg width="18" height="18" fill="none" stroke="var(--yellow)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 20 20"><path d="M2 2h2.5l2 9h9l2-6H5"/><circle cx="8" cy="17" r="1.5"/><circle cx="15" cy="17" r="1.5"/></svg>}
         />
         <StatCard
           bg="var(--blue-bg)"
