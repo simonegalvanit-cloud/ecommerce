@@ -3,33 +3,36 @@ import { useState, FormEvent } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
-const ADMIN_EMAIL = 'simone@gmail.com'
-const ADMIN_PASS  = 'test'
-const TOKEN_KEY   = 'bp_admin_bypass'
-const TOKEN_VAL   = 'briopack_admin_2025'
-
 export default function AdminPanelLogin() {
   const router = useRouter()
-  const [email, setEmail]     = useState('')
+  const [email, setEmail]       = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError]     = useState('')
-  const [loading, setLoading] = useState(false)
+  const [error, setError]       = useState('')
+  const [loading, setLoading]   = useState(false)
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     setError('')
     setLoading(true)
-
-    setTimeout(() => {
-      if (email.trim().toLowerCase() === ADMIN_EMAIL && password === ADMIN_PASS) {
-        document.cookie = `${TOKEN_KEY}=${TOKEN_VAL}; path=/; SameSite=Strict`
-        sessionStorage.setItem(TOKEN_KEY, TOKEN_VAL)
-        router.push('/admin')
-      } else {
-        setError('Credenziali non valide.')
+    try {
+      const res = await fetch('/api/admin-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setError(data.error || 'Credenziali non valide.')
         setLoading(false)
+        return
       }
-    }, 600)
+      // Store name for sidebar display (non-sensitive)
+      sessionStorage.setItem('bp_admin_name', data.name || 'Admin')
+      router.push('/admin')
+    } catch {
+      setError('Errore di connessione. Riprova.')
+      setLoading(false)
+    }
   }
 
   return (
