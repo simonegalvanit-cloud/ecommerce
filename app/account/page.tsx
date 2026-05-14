@@ -85,6 +85,7 @@ export default function AccountPage() {
   const [statOrders, setStatOrders] = useState<number>(0)
   const [statSpent, setStatSpent] = useState<number>(0)
   const [statPending, setStatPending] = useState<number>(0)
+  const [userRole, setUserRole] = useState<string>('cliente')
 
   useEffect(() => {
     ;(async () => {
@@ -99,6 +100,8 @@ export default function AccountPage() {
       const { data: prof } = await sb.from('profiles').select('*').eq('id', session.user.id).single()
       if (prof) {
         setProfile(prof)
+        setUserRole(prof.role || 'cliente')
+        if (prof.role === 'admin') { router.push('/admin'); return }
         setFullName(prof.full_name || '')
         setCompany(prof.company || '')
         setPhone(prof.phone || '')
@@ -253,7 +256,7 @@ export default function AccountPage() {
             </div>
             <div className="sidebar-name">{displayName}</div>
             <div className="sidebar-email" title={email}>{email}</div>
-            <span className="sidebar-role">Cliente</span>
+            <span className="sidebar-role">{userRole === 'admin' ? 'Admin' : 'Cliente'}</span>
           </div>
 
           {/* Nav items */}
