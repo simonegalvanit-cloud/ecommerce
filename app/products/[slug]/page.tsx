@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { cache } from 'react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { PRODUCTS, SIZES, COLORS, PRINT_OPTIONS, QTY_PRESETS, DISC_TIERS, type Product } from '@/lib/products'
@@ -7,11 +8,23 @@ import ProductConfigurator from '@/components/ProductConfigurator'
 import CartDrawer from '@/components/CartDrawer'
 import NavWrapper from '@/components/NavWrapper'
 
-export const dynamic = 'force-dynamic'
+// Pre-build all hardcoded product pages at deploy time
+export async function generateStaticParams() {
+  return PRODUCTS.map(p => ({ slug: p.key }))
+}
+
+// Revalidate admin-added products in the background every 60s
+export const revalidate = 60
 
 type Props = { params: Promise<{ slug: string }> }
 
-async function getProduct(slug: string): Promise<Product | null> {
+// cache() deduplicates calls within the same render (metadata + page share one fetch)
+const getProduct = cache(async (slug: string): Promise<Product | null> => {
+  // Hardcoded products resolve instantly — no network round-trip
+  const local = PRODUCTS.find(p => p.key === slug)
+  if (local) return local
+
+  // Only hit Supabase for admin-added products not in the local catalog
   try {
     const sb = await createClient()
     const { data } = await sb
@@ -38,10 +51,10 @@ async function getProduct(slug: string): Promise<Product | null> {
         discTiers:    data.disc_tiers?.length   ? data.disc_tiers   : DISC_TIERS,
       }
     }
-  } catch { /* table may not exist yet */ }
+  } catch { /* products table may not exist yet */ }
 
-  return PRODUCTS.find(p => p.key === slug) ?? null
-}
+  return null
+})
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
@@ -71,7 +84,7 @@ export default async function ProductPage({ params }: Props) {
       <div className="cfg-breadcrumb">
         <Link href="/">Home</Link>
         <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
-        <Link href="/#catalogo">Prodotti</Link>
+        <Link href="/catalogo">Catalogo</Link>
         <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
         <span>{product.name}</span>
       </div>
