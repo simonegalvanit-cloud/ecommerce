@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, FormEvent, ReactElement } from 'react'
+import { useState, useEffect, useRef, FormEvent, ReactElement } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
@@ -63,6 +63,7 @@ export default function AccountPage() {
   const [profile, setProfile] = useState<Profile>({ full_name: null, company: null, phone: null, address: null, city: null, postal_code: null, country: 'Italia' })
   const [orders, setOrders] = useState<Order[]>([])
   const [loadingOrders, setLoadingOrders] = useState(false)
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   // Profile form state
   const [fullName, setFullName] = useState('')
@@ -123,7 +124,7 @@ export default function AccountPage() {
   }, [])
 
   async function loadOrders() {
-    if (loadingOrders) return
+    if (!email) return
     setLoadingOrders(true)
     const { data } = await sb.from('orders').select('*').eq('customer_email', email).order('created_at', { ascending: false })
     setOrders((data || []) as Order[])
@@ -132,8 +133,19 @@ export default function AccountPage() {
 
   function goTo(s: Section) {
     setSection(s)
-    if (s === 'orders' && userId) loadOrders()
+    if (s === 'orders' && email) {
+      loadOrders()
+      if (pollRef.current) clearInterval(pollRef.current)
+      pollRef.current = setInterval(() => {
+        sb.from('orders').select('*').eq('customer_email', email).order('created_at', { ascending: false })
+          .then(({ data }) => { if (data) setOrders(data as Order[]) })
+      }, 20000)
+    } else {
+      if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null }
+    }
   }
+
+  useEffect(() => () => { if (pollRef.current) clearInterval(pollRef.current) }, [])
 
   async function saveProfile(e: FormEvent) {
     e.preventDefault()

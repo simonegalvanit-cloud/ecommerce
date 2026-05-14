@@ -3,13 +3,13 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 interface Customer {
-  id: string
-  full_name: string | null
-  company: string | null
+  email: string
+  name: string | null
   phone: string | null
   city: string | null
-  created_at: string
-  role: string
+  first_order: string
+  order_count: number
+  total_spent: number
 }
 
 const thStyle: React.CSSProperties = {
@@ -40,11 +40,34 @@ export default function CustomersPage() {
   async function loadCustomers() {
     setLoading(true)
     const { data } = await sb
-      .from('profiles')
-      .select('*')
-      .eq('role', 'customer')
+      .from('orders')
+      .select('customer_email,customer_name,customer_phone,city,created_at,total_eur,status')
+      .not('customer_email', 'is', null)
       .order('created_at', { ascending: false })
-    const list = (data || []) as Customer[]
+
+    const rows = data || []
+    const map = new Map<string, Customer>()
+    for (const o of rows) {
+      const email = o.customer_email as string
+      if (!email) continue
+      if (!map.has(email)) {
+        map.set(email, {
+          email,
+          name:        o.customer_name || null,
+          phone:       o.customer_phone || null,
+          city:        o.city || null,
+          first_order: o.created_at,
+          order_count: 0,
+          total_spent: 0,
+        })
+      }
+      const c = map.get(email)!
+      c.order_count++
+      c.total_spent += o.total_eur || 0
+      if (o.created_at < c.first_order) c.first_order = o.created_at
+    }
+
+    const list = Array.from(map.values()).sort((a, b) => b.order_count - a.order_count)
     setAll(list)
     applyFilter(list, search)
     setLoading(false)
@@ -53,27 +76,21 @@ export default function CustomersPage() {
   function applyFilter(list: Customer[], q: string) {
     const f = list.filter(c =>
       !q ||
-      (c.full_name || '').toLowerCase().includes(q.toLowerCase()) ||
-      (c.company   || '').toLowerCase().includes(q.toLowerCase()) ||
-      (c.city      || '').toLowerCase().includes(q.toLowerCase())
+      (c.name  || '').toLowerCase().includes(q.toLowerCase()) ||
+      (c.email || '').toLowerCase().includes(q.toLowerCase()) ||
+      (c.city  || '').toLowerCase().includes(q.toLowerCase())
     )
     setFiltered(f)
   }
 
   function handleSearch(v: string) { setSearch(v); applyFilter(all, v) }
 
-  async function promoteToAdmin(c: Customer) {
-    if (!window.confirm(`Promuovere "${c.full_name || c.company || 'questo utente'}" ad amministratore?\n\nL'utente avrà accesso completo al pannello admin.`)) return
-    await sb.from('profiles').update({ role: 'admin' }).eq('id', c.id)
-    await loadCustomers()
-  }
-
   return (
     <div style={{ padding: '28px 32px' }}>
       {/* Header */}
       <div style={{ marginBottom: 20 }}>
         <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-0.4px' }}>Clienti</div>
-        <div style={{ fontSize: 13, color: 'var(--ink-4)', marginTop: 2 }}>Gestisci gli account clienti</div>
+        <div style={{ fontSize: 13, color: 'var(--ink-4)', marginTop: 2 }}>Clienti che hanno effettuato almeno un ordine</div>
       </div>
 
       {/* Search */}
@@ -81,7 +98,7 @@ export default function CustomersPage() {
         <input
           value={search}
           onChange={e => handleSearch(e.target.value)}
-          placeholder="Cerca per nome, azienda o città…"
+          placeholder="Cerca per nome, email o città…"
           style={inputStyle}
         />
       </div>
@@ -97,35 +114,37 @@ export default function CustomersPage() {
           <div style={{ padding: '56px 24px', textAlign: 'center', color: 'var(--ink-4)' }}>
             <svg width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.2" viewBox="0 0 24 24" style={{ opacity: 0.25, marginBottom: 12 }}><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
             <p style={{ fontSize: 14, margin: 0 }}>Nessun cliente trovato.</p>
+            <p style={{ fontSize: 12.5, margin: '5px 0 0', color: 'var(--ink-5)' }}>I clienti appariranno qui dopo il primo ordine ricevuto.</p>
           </div>
         ) : (
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr>
-                {['Nome', 'Azienda', 'Telefono', 'Città', 'Data registrazione', 'Azioni'].map(h => (
+                {['Nome', 'Email', 'Telefono', 'Città', 'Ordini', 'Spesa totale', 'Primo ordine'].map(h => (
                   <th key={h} style={thStyle}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {filtered.map(c => (
-                <tr key={c.id}
+                <tr key={c.email}
                   onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'var(--surface)'}
                   onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'transparent'}
                   style={{ transition: 'background .15s' }}>
-                  <td style={{ ...tdStyle, fontWeight: 600 }}>{c.full_name || '—'}</td>
-                  <td style={tdStyle}>{c.company || '—'}</td>
+                  <td style={{ ...tdStyle, fontWeight: 600 }}>{c.name || '—'}</td>
+                  <td style={{ ...tdStyle, color: 'var(--ink-3)' }}>{c.email}</td>
                   <td style={{ ...tdStyle, color: 'var(--ink-3)' }}>{c.phone || '—'}</td>
                   <td style={{ ...tdStyle, color: 'var(--ink-3)' }}>{c.city || '—'}</td>
-                  <td style={{ ...tdStyle, fontSize: 12.5, color: 'var(--ink-4)' }}>
-                    {new Date(c.created_at).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' })}
-                  </td>
                   <td style={tdStyle}>
-                    <button
-                      onClick={() => promoteToAdmin(c)}
-                      style={{ padding: '5px 12px', fontFamily: 'var(--f)', fontSize: 12, fontWeight: 600, background: 'transparent', color: 'var(--ink-3)', border: '1px solid var(--border-2)', borderRadius: 'var(--r)', cursor: 'pointer', whiteSpace: 'nowrap' }}>
-                      → Admin
-                    </button>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 24, height: 24, borderRadius: '50%', background: 'var(--accent-bg)', color: 'var(--accent)', fontSize: 12, fontWeight: 700 }}>
+                      {c.order_count}
+                    </span>
+                  </td>
+                  <td style={{ ...tdStyle, fontWeight: 700, color: 'var(--ink)' }}>
+                    €{c.total_spent.toLocaleString('it-IT', { minimumFractionDigits: 2 })}
+                  </td>
+                  <td style={{ ...tdStyle, fontSize: 12.5, color: 'var(--ink-4)' }}>
+                    {new Date(c.first_order).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' })}
                   </td>
                 </tr>
               ))}

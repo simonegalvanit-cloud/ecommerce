@@ -30,15 +30,60 @@ const SQL_ORDERS = `create table if not exists orders (
   total_eur             numeric(10,2) not null default 0,
   cart_json             jsonb not null default '[]',
   status                text not null default 'pending'
-                          check (status in ('pending','paid','refunded','cancelled')),
+                          check (status in ('pending','paid','processing','shipped','delivered','cancelled','refunded')),
   created_at            timestamptz not null default now()
 );
 
 alter table orders enable row level security;
 
--- Only the service role (webhook) can insert/update orders
+-- Allow all operations (admin uses bypass token, webhook uses service role)
 create policy "Service role manages orders"
   on orders for all using (true) with check (true);`
+
+const SQL_FIX_STATUS_CONSTRAINT = `-- Run this if your orders table already exists with the old constraint
+-- (only allows pending/paid/refunded/cancelled)
+
+alter table orders drop constraint if exists orders_status_check;
+
+alter table orders add constraint orders_status_check
+  check (status in ('pending','paid','processing','shipped','delivered','cancelled','refunded'));`
+
+const SQL_PROFILES = `create table if not exists profiles (
+  id          uuid references auth.users primary key,
+  full_name   text,
+  company     text,
+  phone       text,
+  address     text,
+  city        text,
+  postal_code text,
+  country     text default 'Italia',
+  role        text not null default 'customer',
+  created_at  timestamptz not null default now()
+);
+
+alter table profiles enable row level security;
+
+-- Users can read/write their own profile
+create policy "User manages own profile"
+  on profiles for all
+  using (auth.uid() = id)
+  with check (auth.uid() = id);
+
+-- Auto-create profile row on new user signup
+create or replace function public.handle_new_user()
+returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  insert into public.profiles (id)
+  values (new.id)
+  on conflict (id) do nothing;
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();`
 
 const SQL_PRODUCTS = `create table if not exists products (
   id         uuid primary key default gen_random_uuid(),
@@ -207,6 +252,38 @@ export default function SettingsPage() {
           <button onClick={() => { navigator.clipboard.writeText(SQL_ORDERS); setCopied('sql-orders'); setTimeout(() => setCopied(''), 2000) }}
             style={{ marginTop: 12, padding: '7px 16px', fontFamily: 'var(--f)', fontSize: 13, fontWeight: 600, background: copied === 'sql-orders' ? 'var(--green-bg)' : 'var(--surface)', color: copied === 'sql-orders' ? 'var(--green)' : 'var(--ink-3)', border: '1px solid var(--border-2)', borderRadius: 'var(--r)', cursor: 'pointer' }}>
             {copied === 'sql-orders' ? '✓ Copiato' : 'Copia SQL'}
+          </button>
+        </div>
+      </div>
+
+      {/* SQL — fix status constraint */}
+      <div style={sectionStyle}>
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>Fix — Constraint stato ordini</div>
+          <div style={{ fontSize: 12.5, color: 'var(--ink-4)', marginTop: 3 }}>
+            <strong style={{ color: 'var(--accent)' }}>OBBLIGATORIO se la tabella ordini esiste già.</strong> Aggiunge i nuovi stati (processing, shipped, delivered) al vincolo.
+          </div>
+        </div>
+        <div style={{ padding: 20 }}>
+          <pre style={{ background: '#0f1117', color: '#e2e8f0', padding: '16px 20px', borderRadius: 10, fontSize: 12, lineHeight: 1.7, overflowX: 'auto', margin: 0, fontFamily: 'monospace' }}>{SQL_FIX_STATUS_CONSTRAINT}</pre>
+          <button onClick={() => { navigator.clipboard.writeText(SQL_FIX_STATUS_CONSTRAINT); setCopied('sql-fix-status'); setTimeout(() => setCopied(''), 2000) }}
+            style={{ marginTop: 12, padding: '7px 16px', fontFamily: 'var(--f)', fontSize: 13, fontWeight: 600, background: copied === 'sql-fix-status' ? 'var(--green-bg)' : 'var(--surface)', color: copied === 'sql-fix-status' ? 'var(--green)' : 'var(--ink-3)', border: '1px solid var(--border-2)', borderRadius: 'var(--r)', cursor: 'pointer' }}>
+            {copied === 'sql-fix-status' ? '✓ Copiato' : 'Copia SQL'}
+          </button>
+        </div>
+      </div>
+
+      {/* SQL — profiles */}
+      <div style={sectionStyle}>
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>Setup database — Profili utenti</div>
+          <div style={{ fontSize: 12.5, color: 'var(--ink-4)', marginTop: 3 }}>Crea la tabella profili e il trigger che la popola automaticamente alla registrazione</div>
+        </div>
+        <div style={{ padding: 20 }}>
+          <pre style={{ background: '#0f1117', color: '#e2e8f0', padding: '16px 20px', borderRadius: 10, fontSize: 12, lineHeight: 1.7, overflowX: 'auto', margin: 0, fontFamily: 'monospace' }}>{SQL_PROFILES}</pre>
+          <button onClick={() => { navigator.clipboard.writeText(SQL_PROFILES); setCopied('sql-profiles'); setTimeout(() => setCopied(''), 2000) }}
+            style={{ marginTop: 12, padding: '7px 16px', fontFamily: 'var(--f)', fontSize: 13, fontWeight: 600, background: copied === 'sql-profiles' ? 'var(--green-bg)' : 'var(--surface)', color: copied === 'sql-profiles' ? 'var(--green)' : 'var(--ink-3)', border: '1px solid var(--border-2)', borderRadius: 'var(--r)', cursor: 'pointer' }}>
+            {copied === 'sql-profiles' ? '✓ Copiato' : 'Copia SQL'}
           </button>
         </div>
       </div>

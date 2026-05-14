@@ -7,9 +7,9 @@ import { PRODUCTS } from '@/lib/products'
 interface Order {
   id: string
   created_at: string
-  total: number | null
+  total_eur: number | null
   status: string
-  shipping_name?: string | null
+  customer_name?: string | null
 }
 
 const STATUS_LABEL: Record<string, string> = {
@@ -63,18 +63,18 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     ;(async () => {
-      const [custResult, ordersResult] = await Promise.allSettled([
-        sb.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'customer'),
-        sb.from('orders').select('id,created_at,total,status,shipping_name').order('created_at', { ascending: false }),
-      ])
-      if (custResult.status === 'fulfilled') setCustomers(custResult.value.count ?? 0)
-      if (ordersResult.status === 'fulfilled') {
-        const orders = (ordersResult.value.data || []) as Order[]
-        setPending(orders.filter(o => o.status === 'pending').length)
-        setRevenue(orders.reduce((s, o) => s + (o.total || 0), 0))
-        setRecentOrders(orders.slice(0, 8))
-      }
+      const { data: ordersData } = await sb
+        .from('orders')
+        .select('id,created_at,total_eur,status,customer_name,customer_email')
+        .order('created_at', { ascending: false })
+      const orders = (ordersData || []) as Order[]
+      const uniqueEmails = new Set(orders.map(o => (o as any).customer_email).filter(Boolean))
+      setCustomers(uniqueEmails.size)
+      setPending(orders.filter(o => o.status === 'pending' || o.status === 'paid').length)
+      setRevenue(orders.filter(o => !['cancelled', 'refunded'].includes(o.status)).reduce((s, o) => s + (o.total_eur || 0), 0))
+      setRecentOrders(orders.slice(0, 8))
       setLoading(false)
+
     })()
   }, [])
 
@@ -138,9 +138,9 @@ export default function AdminDashboardPage() {
                 {recentOrders.map(o => (
                   <tr key={o.id}>
                     <td style={tdStyle}><span style={{ fontFamily: 'monospace', fontSize: 12, background: 'var(--surface-2)', padding: '2px 7px', borderRadius: 4 }}>#{o.id.slice(0, 8).toUpperCase()}</span></td>
-                    <td style={{ ...tdStyle, fontSize: 13 }}>{o.shipping_name || '—'}</td>
+                    <td style={{ ...tdStyle, fontSize: 13 }}>{o.customer_name || '—'}</td>
                     <td style={tdStyle}><span style={{ fontSize: 11, fontWeight: 600, padding: '3px 9px', borderRadius: 100, textTransform: 'uppercase', letterSpacing: '0.4px', whiteSpace: 'nowrap', ...(STATUS_STYLE[o.status] || { background: 'var(--surface-2)', color: 'var(--ink-3)' }) }}>{STATUS_LABEL[o.status] || o.status}</span></td>
-                    <td style={{ ...tdStyle, fontWeight: 600 }}>€{(o.total || 0).toFixed(2)}</td>
+                    <td style={{ ...tdStyle, fontWeight: 600 }}>€{(o.total_eur || 0).toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
