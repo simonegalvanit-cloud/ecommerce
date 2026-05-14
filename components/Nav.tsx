@@ -13,7 +13,7 @@ interface NavProps {
 const NAV_LINKS = [
   { href: '/',         label: 'Home',     key: 'home' },
   { href: '/catalogo', label: 'Catalogo', key: 'catalogo' },
-  { href: '/contact',  label: 'Contatti', key: 'contact' },
+  { href: '/contatti', label: 'Contatti', key: 'contatti' },
 ]
 
 export default function Nav({ cartCount = 0, onCartClick, activeLink }: NavProps) {
