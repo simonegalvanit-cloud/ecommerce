@@ -2,24 +2,20 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
-interface OrderProfile {
-  full_name: string | null
-  company: string | null
-}
-
 interface Order {
   id: string
   created_at: string
   total: number | null
   status: string
-  customer_id: string
+  shipping_name: string | null
+  shipping_email: string | null
+  shipping_city: string | null
   notes: string | null
-  profiles: OrderProfile | null
 }
 
 interface OrderItem {
   id: string
-  name: string
+  product_name: string
   quantity: number
   unit_price: number
 }
@@ -65,7 +61,6 @@ export default function OrdersPage() {
   const [statusFilter, setStatusFilter] = useState('')
   const [loading, setLoading]   = useState(true)
 
-  // Detail modal
   const [detailOrder, setDetailOrder]   = useState<Order | null>(null)
   const [detailItems, setDetailItems]   = useState<OrderItem[]>([])
   const [loadingItems, setLoadingItems] = useState(false)
@@ -74,26 +69,32 @@ export default function OrdersPage() {
 
   async function loadOrders() {
     setLoading(true)
-    const { data } = await sb
-      .from('orders')
-      .select('*, profiles(full_name, company)')
-      .order('created_at', { ascending: false })
-    const list = (data || []) as Order[]
-    setAll(list)
-    applyFilter(list, search, statusFilter)
+    try {
+      const { data } = await sb
+        .from('orders')
+        .select('id,created_at,total,status,shipping_name,shipping_email,shipping_city,notes')
+        .order('created_at', { ascending: false })
+      const list = (data || []) as Order[]
+      setAll(list)
+      applyFilter(list, search, statusFilter)
+    } catch {
+      // table may not exist yet
+    }
     setLoading(false)
   }
 
   function applyFilter(list: Order[], q: string, st: string) {
     const f = list.filter(o =>
-      (!q  || o.id.toLowerCase().includes(q.toLowerCase()) || (o.profiles?.full_name || '').toLowerCase().includes(q.toLowerCase()) || (o.profiles?.company || '').toLowerCase().includes(q.toLowerCase())) &&
+      (!q  || o.id.toLowerCase().includes(q.toLowerCase()) ||
+              (o.shipping_name  || '').toLowerCase().includes(q.toLowerCase()) ||
+              (o.shipping_email || '').toLowerCase().includes(q.toLowerCase())) &&
       (!st || o.status === st)
     )
     setFiltered(f)
   }
 
-  function handleSearch(v: string)      { setSearch(v);       applyFilter(all, v, statusFilter) }
-  function handleStatus(v: string)      { setStatusFilter(v); applyFilter(all, search, v) }
+  function handleSearch(v: string) { setSearch(v);       applyFilter(all, v, statusFilter) }
+  function handleStatus(v: string) { setStatusFilter(v); applyFilter(all, search, v) }
 
   async function updateStatus(id: string, status: string) {
     await sb.from('orders').update({ status, updated_at: new Date().toISOString() }).eq('id', id)
@@ -105,24 +106,26 @@ export default function OrdersPage() {
   async function openDetail(order: Order) {
     setDetailOrder(order)
     setLoadingItems(true)
-    const { data } = await sb.from('order_items').select('*').eq('order_id', order.id)
-    setDetailItems((data || []) as OrderItem[])
+    try {
+      const { data } = await sb.from('order_items').select('*').eq('order_id', order.id)
+      setDetailItems((data || []) as OrderItem[])
+    } catch {
+      setDetailItems([])
+    }
     setLoadingItems(false)
   }
-
-  const customerName = (o: Order) => o.profiles?.full_name || o.profiles?.company || '—'
 
   return (
     <div style={{ padding: '28px 32px' }}>
       {/* Header */}
       <div style={{ marginBottom: 20 }}>
         <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-0.4px' }}>Ordini</div>
-        <div style={{ fontSize: 13, color: 'var(--ink-4)', marginTop: 2 }}>Visualizza e aggiorna gli ordini</div>
+        <div style={{ fontSize: 13, color: 'var(--ink-4)', marginTop: 2 }}>Visualizza e aggiorna gli ordini dei clienti</div>
       </div>
 
       {/* Filters */}
       <div style={{ display: 'flex', gap: 10, marginBottom: 16 }}>
-        <input value={search} onChange={e => handleSearch(e.target.value)} placeholder="Cerca per ID o nome cliente…" style={{ ...inputStyle, flex: 1 }} />
+        <input value={search} onChange={e => handleSearch(e.target.value)} placeholder="Cerca per ID, nome o email…" style={{ ...inputStyle, flex: 1 }} />
         <select value={statusFilter} onChange={e => handleStatus(e.target.value)} style={{ ...inputStyle, width: 'auto', minWidth: 180 }}>
           <option value="">Tutti gli stati</option>
           {Object.entries(STATUS_LABEL).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
@@ -136,16 +139,23 @@ export default function OrdersPage() {
         </div>
         {loading ? (
           <div style={{ padding: 48, textAlign: 'center' }}><span className="spinner" /></div>
+        ) : all.length === 0 ? (
+          <div style={{ padding: '56px 24px', textAlign: 'center', color: 'var(--ink-4)' }}>
+            <div style={{ fontSize: 40, marginBottom: 10 }}>📭</div>
+            <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--ink-3)', margin: '0 0 6px' }}>Nessun ordine ancora</p>
+            <p style={{ fontSize: 13, margin: 0, maxWidth: 340, marginLeft: 'auto', marginRight: 'auto' }}>
+              Quando i clienti effettuano un ordine tramite il checkout, appariranno qui in tempo reale.
+            </p>
+          </div>
         ) : filtered.length === 0 ? (
           <div style={{ padding: '48px 24px', textAlign: 'center', color: 'var(--ink-4)' }}>
-            <div style={{ fontSize: 36, marginBottom: 10 }}>📭</div>
-            <p style={{ fontSize: 14 }}>Nessun ordine trovato.</p>
+            <p style={{ fontSize: 14 }}>Nessun risultato per questa ricerca.</p>
           </div>
         ) : (
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr>
-                {['ID', 'Cliente', 'Data', 'Totale', 'Stato', 'Azioni'].map(h => (
+                {['ID', 'Cliente', 'Città', 'Data', 'Totale', 'Stato', 'Azioni'].map(h => (
                   <th key={h} style={thStyle}>{h}</th>
                 ))}
               </tr>
@@ -159,7 +169,11 @@ export default function OrdersPage() {
                   <td style={tdStyle}>
                     <span style={{ fontFamily: 'monospace', fontSize: 12, background: 'var(--surface-2)', padding: '2px 7px', borderRadius: 4 }}>#{o.id.slice(0, 8).toUpperCase()}</span>
                   </td>
-                  <td style={{ ...tdStyle, fontWeight: 500 }}>{customerName(o)}</td>
+                  <td style={{ ...tdStyle }}>
+                    <div style={{ fontWeight: 500 }}>{o.shipping_name || '—'}</div>
+                    {o.shipping_email && <div style={{ fontSize: 12, color: 'var(--ink-4)' }}>{o.shipping_email}</div>}
+                  </td>
+                  <td style={{ ...tdStyle, color: 'var(--ink-3)' }}>{o.shipping_city || '—'}</td>
                   <td style={{ ...tdStyle, fontSize: 12.5, color: 'var(--ink-4)' }}>
                     {new Date(o.created_at).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' })}
                   </td>
@@ -170,7 +184,7 @@ export default function OrdersPage() {
                     </span>
                   </td>
                   <td style={tdStyle}>
-                    <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
                       <button onClick={() => openDetail(o)} style={{ padding: '5px 12px', fontFamily: 'var(--f)', fontSize: 12, fontWeight: 600, background: 'transparent', color: 'var(--ink-3)', border: '1px solid var(--border-2)', borderRadius: 'var(--r)', cursor: 'pointer', whiteSpace: 'nowrap' }}>Dettagli</button>
                       <select
                         defaultValue={o.status}
@@ -190,22 +204,23 @@ export default function OrdersPage() {
       {/* Detail Modal */}
       {detailOrder && (
         <div onClick={e => { if (e.target === e.currentTarget) setDetailOrder(null) }} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
-          <div style={{ background: 'var(--white)', borderRadius: 'var(--r-xl)', width: '100%', maxWidth: 600, maxHeight: '90vh', overflowY: 'auto', boxShadow: 'var(--shadow-lg)' }}>
+          <div style={{ background: 'var(--white)', borderRadius: 'var(--r-xl)', width: '100%', maxWidth: 620, maxHeight: '90vh', overflowY: 'auto', boxShadow: 'var(--shadow-lg)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px 24px', borderBottom: '1px solid var(--border)' }}>
               <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--ink)' }}>Ordine #{detailOrder.id.slice(0, 8).toUpperCase()}</div>
               <button onClick={() => setDetailOrder(null)} style={{ width: 30, height: 30, border: 'none', background: 'var(--surface-2)', borderRadius: '50%', cursor: 'pointer', fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--ink-3)' }}>✕</button>
             </div>
             <div style={{ padding: 24 }}>
-              {/* Order meta */}
-              <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', marginBottom: 20 }}>
+              <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', marginBottom: 20 }}>
                 {[
-                  { lbl: 'Cliente', val: customerName(detailOrder) },
+                  { lbl: 'Cliente', val: detailOrder.shipping_name || '—' },
+                  { lbl: 'Email', val: detailOrder.shipping_email || '—' },
+                  { lbl: 'Città', val: detailOrder.shipping_city || '—' },
                   { lbl: 'Data', val: new Date(detailOrder.created_at).toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' }) },
                   { lbl: 'Totale', val: `€${(detailOrder.total || 0).toFixed(2)}` },
                 ].map(item => (
                   <div key={item.lbl}>
                     <div style={{ fontSize: 11, color: 'var(--ink-4)', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: 3 }}>{item.lbl}</div>
-                    <div style={{ fontWeight: 600 }}>{item.val}</div>
+                    <div style={{ fontWeight: 600, fontSize: 13.5 }}>{item.val}</div>
                   </div>
                 ))}
                 <div>
@@ -222,11 +237,13 @@ export default function OrdersPage() {
                 </div>
               )}
 
-              <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13.5 }}>Articoli</div>
+              <div style={{ fontWeight: 600, marginBottom: 10, fontSize: 13.5 }}>Articoli ordinati</div>
               {loadingItems ? (
                 <div style={{ padding: 24, textAlign: 'center' }}><span className="spinner" /></div>
               ) : detailItems.length === 0 ? (
-                <div style={{ padding: '24px', textAlign: 'center', color: 'var(--ink-4)', fontSize: 13.5 }}>Nessun articolo.</div>
+                <div style={{ padding: 20, textAlign: 'center', color: 'var(--ink-4)', fontSize: 13.5, background: 'var(--surface)', borderRadius: 'var(--r)' }}>
+                  Nessun articolo disponibile.
+                </div>
               ) : (
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
@@ -239,7 +256,7 @@ export default function OrdersPage() {
                   <tbody>
                     {detailItems.map(item => (
                       <tr key={item.id}>
-                        <td style={{ padding: '10px 12px', fontSize: 13.5, borderBottom: '1px solid var(--border)', fontWeight: 500 }}>{item.name}</td>
+                        <td style={{ padding: '10px 12px', fontSize: 13.5, borderBottom: '1px solid var(--border)', fontWeight: 500 }}>{item.product_name}</td>
                         <td style={{ padding: '10px 12px', fontSize: 13.5, borderBottom: '1px solid var(--border)' }}>{item.quantity}</td>
                         <td style={{ padding: '10px 12px', fontSize: 13.5, borderBottom: '1px solid var(--border)' }}>€{Number(item.unit_price).toFixed(2)}</td>
                         <td style={{ padding: '10px 12px', fontSize: 13.5, borderBottom: '1px solid var(--border)', fontWeight: 600 }}>€{(item.quantity * item.unit_price).toFixed(2)}</td>
