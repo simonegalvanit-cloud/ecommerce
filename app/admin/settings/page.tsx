@@ -1,6 +1,30 @@
 'use client'
 import { useState } from 'react'
 
+const SQL_ORDERS = `create table if not exists orders (
+  id                   uuid primary key default gen_random_uuid(),
+  stripe_session_id    text unique not null,
+  stripe_payment_intent text,
+  customer_email       text not null,
+  customer_name        text,
+  customer_phone       text,
+  address              text,
+  city                 text,
+  zip                  text,
+  province             text,
+  notes                text,
+  total_eur            numeric(10,2) not null default 0,
+  status               text not null default 'paid'
+                         check (status in ('paid','refunded','cancelled')),
+  created_at           timestamptz not null default now()
+);
+
+alter table orders enable row level security;
+
+-- Only the service role (webhook) can insert/update orders
+create policy "Service role manages orders"
+  on orders for all using (true) with check (true);`
+
 const SQL_PRODUCTS = `create table if not exists products (
   id         uuid primary key default gen_random_uuid(),
   key        text unique not null,
@@ -142,7 +166,22 @@ export default function SettingsPage() {
         ))}
       </div>
 
-      {/* SQL setup */}
+      {/* SQL — orders */}
+      <div style={sectionStyle}>
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>Setup database — Tabella ordini</div>
+          <div style={{ fontSize: 12.5, color: 'var(--ink-4)', marginTop: 3 }}>Necessaria per salvare gli ordini ricevuti tramite Stripe</div>
+        </div>
+        <div style={{ padding: 20 }}>
+          <pre style={{ background: '#0f1117', color: '#e2e8f0', padding: '16px 20px', borderRadius: 10, fontSize: 12, lineHeight: 1.7, overflowX: 'auto', margin: 0, fontFamily: 'monospace' }}>{SQL_ORDERS}</pre>
+          <button onClick={() => { navigator.clipboard.writeText(SQL_ORDERS); setCopied('sql-orders'); setTimeout(() => setCopied(''), 2000) }}
+            style={{ marginTop: 12, padding: '7px 16px', fontFamily: 'var(--f)', fontSize: 13, fontWeight: 600, background: copied === 'sql-orders' ? 'var(--green-bg)' : 'var(--surface)', color: copied === 'sql-orders' ? 'var(--green)' : 'var(--ink-3)', border: '1px solid var(--border-2)', borderRadius: 'var(--r)', cursor: 'pointer' }}>
+            {copied === 'sql-orders' ? '✓ Copiato' : 'Copia SQL'}
+          </button>
+        </div>
+      </div>
+
+      {/* SQL — products */}
       <div style={sectionStyle}>
         <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
           <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>Setup database — Tabella prodotti</div>
