@@ -97,7 +97,7 @@ function PaymentForm({ siteUrl, onBack }: { siteUrl: string; onBack: () => void 
 
   return (
     <form onSubmit={handlePay} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      <PaymentElement options={{ layout: 'tabs' }} />
+      <PaymentElement options={{ layout: 'tabs', wallets: { applePay: 'auto', googlePay: 'auto' } }} />
 
       {error && (
         <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 10, padding: '12px 16px', fontSize: 13.5, color: '#dc2626' }}>
