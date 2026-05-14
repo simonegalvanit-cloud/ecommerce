@@ -11,6 +11,15 @@ function fmt(n: number) {
 
 const IVA_RATE = 0.22
 
+// ─── Shipping config ──────────────────────────────────────────────────────────
+// Currently a flat rate. TODO: replace with weight/qty-based logic once each
+// product has a weight field. Example future signature:
+//   calculateShipping(cart: CartItem[]): number
+const SHIPPING_RATE = 10.00   // EUR flat rate
+function calculateShipping(/* cart */): number {
+  return SHIPPING_RATE
+}
+
 export default function CheckoutPage() {
   const { cart, cartTotal, clearCart } = useCart()
   const router = useRouter()
@@ -22,8 +31,9 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState<Partial<typeof form>>({})
 
-  const iva    = cartTotal * IVA_RATE
-  const total  = cartTotal + iva
+  const shipping = calculateShipping()
+  const iva      = cartTotal * IVA_RATE
+  const total    = cartTotal + iva + shipping
 
   function set(field: keyof typeof form, value: string) {
     setForm(f => ({ ...f, [field]: value }))
@@ -172,11 +182,8 @@ export default function CheckoutPage() {
               <span className="checkout-spinner" />
             ) : (
               <>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-                  <line x1="1" y1="10" x2="23" y2="10"/>
-                </svg>
-                Paga €{fmt(total)} con Stripe
+                Procedi al pagamento
+                <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 16 16" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9 4 13 8 9 12"/></svg>
               </>
             )}
           </button>
@@ -213,9 +220,9 @@ export default function CheckoutPage() {
               <span>IVA 22%</span>
               <span>€{fmt(iva)}</span>
             </div>
-            <div className="checkout-summary-row checkout-summary-row-shipping">
+            <div className="checkout-summary-row">
               <span>Spedizione</span>
-              <span className="checkout-shipping-tag">Calcolata al passo successivo</span>
+              <span>€{fmt(shipping)}</span>
             </div>
 
             <div className="checkout-summary-divider" />
