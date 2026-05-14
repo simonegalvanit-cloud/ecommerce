@@ -157,22 +157,27 @@ function CheckoutInner() {
   // Pre-fill from Supabase profile if user is logged in
   useEffect(() => {
     const sb = createClient()
-    sb.auth.getSession().then(({ data: { session } }) => {
-      if (!session) return
-      const email = session.user.email ?? ''
-      sb.from('profiles').select('full_name,phone,address,city,postal_code').eq('id', session.user.id).single().then(({ data }) => {
-        const nameParts = (data?.full_name || '').split(' ')
-        setForm(f => ({
-          ...f,
-          email,
-          firstName: f.firstName || nameParts[0] || '',
-          lastName:  f.lastName  || nameParts.slice(1).join(' ') || '',
-          phone:     f.phone     || data?.phone       || '',
-          address:   f.address   || data?.address     || '',
-          city:      f.city      || data?.city        || '',
-          zip:       f.zip       || data?.postal_code || '',
-        }))
-      })
+    sb.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return
+      setForm(f => ({ ...f, email: f.email || user.email || '' }))
+      sb.from('profiles')
+        .select('full_name,phone,address,city,postal_code')
+        .eq('id', user.id)
+        .single()
+        .then(({ data }) => {
+          if (!data) return
+          const parts = (data.full_name || '').trim().split(' ')
+          setForm(f => ({
+            ...f,
+            email:     f.email     || user.email      || '',
+            firstName: f.firstName || parts[0]         || '',
+            lastName:  f.lastName  || parts.slice(1).join(' ') || '',
+            phone:     f.phone     || data.phone       || '',
+            address:   f.address   || data.address     || '',
+            city:      f.city      || data.city        || '',
+            zip:       f.zip       || data.postal_code || '',
+          }))
+        })
     })
   }, [])
 
