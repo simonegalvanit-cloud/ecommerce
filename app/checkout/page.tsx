@@ -20,7 +20,8 @@ const IVA_RATE = 0.22
 const SHIPPING_RATE = 10.00
 function calculateShipping(): number { return SHIPPING_RATE }
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
+const stripeKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? ''
+const stripePromise = stripeKey ? loadStripe(stripeKey) : null
 
 const stripeAppearance = {
   theme: 'stripe' as const,
@@ -343,13 +344,17 @@ function CheckoutInner() {
                 </button>
               </div>
 
-              {clientSecret && (
+              {clientSecret && stripePromise ? (
                 <Elements
                   stripe={stripePromise}
                   options={{ clientSecret, appearance: stripeAppearance, locale: 'it' }}>
                   <PaymentForm siteUrl={siteUrl} onBack={() => setStep(1)} />
                 </Elements>
-              )}
+              ) : clientSecret && !stripePromise ? (
+                <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 10, padding: '16px', fontSize: 13.5, color: '#dc2626' }}>
+                  Configurazione Stripe mancante. Aggiungere NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY nelle variabili d&apos;ambiente.
+                </div>
+              ) : null}
             </div>
           )}
         </div>
