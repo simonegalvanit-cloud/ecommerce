@@ -32,13 +32,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
+    // Bypass: hardcoded admin token from /admin-panel
+    if (sessionStorage.getItem('bp_admin_bypass') === 'briopack_admin_2025') {
+      setAdminName('Simone')
+      setReady(true)
+      return
+    }
+
+    // Normal Supabase role check
     ;(async () => {
       const { data: { session } } = await sb.auth.getSession()
-      if (!session) { router.push('/login'); return }
+      if (!session) { router.push('/admin-panel'); return }
 
       const { data: profile } = await sb.from('profiles').select('role,full_name').eq('id', session.user.id).single()
       if (!profile || profile.role !== 'admin') {
-        router.push('/account')
+        router.push('/admin-panel')
         return
       }
       setAdminName(profile.full_name || session.user.email || 'Admin')
@@ -47,6 +55,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, [])
 
   async function handleLogout() {
+    sessionStorage.removeItem('bp_admin_bypass')
     await sb.auth.signOut()
     router.push('/')
   }
