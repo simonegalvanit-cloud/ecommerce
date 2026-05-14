@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 const TOKEN_KEY = 'bp_admin_bypass'
-const TOKEN_VAL = 'briopack_admin_2025'
 
 export async function POST(req: NextRequest) {
   const { email, password } = await req.json()
@@ -25,7 +24,11 @@ export async function POST(req: NextRequest) {
       name: process.env.ADMIN_NAME || 'Admin',
     })
     // httpOnly so JS can't read the cookie — middleware validates it server-side
-    res.cookies.set(TOKEN_KEY, TOKEN_VAL, {
+    const tokenVal = process.env.ADMIN_SESSION_TOKEN
+    if (!tokenVal) {
+      return NextResponse.json({ error: 'ADMIN_SESSION_TOKEN not configured.' }, { status: 500 })
+    }
+    res.cookies.set(TOKEN_KEY, tokenVal, {
       httpOnly: true,
       sameSite: 'strict',
       path: '/',
