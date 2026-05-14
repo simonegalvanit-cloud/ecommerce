@@ -25,21 +25,23 @@ interface Order {
 }
 
 const STATUS_LABEL: Record<string, string> = {
-  pending: 'In attesa',
-  confirmed: 'Confermato',
+  pending:    'In attesa',
+  paid:       'Pagato',
   processing: 'In lavorazione',
-  shipped: 'Spedito',
-  delivered: 'Consegnato',
-  cancelled: 'Annullato',
+  shipped:    'Spedito',
+  delivered:  'Consegnato',
+  cancelled:  'Annullato',
+  refunded:   'Rimborsato',
 }
 
 const STATUS_BADGE: Record<string, string> = {
   pending:    'badge badge-yellow',
-  confirmed:  'badge badge-blue',
+  paid:       'badge badge-green',
   processing: 'badge badge-blue',
   shipped:    'badge badge-orange',
   delivered:  'badge badge-green',
   cancelled:  'badge badge-red',
+  refunded:   'badge badge-gray',
 }
 
 function StatusBadge({ status }: { status: string }) {
