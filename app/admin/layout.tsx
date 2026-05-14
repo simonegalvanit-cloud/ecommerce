@@ -40,8 +40,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    if (sessionStorage.getItem('bp_admin_bypass') === 'briopack_admin_2025') {
-      setAdminName('Simone')
+    // Cookie is httpOnly — if middleware allowed through, bypass is valid
+    const storedName = sessionStorage.getItem('bp_admin_name')
+    if (storedName) {
+      setAdminName(storedName)
       setReady(true)
       return
     }
@@ -56,8 +58,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }, [])
 
   async function handleLogout() {
-    sessionStorage.removeItem('bp_admin_bypass')
-    document.cookie = 'bp_admin_bypass=; path=/; max-age=0'
+    sessionStorage.removeItem('bp_admin_name')
+    await fetch('/api/admin-logout', { method: 'POST' })
     await sb.auth.signOut()
     router.push('/')
   }

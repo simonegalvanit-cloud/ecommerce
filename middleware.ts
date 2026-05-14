@@ -31,9 +31,9 @@ export async function middleware(request: NextRequest) {
   }
 
   if (path.startsWith('/admin')) {
-    // Allow hardcoded bypass token (set by /admin-panel login)
+    // Allow bypass token set by /admin-panel login (validated against ADMIN_SESSION_TOKEN env var)
     const bypassCookie = request.cookies.get('bp_admin_bypass')
-    if (bypassCookie?.value === 'briopack_admin_2025') {
+    if (bypassCookie?.value && bypassCookie.value === process.env.ADMIN_SESSION_TOKEN) {
       return supabaseResponse
     }
 

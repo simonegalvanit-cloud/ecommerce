@@ -122,8 +122,8 @@ export default function SettingsPage() {
         </div>
         {[
           { label: 'URL pannello admin', key: 'admin_url',  value: '/admin-panel' },
-          { label: 'Email admin',        key: 'admin_email', value: 'simone@gmail.com' },
-          { label: 'Token sessione',     key: 'token_key',  value: 'bp_admin_bypass' },
+          { label: 'Email admin',        key: 'admin_email', value: 'ADMIN_EMAIL (env var)' },
+          { label: 'Token sessione',     key: 'token_key',  value: 'ADMIN_SESSION_TOKEN (env var)' },
         ].map((row, idx, arr) => (
           <div key={row.key} style={{ ...rowStyle, borderBottom: idx < arr.length - 1 ? '1px solid var(--border)' : 'none' }}>
             <div style={labelStyle}>
