@@ -1,9 +1,10 @@
 'use client'
-import { useState, FormEvent, Suspense } from 'react'
+import { useState, useEffect, FormEvent, Suspense } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useCart } from '@/lib/cart-context'
+import { createClient } from '@/lib/supabase/client'
 import { loadStripe } from '@stripe/stripe-js'
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
 
@@ -152,6 +153,28 @@ function CheckoutInner() {
     firstName: '', lastName: '', email: '', phone: '',
     address: '', city: '', zip: '', province: '', notes: '',
   })
+
+  // Pre-fill from Supabase profile if user is logged in
+  useEffect(() => {
+    const sb = createClient()
+    sb.auth.getSession().then(({ data: { session } }) => {
+      if (!session) return
+      const email = session.user.email ?? ''
+      sb.from('profiles').select('full_name,phone,address,city,postal_code').eq('id', session.user.id).single().then(({ data }) => {
+        const nameParts = (data?.full_name || '').split(' ')
+        setForm(f => ({
+          ...f,
+          email,
+          firstName: f.firstName || nameParts[0] || '',
+          lastName:  f.lastName  || nameParts.slice(1).join(' ') || '',
+          phone:     f.phone     || data?.phone       || '',
+          address:   f.address   || data?.address     || '',
+          city:      f.city      || data?.city        || '',
+          zip:       f.zip       || data?.postal_code || '',
+        }))
+      })
+    })
+  }, [])
 
   const shipping = calculateShipping()
   const iva      = cartTotal * IVA_RATE

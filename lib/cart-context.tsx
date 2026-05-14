@@ -1,5 +1,5 @@
 'use client'
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react'
+import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react'
 
 export interface CartItem {
   id: string
@@ -24,10 +24,29 @@ interface CartCtx {
 }
 
 const CartContext = createContext<CartCtx | null>(null)
+const STORAGE_KEY = 'bp_cart'
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([])
   const [cartOpen, setCartOpen] = useState(false)
+  const [hydrated, setHydrated] = useState(false)
+
+  // Restore cart from localStorage on first mount
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY)
+      if (stored) setCart(JSON.parse(stored))
+    } catch {}
+    setHydrated(true)
+  }, [])
+
+  // Persist cart to localStorage on every change (after hydration)
+  useEffect(() => {
+    if (!hydrated) return
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cart))
+    } catch {}
+  }, [cart, hydrated])
 
   const addItem = useCallback((item: CartItem) => {
     setCart(prev => {
@@ -50,7 +69,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setCart(prev => prev.map(i => i.id === id ? { ...i, qty: Math.max(1, i.qty + delta) } : i))
   }, [])
 
-  const clearCart = useCallback(() => setCart([]), [])
+  const clearCart = useCallback(() => {
+    setCart([])
+    try { localStorage.removeItem(STORAGE_KEY) } catch {}
+  }, [])
 
   const cartCount = cart.reduce((s, i) => s + i.qty, 0)
   const cartTotal = cart.reduce((s, i) => s + i.unitPrice * i.qty + i.setupCost, 0)

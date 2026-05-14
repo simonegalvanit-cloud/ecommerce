@@ -20,7 +20,7 @@ interface Profile {
 interface Order {
   id: string
   created_at: string
-  total: number | null
+  total_eur: number | null
   status: string
 }
 
@@ -111,11 +111,11 @@ export default function AccountPage() {
         setCountry(prof.country || 'Italia')
       }
 
-      const { data: ord } = await sb.from('orders').select('*').eq('customer_id', session.user.id).order('created_at', { ascending: false })
+      const { data: ord } = await sb.from('orders').select('*').eq('customer_email', session.user.email ?? '').order('created_at', { ascending: false })
       const all = (ord || []) as Order[]
       setOrders(all)
       setStatOrders(all.length)
-      setStatSpent(all.reduce((s, o) => s + (o.total || 0), 0))
+      setStatSpent(all.reduce((s, o) => s + (o.total_eur || 0), 0))
       setStatPending(all.filter(o => ['pending', 'confirmed', 'processing', 'shipped'].includes(o.status)).length)
     })()
   }, [])
@@ -123,7 +123,7 @@ export default function AccountPage() {
   async function loadOrders() {
     if (loadingOrders) return
     setLoadingOrders(true)
-    const { data } = await sb.from('orders').select('*').eq('customer_id', userId).order('created_at', { ascending: false })
+    const { data } = await sb.from('orders').select('*').eq('customer_email', email).order('created_at', { ascending: false })
     setOrders((data || []) as Order[])
     setLoadingOrders(false)
   }
@@ -411,7 +411,7 @@ export default function AccountPage() {
                             <span className="td-mono">#{o.id.slice(0, 8).toUpperCase()}</span>
                           </td>
                           <td style={{ color: 'var(--ink-3)', fontSize: 13 }}>{formatDate(o.created_at)}</td>
-                          <td style={{ fontWeight: 700, color: 'var(--ink)' }}>€{(o.total || 0).toFixed(2)}</td>
+                          <td style={{ fontWeight: 700, color: 'var(--ink)' }}>€{(o.total_eur || 0).toFixed(2)}</td>
                           <td><StatusBadge status={o.status} /></td>
                         </tr>
                       ))}
@@ -767,7 +767,7 @@ function OrderList({ orders }: { orders: Order[] }) {
         >
           <span className="td-mono">#{o.id.slice(0, 8).toUpperCase()}</span>
           <span style={{ fontSize: 12.5, color: 'var(--ink-4)', flex: 1 }}>{formatDate(o.created_at)}</span>
-          <span style={{ fontSize: 15, fontWeight: 800, color: 'var(--ink)' }}>€{(o.total || 0).toFixed(2)}</span>
+          <span style={{ fontSize: 15, fontWeight: 800, color: 'var(--ink)' }}>€{(o.total_eur || 0).toFixed(2)}</span>
           <StatusBadge status={o.status} />
         </div>
       ))}

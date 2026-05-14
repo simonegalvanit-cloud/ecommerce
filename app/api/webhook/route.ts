@@ -71,6 +71,13 @@ async function handleOrderPaid(pi: Stripe.PaymentIntent) {
   const fromEmail = process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev'
   const toEmail   = m.customer_email
 
+  if (!resendKey) {
+    console.error('RESEND_API_KEY not set — emails not sent')
+  }
+  if (!toEmail) {
+    console.error('customer_email missing from PaymentIntent metadata — customer email not sent')
+  }
+
   if (resendKey && toEmail) {
     const resend = new Resend(resendKey)
     const total  = (pi.amount / 100).toLocaleString('it-IT', { minimumFractionDigits: 2 })
@@ -106,7 +113,7 @@ async function handleOrderPaid(pi: Stripe.PaymentIntent) {
           </div>
         </div>
       `,
-    })
+    }).catch((err: unknown) => console.error('Customer email send failed:', err))
   }
 
   // Notify the store owner
@@ -129,6 +136,6 @@ async function handleOrderPaid(pi: Stripe.PaymentIntent) {
           <p><strong>Payment Intent:</strong> <code>${pi.id}</code></p>
         </div>
       `,
-    })
+    }).catch((err: unknown) => console.error('Owner email send failed:', err))
   }
 }
