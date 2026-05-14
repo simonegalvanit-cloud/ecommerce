@@ -52,25 +52,26 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [userId, setUserId]     = useState<string | null>(null)
   const syncTimer               = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  // ── Restore anonymous cart immediately on mount ─────────────────────────────
+  useEffect(() => {
+    setCart(readLocal())
+  }, [])
+
   // ── Auth state ──────────────────────────────────────────────────────────────
   useEffect(() => {
     const sb = createClient()
 
-    const { data: { subscription } } = sb.auth.onAuthStateChange(async (event, session) => {
+    const { data: { subscription } } = sb.auth.onAuthStateChange((event, session) => {
       if (event === 'INITIAL_SESSION') {
         if (session?.user) {
-          // Page loaded while already logged in — load remote cart, replace local
           setUserId(session.user.id)
-          await loadRemote(session.user.id)
-        } else {
-          // Anonymous — restore from localStorage
-          setCart(readLocal())
+          loadRemote(session.user.id)   // fire-and-forget — do NOT await in callback
         }
+        // anonymous: cart already set from localStorage above
       } else if (event === 'SIGNED_IN' && session?.user) {
-        // User just logged in — merge any local (anonymous) cart into their remote cart
         const localBefore = readLocal()
         setUserId(session.user.id)
-        await mergeWithRemote(session.user.id, localBefore)
+        mergeWithRemote(session.user.id, localBefore)   // fire-and-forget
       } else if (event === 'SIGNED_OUT') {
         setUserId(null)
         setCart([])
