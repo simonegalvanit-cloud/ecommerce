@@ -1,11 +1,11 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useCart } from '@/lib/cart-context'
 
-export default function ConfermaPage() {
+function ConfermaInner() {
   const params   = useSearchParams()
   const router   = useRouter()
   const { clearCart } = useCart()
@@ -14,7 +14,6 @@ export default function ConfermaPage() {
 
   useEffect(() => {
     if (!sessionId) { router.replace('/'); return }
-    // Clear cart now that payment is confirmed
     clearCart()
     setReady(true)
   }, [sessionId])
@@ -75,5 +74,13 @@ export default function ConfermaPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function ConfermaPage() {
+  return (
+    <Suspense fallback={null}>
+      <ConfermaInner />
+    </Suspense>
   )
 }
