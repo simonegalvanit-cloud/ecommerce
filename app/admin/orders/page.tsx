@@ -142,9 +142,9 @@ function exportReport(orders: Order[], dateFrom: string, dateTo: string) {
 
   <!-- Header -->
   <div style="background:linear-gradient(135deg,#c45a14,#e8721a);padding:28px 40px;display:flex;justify-content:space-between;align-items:center;">
-    <div>
-      <div style="color:#fff;font-size:28px;font-weight:800;letter-spacing:-0.8px;">BRIOPACK</div>
-      <div style="color:rgba(255,255,255,0.8);font-size:13px;margin-top:2px;">Report Ordini</div>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <img src="${window.location.origin}/logo.png" alt="Briopack" style="height:32px;width:auto;filter:brightness(0) invert(1);" />
+      <div style="color:rgba(255,255,255,0.7);font-size:13px;border-left:1px solid rgba(255,255,255,0.3);padding-left:14px;">Report Ordini</div>
     </div>
     <div style="text-align:right;">
       <div style="color:#fff;font-size:13px;opacity:0.9;">${dateLabel}</div>
@@ -213,6 +213,7 @@ export default function OrdersPage() {
   const [dateTo, setDateTo]   = useState('')
   const [loading, setLoading] = useState(true)
   const [updatingId, setUpdatingId] = useState<string | null>(null)
+  const [statusError, setStatusError] = useState<string | null>(null)
 
   const [detail, setDetail] = useState<Order | null>(null)
 
@@ -252,6 +253,7 @@ export default function OrdersPage() {
 
   async function updateStatus(order: Order, status: string) {
     setUpdatingId(order.id)
+    setStatusError(null)
     try {
       const res = await fetch('/api/admin/order-status', {
         method: 'POST',
@@ -269,7 +271,17 @@ export default function OrdersPage() {
         setAll(updated)
         applyFilter(updated, search, statusFilter, dateFrom, dateTo)
         if (detail?.id === order.id) setDetail({ ...detail, status })
+      } else {
+        const body = await res.json().catch(() => ({}))
+        const msg = body.error || `Errore ${res.status}`
+        setStatusError(msg.includes('orders_status_check')
+          ? 'Vai in Impostazioni e copia il SQL "Fix Constraint stato ordini", poi eseguilo in Supabase.'
+          : msg)
+        setTimeout(() => setStatusError(null), 6000)
       }
+    } catch {
+      setStatusError('Errore di rete. Riprova.')
+      setTimeout(() => setStatusError(null), 4000)
     } finally {
       setUpdatingId(null)
     }
@@ -290,6 +302,14 @@ export default function OrdersPage() {
           Esporta Report ({filtered.length})
         </button>
       </div>
+
+      {/* Status update error banner */}
+      {statusError && (
+        <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 8, padding: '10px 16px', marginBottom: 14, fontSize: 13, color: '#dc2626', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+          {statusError}
+        </div>
+      )}
 
       {/* Filters */}
       <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
