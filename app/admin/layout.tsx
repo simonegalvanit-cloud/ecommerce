@@ -5,21 +5,29 @@ import Image from 'next/image'
 import { useRouter, usePathname } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
-type NavItem = { href: string; label: string; icon: string; external?: boolean }
+const IcGrid = () => <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 16 16"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+const IcBox = () => <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 16 16"><path d="M13.5 4.5L8 1.5 2.5 4.5v7L8 14.5l5.5-3v-7z"/><path d="M8 1.5v13M2.5 4.5l5.5 3 5.5-3"/></svg>
+const IcClipboard = () => <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="12" rx="1"/><path d="M5 3V2a1 1 0 011-1h4a1 1 0 011 1v1M5 8h6M5 11h4"/></svg>
+const IcUsers = () => <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 16 16"><circle cx="6" cy="5" r="3"/><path d="M1 14c0-3 2-5 5-5s5 2 5 5"/><path d="M11 2c1.7 0 3 1.3 3 3s-1.3 3-3 3"/><path d="M15 14c0-2-1-4-3-4.5"/></svg>
+const IcSettings = () => <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 16 16"><circle cx="8" cy="8" r="2.5"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41"/></svg>
+const IcExternalLink = () => <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 16 16"><path d="M7 3H3a1 1 0 00-1 1v9a1 1 0 001 1h9a1 1 0 001-1V9"/><path d="M10 1h5v5"/><path d="M15 1L8 8"/></svg>
+const IcLogout = () => <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" viewBox="0 0 16 16"><path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M11 5l4 3-4 3M15 8H7"/></svg>
+
+type NavItem  = { href: string; label: string; icon: React.ReactElement; external?: boolean }
 type NavGroup = { section: string; items: NavItem[] }
 
 const NAV_ITEMS: NavGroup[] = [
   { section: 'Principale', items: [
-    { href: '/admin',          label: 'Dashboard', icon: '⊞' },
-    { href: '/admin/products', label: 'Prodotti',  icon: '📦' },
-    { href: '/admin/orders',   label: 'Ordini',    icon: '🗒️' },
+    { href: '/admin',          label: 'Dashboard', icon: <IcGrid /> },
+    { href: '/admin/products', label: 'Prodotti',  icon: <IcBox /> },
+    { href: '/admin/orders',   label: 'Ordini',    icon: <IcClipboard /> },
   ]},
   { section: 'Gestione', items: [
-    { href: '/admin/customers', label: 'Clienti',      icon: '👥' },
-    { href: '/admin/settings',  label: 'Impostazioni', icon: '⚙️' },
+    { href: '/admin/customers', label: 'Clienti',      icon: <IcUsers /> },
+    { href: '/admin/settings',  label: 'Impostazioni', icon: <IcSettings /> },
   ]},
   { section: 'Negozio', items: [
-    { href: '/', label: 'Vai al negozio', icon: '↗', external: true },
+    { href: '/', label: 'Vai al negozio', icon: <IcExternalLink />, external: true },
   ]},
 ]
 
@@ -32,23 +40,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    // Bypass: hardcoded admin token from /admin-panel
     if (sessionStorage.getItem('bp_admin_bypass') === 'briopack_admin_2025') {
       setAdminName('Simone')
       setReady(true)
       return
     }
-
-    // Normal Supabase role check
     ;(async () => {
       const { data: { session } } = await sb.auth.getSession()
       if (!session) { router.push('/admin-panel'); return }
-
       const { data: profile } = await sb.from('profiles').select('role,full_name').eq('id', session.user.id).single()
-      if (!profile || profile.role !== 'admin') {
-        router.push('/admin-panel')
-        return
-      }
+      if (!profile || profile.role !== 'admin') { router.push('/admin-panel'); return }
       setAdminName(profile.full_name || session.user.email || 'Admin')
       setReady(true)
     })()
@@ -69,37 +70,43 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     )
   }
 
+  const initials = adminName.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
+
   return (
     <div style={{ display: 'flex', minHeight: '100vh', fontFamily: 'var(--f)' }}>
       {/* Sidebar */}
-      <aside style={{ width: 220, flexShrink: 0, background: '#1a1a1a', display: 'flex', flexDirection: 'column', height: '100vh', position: 'sticky', top: 0, overflowY: 'auto' }}>
+      <aside style={{ width: 224, flexShrink: 0, background: '#161616', display: 'flex', flexDirection: 'column', height: '100vh', position: 'sticky', top: 0, overflowY: 'auto', borderRight: '1px solid rgba(255,255,255,0.06)' }}>
         {/* Logo */}
-        <div style={{ padding: '20px 20px 16px', borderBottom: '1px solid rgba(255,255,255,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Image src="/logo.png" alt="Briopack" width={100} height={24} style={{ height: 24, width: 'auto', filter: 'brightness(0) invert(1)' }} />
-          <span style={{ fontSize: 9, fontWeight: 600, background: 'var(--accent)', color: '#fff', padding: '2px 6px', borderRadius: 3, letterSpacing: '0.5px', textTransform: 'uppercase', flexShrink: 0 }}>Admin</span>
+        <div style={{ padding: '18px 20px 14px', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Image src="/logo.png" alt="Briopack" width={100} height={24} style={{ height: 22, width: 'auto', filter: 'brightness(0) invert(1)' }} />
+          <span style={{ fontSize: 9, fontWeight: 700, background: 'var(--accent)', color: '#fff', padding: '2px 7px', borderRadius: 4, letterSpacing: '0.6px', textTransform: 'uppercase', flexShrink: 0 }}>Admin</span>
         </div>
 
         {/* Nav */}
-        <nav style={{ flex: 1, padding: '12px 8px' }}>
+        <nav style={{ flex: 1, padding: '10px 8px' }}>
           {NAV_ITEMS.map(group => (
-            <div key={group.section}>
-              <div style={{ fontSize: 9.5, fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', padding: '12px 12px 6px' }}>{group.section}</div>
+            <div key={group.section} style={{ marginBottom: 4 }}>
+              <div style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', color: 'rgba(255,255,255,0.25)', padding: '10px 12px 5px' }}>{group.section}</div>
               {group.items.map(item => {
                 const isActive = item.href !== '/' && (item.href === '/admin' ? pathname === '/admin' : pathname.startsWith(item.href))
                 if (item.external) {
                   return (
-                    <a key={item.href} href="/" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', borderRadius: 'var(--r)', fontSize: 13, fontWeight: 500, color: 'rgba(255,255,255,0.6)', cursor: 'pointer', transition: 'all .18s', textDecoration: 'none' }}
-                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = '#2e2e2e'; (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.9)' }}
-                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.6)' }}>
-                      <span style={{ fontSize: 14 }}>{item.icon}</span>
-                      <span>{item.label}</span>
+                    <a key={item.href} href="/" target="_blank" rel="noopener noreferrer"
+                      style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '8px 12px', borderRadius: 8, fontSize: 13, fontWeight: 500, color: 'rgba(255,255,255,0.45)', cursor: 'pointer', transition: 'all .15s', textDecoration: 'none' }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.06)'; (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.8)' }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.45)' }}>
+                      <span style={{ opacity: 0.6 }}>{item.icon}</span>
+                      {item.label}
                     </a>
                   )
                 }
                 return (
-                  <Link key={item.href} href={item.href} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 12px', borderRadius: 'var(--r)', fontSize: 13, fontWeight: isActive ? 600 : 500, color: isActive ? '#fff' : 'rgba(255,255,255,0.6)', background: isActive ? 'var(--accent)' : 'transparent', cursor: 'pointer', transition: 'all .18s', textDecoration: 'none' }}>
-                    <span style={{ fontSize: 14 }}>{item.icon}</span>
-                    <span>{item.label}</span>
+                  <Link key={item.href} href={item.href}
+                    style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '8px 12px', borderRadius: 8, fontSize: 13, fontWeight: isActive ? 600 : 500, color: isActive ? '#fff' : 'rgba(255,255,255,0.5)', background: isActive ? 'rgba(232,114,26,0.18)' : 'transparent', cursor: 'pointer', transition: 'all .15s', textDecoration: 'none' }}
+                    onMouseEnter={e => { if (!isActive) { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.06)'; (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.8)' }}}
+                    onMouseLeave={e => { if (!isActive) { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.5)' }}}>
+                    <span style={{ color: isActive ? 'var(--accent)' : undefined }}>{item.icon}</span>
+                    {item.label}
                   </Link>
                 )
               })}
@@ -107,20 +114,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           ))}
         </nav>
 
-        {/* Bottom user + logout */}
-        <div style={{ padding: '12px 8px 16px', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 'var(--r)' }}>
-            <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, flexShrink: 0 }}>👤</div>
+        {/* Bottom: user + logout */}
+        <div style={{ padding: '10px 8px 14px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '8px 12px', borderRadius: 8, marginBottom: 4 }}>
+            <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: '#fff', flexShrink: 0 }}>{initials}</div>
             <div style={{ minWidth: 0 }}>
               <div style={{ fontSize: 12.5, fontWeight: 600, color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{adminName}</div>
-              <div style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.4)' }}>Amministratore</div>
+              <div style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.3)' }}>Amministratore</div>
             </div>
           </div>
-          <button onClick={handleLogout} style={{ width: '100%', padding: '8px 12px', fontFamily: 'var(--f)', fontSize: 12.5, fontWeight: 500, color: 'rgba(255,255,255,0.5)', background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 'var(--r)', cursor: 'pointer', transition: 'all .18s', marginTop: 6, display: 'flex', alignItems: 'center', gap: 8 }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#fff'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.25)' }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.5)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.1)' }}>
-            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M11 5l4 3-4 3M15 8H7"/></svg>
-            <span>Esci</span>
+          <button onClick={handleLogout}
+            style={{ width: '100%', padding: '7px 12px', fontFamily: 'var(--f)', fontSize: 12.5, fontWeight: 500, color: 'rgba(255,255,255,0.4)', background: 'transparent', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8, cursor: 'pointer', transition: 'all .15s', display: 'flex', alignItems: 'center', gap: 7 }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#fff'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.2)' }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.4)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.08)' }}>
+            <IcLogout />
+            Esci
           </button>
         </div>
       </aside>

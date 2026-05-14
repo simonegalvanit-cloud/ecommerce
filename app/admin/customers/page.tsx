@@ -94,9 +94,9 @@ export default function CustomersPage() {
         {loading ? (
           <div style={{ padding: 48, textAlign: 'center' }}><span className="spinner" /></div>
         ) : filtered.length === 0 ? (
-          <div style={{ padding: '48px 24px', textAlign: 'center', color: 'var(--ink-4)' }}>
-            <div style={{ fontSize: 36, marginBottom: 10 }}>👥</div>
-            <p style={{ fontSize: 14 }}>Nessun cliente trovato.</p>
+          <div style={{ padding: '56px 24px', textAlign: 'center', color: 'var(--ink-4)' }}>
+            <svg width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.2" viewBox="0 0 24 24" style={{ opacity: 0.25, marginBottom: 12 }}><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+            <p style={{ fontSize: 14, margin: 0 }}>Nessun cliente trovato.</p>
           </div>
         ) : (
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>

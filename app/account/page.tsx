@@ -709,7 +709,9 @@ function EmptyOrders() {
       background: 'var(--white)', border: '1px solid var(--border)',
       borderRadius: 'var(--r-lg)', padding: '64px 24px', textAlign: 'center',
     }}>
-      <div style={{ fontSize: 48, marginBottom: 16 }}>🛍️</div>
+      <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'center' }}>
+        <svg width="52" height="52" fill="none" stroke="currentColor" strokeWidth="1.2" viewBox="0 0 24 24" style={{ opacity: 0.2 }}><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      </div>
       <div style={{ fontSize: 17, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>
         Nessun ordine ancora
       </div>
@@ -732,7 +734,9 @@ function OrderList({ orders }: { orders: Order[] }) {
   if (orders.length === 0) {
     return (
       <div style={{ textAlign: 'center', padding: '40px 24px' }}>
-        <div style={{ fontSize: 36, marginBottom: 12 }}>🛍️</div>
+        <div style={{ marginBottom: 12, display: 'flex', justifyContent: 'center' }}>
+          <svg width="36" height="36" fill="none" stroke="currentColor" strokeWidth="1.3" viewBox="0 0 24 24" style={{ opacity: 0.2 }}><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        </div>
         <div style={{ fontSize: 14.5, fontWeight: 600, color: 'var(--ink)', marginBottom: 6 }}>Nessun ordine ancora</div>
         <p style={{ fontSize: 13.5, color: 'var(--ink-4)', lineHeight: 1.6 }}>
           <Link href="/" style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 600 }}>Inizia a fare acquisti</Link>

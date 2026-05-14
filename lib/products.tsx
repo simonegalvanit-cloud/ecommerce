@@ -1,5 +1,9 @@
 import type { ReactNode } from 'react'
 
+export interface ProductSize  { label: string; dim: string; price: number | null }
+export interface ProductColor { label: string; hex: string; border?: boolean }
+export interface ProductDiscTier { min: number; max: number | null; label: string; disc: string | null }
+
 export interface Product {
   key: string
   name: string
@@ -10,7 +14,13 @@ export interface Product {
   badge?: { label: string; type: 'top' | 'eco' }
   desc: string
   seoDesc: string
-  svg: ReactNode
+  svg?: ReactNode
+  // Optional per-product config — falls back to global constants when absent
+  sizes?: ProductSize[]
+  colors?: ProductColor[]
+  printOptions?: string[]
+  qtyPresets?: number[]
+  discTiers?: ProductDiscTier[]
 }
 
 export const PRODUCTS: Product[] = [
