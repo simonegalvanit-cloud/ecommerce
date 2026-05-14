@@ -5,12 +5,17 @@ import { createClient } from '@/lib/supabase/client'
 interface Order {
   id: string
   created_at: string
-  total: number | null
+  total_eur: number | null
   status: string
-  shipping_name: string | null
-  shipping_email: string | null
-  shipping_city: string | null
+  customer_name: string | null
+  customer_email: string | null
+  customer_phone: string | null
+  city: string | null
+  address: string | null
+  zip: string | null
+  province: string | null
   notes: string | null
+  stripe_session_id: string | null
 }
 
 interface OrderItem {
@@ -72,7 +77,7 @@ export default function OrdersPage() {
     try {
       const { data } = await sb
         .from('orders')
-        .select('id,created_at,total,status,shipping_name,shipping_email,shipping_city,notes')
+        .select('id,created_at,total_eur,status,customer_name,customer_email,customer_phone,city,address,zip,province,notes,stripe_session_id')
         .order('created_at', { ascending: false })
       const list = (data || []) as Order[]
       setAll(list)
@@ -86,8 +91,8 @@ export default function OrdersPage() {
   function applyFilter(list: Order[], q: string, st: string) {
     const f = list.filter(o =>
       (!q  || o.id.toLowerCase().includes(q.toLowerCase()) ||
-              (o.shipping_name  || '').toLowerCase().includes(q.toLowerCase()) ||
-              (o.shipping_email || '').toLowerCase().includes(q.toLowerCase())) &&
+              (o.customer_name  || '').toLowerCase().includes(q.toLowerCase()) ||
+              (o.customer_email || '').toLowerCase().includes(q.toLowerCase())) &&
       (!st || o.status === st)
     )
     setFiltered(f)
@@ -170,14 +175,14 @@ export default function OrdersPage() {
                     <span style={{ fontFamily: 'monospace', fontSize: 12, background: 'var(--surface-2)', padding: '2px 7px', borderRadius: 4 }}>#{o.id.slice(0, 8).toUpperCase()}</span>
                   </td>
                   <td style={{ ...tdStyle }}>
-                    <div style={{ fontWeight: 500 }}>{o.shipping_name || '—'}</div>
-                    {o.shipping_email && <div style={{ fontSize: 12, color: 'var(--ink-4)' }}>{o.shipping_email}</div>}
+                    <div style={{ fontWeight: 500 }}>{o.customer_name || '—'}</div>
+                    {o.customer_email && <div style={{ fontSize: 12, color: 'var(--ink-4)' }}>{o.customer_email}</div>}
                   </td>
-                  <td style={{ ...tdStyle, color: 'var(--ink-3)' }}>{o.shipping_city || '—'}</td>
+                  <td style={{ ...tdStyle, color: 'var(--ink-3)' }}>{o.city || '—'}</td>
                   <td style={{ ...tdStyle, fontSize: 12.5, color: 'var(--ink-4)' }}>
                     {new Date(o.created_at).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' })}
                   </td>
-                  <td style={{ ...tdStyle, fontWeight: 600 }}>€{(o.total || 0).toFixed(2)}</td>
+                  <td style={{ ...tdStyle, fontWeight: 600 }}>€{(o.total_eur || 0).toFixed(2)}</td>
                   <td style={tdStyle}>
                     <span style={{ fontSize: 11, fontWeight: 600, padding: '3px 9px', borderRadius: 100, textTransform: 'uppercase', letterSpacing: '0.4px', whiteSpace: 'nowrap', ...(STATUS_STYLE[o.status] || { background: 'var(--surface-2)', color: 'var(--ink-3)' }) }}>
                       {STATUS_LABEL[o.status] || o.status}
@@ -212,11 +217,11 @@ export default function OrdersPage() {
             <div style={{ padding: 24 }}>
               <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', marginBottom: 20 }}>
                 {[
-                  { lbl: 'Cliente', val: detailOrder.shipping_name || '—' },
-                  { lbl: 'Email', val: detailOrder.shipping_email || '—' },
-                  { lbl: 'Città', val: detailOrder.shipping_city || '—' },
+                  { lbl: 'Cliente', val: detailOrder.customer_name || '—' },
+                  { lbl: 'Email', val: detailOrder.customer_email || '—' },
+                  { lbl: 'Città', val: detailOrder.city || '—' },
                   { lbl: 'Data', val: new Date(detailOrder.created_at).toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' }) },
-                  { lbl: 'Totale', val: `€${(detailOrder.total || 0).toFixed(2)}` },
+                  { lbl: 'Totale', val: `€${(detailOrder.total_eur || 0).toFixed(2)}` },
                 ].map(item => (
                   <div key={item.lbl}>
                     <div style={{ fontSize: 11, color: 'var(--ink-4)', textTransform: 'uppercase', letterSpacing: '0.4px', marginBottom: 3 }}>{item.lbl}</div>
