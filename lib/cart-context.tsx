@@ -28,23 +28,17 @@ const CartContext = createContext<CartCtx | null>(null)
 const LS_KEY = 'bp_cart'
 
 function readLocal(): CartItem[] {
-  try {
-    const s = localStorage.getItem(LS_KEY)
-    return s ? JSON.parse(s) : []
-  } catch { return [] }
+  try { const s = localStorage.getItem(LS_KEY); return s ? JSON.parse(s) : [] } catch { return [] }
 }
-
 function writeLocal(items: CartItem[]) {
   try { localStorage.setItem(LS_KEY, JSON.stringify(items)) } catch {}
 }
-
 function clearLocal() {
   try { localStorage.removeItem(LS_KEY) } catch {}
 }
-
-function mergeItems(base: CartItem[], incoming: CartItem[]): CartItem[] {
+function mergeItems(base: CartItem[], extra: CartItem[]): CartItem[] {
   const result = [...base]
-  for (const item of incoming) {
+  for (const item of extra) {
     const idx = result.findIndex(i => i.id === item.id)
     if (idx >= 0) result[idx] = { ...result[idx], qty: result[idx].qty + item.qty }
     else result.push(item)
@@ -53,31 +47,30 @@ function mergeItems(base: CartItem[], incoming: CartItem[]): CartItem[] {
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [cart, setCart]     = useState<CartItem[]>([])
+  const [cart, setCart]         = useState<CartItem[]>([])
   const [cartOpen, setCartOpen] = useState(false)
-  const [userId, setUserId] = useState<string | null>(null)
-  const syncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [userId, setUserId]     = useState<string | null>(null)
+  const syncTimer               = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // ── On mount: restore from localStorage ────────────────────────────────────
-  useEffect(() => {
-    setCart(readLocal())
-  }, [])
-
-  // ── Auth state: clear on logout, sync on login ──────────────────────────────
+  // ── Auth state ──────────────────────────────────────────────────────────────
   useEffect(() => {
     const sb = createClient()
 
-    sb.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
+    const { data: { subscription } } = sb.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'INITIAL_SESSION') {
+        if (session?.user) {
+          // Page loaded while already logged in — load remote cart, replace local
+          setUserId(session.user.id)
+          await loadRemote(session.user.id)
+        } else {
+          // Anonymous — restore from localStorage
+          setCart(readLocal())
+        }
+      } else if (event === 'SIGNED_IN' && session?.user) {
+        // User just logged in — merge any local (anonymous) cart into their remote cart
+        const localBefore = readLocal()
         setUserId(session.user.id)
-        syncFromSupabase(session.user.id)
-      }
-    })
-
-    const { data: { subscription } } = sb.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session?.user) {
-        setUserId(session.user.id)
-        syncFromSupabase(session.user.id)
+        await mergeWithRemote(session.user.id, localBefore)
       } else if (event === 'SIGNED_OUT') {
         setUserId(null)
         setCart([])
@@ -88,33 +81,41 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe()
   }, [])
 
-  // ── When cart changes: persist ──────────────────────────────────────────────
+  // ── Persist cart changes ────────────────────────────────────────────────────
   useEffect(() => {
     writeLocal(cart)
-
-    // Debounced Supabase sync for logged-in users
     if (!userId) return
-    if (syncTimerRef.current) clearTimeout(syncTimerRef.current)
-    syncTimerRef.current = setTimeout(() => {
+    if (syncTimer.current) clearTimeout(syncTimer.current)
+    syncTimer.current = setTimeout(async () => {
       const sb = createClient()
-      sb.from('user_carts')
+      await sb.from('user_carts')
         .upsert({ user_id: userId, items: cart, updated_at: new Date().toISOString() })
-        .then()
     }, 800)
   }, [cart, userId])
 
-  async function syncFromSupabase(uid: string) {
+  async function loadRemote(uid: string) {
     try {
       const sb = createClient()
       const { data } = await sb.from('user_carts').select('items').eq('user_id', uid).single()
       const remote: CartItem[] = Array.isArray(data?.items) ? data.items : []
-      // Merge remote cart with any local cart (e.g. added while logged out)
-      const local = readLocal()
-      const merged = mergeItems(remote, local)
+      setCart(remote)
+      writeLocal(remote)
+    } catch {
+      setCart(readLocal())
+    }
+  }
+
+  async function mergeWithRemote(uid: string, localItems: CartItem[]) {
+    try {
+      const sb = createClient()
+      const { data } = await sb.from('user_carts').select('items').eq('user_id', uid).single()
+      const remote: CartItem[] = Array.isArray(data?.items) ? data.items : []
+      const merged = localItems.length > 0 ? mergeItems(remote, localItems) : remote
       setCart(merged)
       writeLocal(merged)
+      await sb.from('user_carts').upsert({ user_id: uid, items: merged, updated_at: new Date().toISOString() })
     } catch {
-      // table may not exist yet — fall back to localStorage only
+      setCart(localItems.length > 0 ? localItems : readLocal())
     }
   }
 
@@ -131,13 +132,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setCartOpen(true)
   }, [])
 
-  const removeItem = useCallback((id: string) => {
-    setCart(prev => prev.filter(i => i.id !== id))
-  }, [])
+  const removeItem = useCallback((id: string) => setCart(prev => prev.filter(i => i.id !== id)), [])
 
-  const updateQty = useCallback((id: string, delta: number) => {
-    setCart(prev => prev.map(i => i.id === id ? { ...i, qty: Math.max(1, i.qty + delta) } : i))
-  }, [])
+  const updateQty = useCallback((id: string, delta: number) =>
+    setCart(prev => prev.map(i => i.id === id ? { ...i, qty: Math.max(1, i.qty + delta) } : i)), [])
 
   const clearCart = useCallback(() => {
     setCart([])

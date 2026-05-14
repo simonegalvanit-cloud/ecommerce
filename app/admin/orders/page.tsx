@@ -65,7 +65,7 @@ function StatusBadge({ status }: { status: string }) {
   )
 }
 
-function exportCSV(orders: Order[], dateFrom: string, dateTo: string) {
+function exportReport(orders: Order[], dateFrom: string, dateTo: string) {
   const inRange = orders.filter(o => {
     const d = new Date(o.created_at)
     if (dateFrom && d < new Date(dateFrom)) return false
@@ -73,34 +73,133 @@ function exportCSV(orders: Order[], dateFrom: string, dateTo: string) {
     return true
   })
 
-  const headers = ['ID', 'Data', 'Cliente', 'Email', 'Telefono', 'Indirizzo', 'Città', 'CAP', 'Prov.', 'Totale EUR', 'Stato', 'Note', 'Prodotti']
-  const rows = inRange.map(o => [
-    o.id,
-    new Date(o.created_at).toLocaleDateString('it-IT'),
-    o.customer_name || '',
-    o.customer_email || '',
-    o.customer_phone || '',
-    o.address || '',
-    o.city || '',
-    o.zip || '',
-    o.province || '',
-    (o.total_eur || 0).toFixed(2),
-    STATUS_LABEL[o.status] || o.status,
-    o.notes || '',
-    (o.cart_json || []).map(i => `${i.name}${i.size ? ` (${i.size})` : ''} x${i.qty}`).join('; '),
-  ])
+  const totalEur = inRange.reduce((s, o) => s + (o.total_eur || 0), 0)
+  const dateLabel = [
+    dateFrom ? `dal ${new Date(dateFrom).toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' })}` : '',
+    dateTo   ? `al ${new Date(dateTo).toLocaleDateString('it-IT',   { day: '2-digit', month: 'long', year: 'numeric' })}` : '',
+  ].filter(Boolean).join(' ') || 'Tutti gli ordini'
 
-  const csv = [headers, ...rows]
-    .map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(','))
-    .join('\n')
+  const statusColors: Record<string, string> = {
+    pending: '#f59e0b', paid: '#16a34a', processing: '#2563eb',
+    shipped: '#e8721a', delivered: '#16a34a', cancelled: '#dc2626', refunded: '#6b7280',
+  }
 
-  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' })
-  const url  = URL.createObjectURL(blob)
-  const a    = document.createElement('a')
-  a.href     = url
-  a.download = `ordini-briopack${dateFrom ? '-dal-' + dateFrom : ''}${dateTo ? '-al-' + dateTo : ''}.csv`
-  a.click()
-  URL.revokeObjectURL(url)
+  const rows = inRange.map((o, i) => `
+    <tr style="background:${i % 2 === 0 ? '#ffffff' : '#fafafa'};">
+      <td style="padding:10px 12px;font-family:monospace;font-size:11px;color:#6b7280;white-space:nowrap;">
+        ${(o.stripe_session_id || o.id).slice(-8).toUpperCase()}
+      </td>
+      <td style="padding:10px 12px;font-size:12.5px;white-space:nowrap;">
+        ${new Date(o.created_at).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' })}
+      </td>
+      <td style="padding:10px 12px;">
+        <div style="font-weight:600;font-size:13px;">${o.customer_name || '—'}</div>
+        <div style="color:#6b7280;font-size:11.5px;">${o.customer_email || ''}</div>
+        ${o.customer_phone ? `<div style="color:#6b7280;font-size:11.5px;">${o.customer_phone}</div>` : ''}
+      </td>
+      <td style="padding:10px 12px;font-size:12px;color:#374151;">
+        ${o.address || '—'}<br>
+        ${o.zip || ''} ${o.city || ''} ${o.province ? `(${o.province})` : ''}
+      </td>
+      <td style="padding:10px 12px;font-size:12px;">
+        ${(o.cart_json || []).map(i => `<div>${i.name}${i.size ? ` <span style="color:#9ca3af">· ${i.size}</span>` : ''} <strong>× ${i.qty}</strong></div>`).join('') || '—'}
+      </td>
+      <td style="padding:10px 12px;font-weight:700;font-size:13.5px;white-space:nowrap;">
+        €${(o.total_eur || 0).toFixed(2)}
+      </td>
+      <td style="padding:10px 12px;">
+        <span style="padding:3px 9px;border-radius:100px;font-size:11px;font-weight:600;background:${statusColors[o.status] || '#e5e7eb'}20;color:${statusColors[o.status] || '#374151'};border:1px solid ${statusColors[o.status] || '#e5e7eb'}40;white-space:nowrap;">
+          ${STATUS_LABEL[o.status] || o.status}
+        </span>
+      </td>
+    </tr>
+  `).join('')
+
+  const html = `<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Report Ordini — Briopack</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f9fafb; color: #111827; }
+    @media print {
+      body { background: #fff; }
+      .no-print { display: none !important; }
+      @page { margin: 15mm 12mm; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Print button -->
+  <div class="no-print" style="background:#fff;border-bottom:1px solid #e5e7eb;padding:12px 40px;display:flex;align-items:center;gap:12px;">
+    <button onclick="window.print()" style="padding:9px 20px;background:#e8721a;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;">
+      🖨 Stampa / Salva PDF
+    </button>
+    <span style="font-size:13px;color:#6b7280;">Usa "Salva come PDF" nelle opzioni di stampa</span>
+  </div>
+
+  <!-- Header -->
+  <div style="background:linear-gradient(135deg,#c45a14,#e8721a);padding:28px 40px;display:flex;justify-content:space-between;align-items:center;">
+    <div>
+      <div style="color:#fff;font-size:28px;font-weight:800;letter-spacing:-0.8px;">BRIOPACK</div>
+      <div style="color:rgba(255,255,255,0.8);font-size:13px;margin-top:2px;">Report Ordini</div>
+    </div>
+    <div style="text-align:right;">
+      <div style="color:#fff;font-size:13px;opacity:0.9;">${dateLabel}</div>
+      <div style="color:#fff;font-size:13px;margin-top:4px;">Generato il ${new Date().toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' })}</div>
+    </div>
+  </div>
+
+  <!-- Summary cards -->
+  <div style="background:#fff;border-bottom:1px solid #e5e7eb;padding:20px 40px;display:flex;gap:40px;">
+    <div>
+      <div style="font-size:11px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Ordini nel periodo</div>
+      <div style="font-size:28px;font-weight:800;color:#111827;">${inRange.length}</div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Fatturato totale</div>
+      <div style="font-size:28px;font-weight:800;color:#e8721a;">€${totalEur.toLocaleString('it-IT', { minimumFractionDigits: 2 })}</div>
+    </div>
+    <div>
+      <div style="font-size:11px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Valore medio</div>
+      <div style="font-size:28px;font-weight:800;color:#374151;">€${inRange.length ? (totalEur / inRange.length).toLocaleString('it-IT', { minimumFractionDigits: 2 }) : '0,00'}</div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div style="padding:24px 40px;">
+    <table style="width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 8px rgba(0,0,0,0.06);">
+      <thead>
+        <tr style="background:#f3f4f6;">
+          ${['Rif.', 'Data', 'Cliente', 'Indirizzo', 'Prodotti', 'Totale', 'Stato'].map(h =>
+            `<th style="padding:10px 12px;font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;text-align:left;border-bottom:2px solid #e5e7eb;">${h}</th>`
+          ).join('')}
+        </tr>
+      </thead>
+      <tbody>
+        ${rows || `<tr><td colspan="7" style="padding:40px;text-align:center;color:#9ca3af;">Nessun ordine nel periodo selezionato.</td></tr>`}
+      </tbody>
+      <tfoot>
+        <tr style="background:#f9fafb;border-top:2px solid #e5e7eb;">
+          <td colspan="5" style="padding:14px 12px;font-size:13px;font-weight:700;text-align:right;color:#374151;">TOTALE PERIODO</td>
+          <td style="padding:14px 12px;font-size:16px;font-weight:800;color:#e8721a;">€${totalEur.toLocaleString('it-IT', { minimumFractionDigits: 2 })}</td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <!-- Footer -->
+  <div style="padding:16px 40px;border-top:1px solid #e5e7eb;text-align:center;font-size:11.5px;color:#9ca3af;">
+    Briopack Srl &mdash; C.da Sodera 38, 66030 Poggiofiorito (CH) &mdash; P.IVA 02540090699 &mdash; info@briopack.com
+  </div>
+</body>
+</html>`
+
+  const w = window.open('', '_blank')
+  if (w) { w.document.write(html); w.document.close() }
 }
 
 export default function OrdersPage() {
@@ -185,10 +284,10 @@ export default function OrdersPage() {
           <div style={{ fontSize: 13, color: 'var(--ink-4)', marginTop: 2 }}>Gestisci e aggiorna gli ordini dei clienti</div>
         </div>
         <button
-          onClick={() => exportCSV(filtered, dateFrom, dateTo)}
+          onClick={() => exportReport(filtered, dateFrom, dateTo)}
           style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '9px 18px', fontFamily: 'var(--f)', fontSize: 13, fontWeight: 600, background: 'var(--white)', color: 'var(--ink-2)', border: '1.5px solid var(--border-2)', borderRadius: 'var(--r)', cursor: 'pointer' }}>
           <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Esporta CSV ({filtered.length})
+          Esporta Report ({filtered.length})
         </button>
       </div>
 
