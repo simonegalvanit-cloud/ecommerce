@@ -226,16 +226,18 @@ export default function CheckoutPage() {
             </div>
 
             <div className="checkout-trust">
-              {[
-                { icon: '🔒', text: 'Pagamento sicuro SSL' },
-                { icon: '📦', text: 'Spedizione con tracking' },
-                { icon: '↩️', text: 'Reso facilitato' },
-              ].map(t => (
-                <div key={t.text} className="checkout-trust-item">
-                  <span>{t.icon}</span>
-                  <span>{t.text}</span>
-                </div>
-              ))}
+              <div className="checkout-trust-item">
+                <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" strokeLinecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                Pagamento sicuro SSL
+              </div>
+              <div className="checkout-trust-item">
+                <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                Spedizione con tracking
+              </div>
+              <div className="checkout-trust-item">
+                <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                Reso facilitato
+              </div>
             </div>
           </div>
         </aside>

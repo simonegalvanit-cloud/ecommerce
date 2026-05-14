@@ -1216,18 +1216,18 @@ tbody tr:hover td { background: var(--surface); }
 
 .checkout-layout {
   display: grid;
-  grid-template-columns: 1fr 420px;
+  grid-template-columns: minmax(0, 640px) 400px;
   gap: 0;
+  justify-content: center;
   min-height: calc(100vh - 64px);
   align-items: start;
 }
 
 /* Form side */
 .checkout-form {
-  padding: 48px 56px;
-  max-width: 600px;
+  padding: 48px 40px 48px 32px;
+  max-width: 640px;
   width: 100%;
-  justify-self: center;
 }
 .checkout-title {
   font-size: 24px; font-weight: 800; color: var(--ink);
@@ -1252,6 +1252,7 @@ tbody tr:hover td { background: var(--surface); }
   font-size: 14px; color: var(--ink); font-family: var(--f);
   background: #fff; transition: border-color .18s, box-shadow .18s;
   outline: none; resize: vertical;
+  touch-action: manipulation;
 }
 .checkout-field input:focus,
 .checkout-field textarea:focus {
@@ -1366,16 +1367,22 @@ tbody tr:hover td { background: var(--surface); }
 
 /* Mobile checkout */
 @media (max-width: 860px) {
-  .checkout-layout { grid-template-columns: 1fr; }
-  .checkout-summary { border-left: none; border-top: 1px solid var(--border-1); min-height: unset; padding: 32px 24px; }
-  .checkout-form { padding: 32px 24px; max-width: 100%; justify-self: stretch; }
+  .checkout-layout { grid-template-columns: 1fr; display: flex; flex-direction: column; }
+  .checkout-summary { order: -1; border-left: none; border-bottom: 1px solid var(--border-1); min-height: unset; padding: 24px 20px; }
+  .checkout-summary-inner { position: static; }
+  .checkout-form { order: 1; padding: 28px 20px 40px; max-width: 100%; width: 100%; }
   .checkout-nav { padding: 0 20px; }
   .checkout-nav-steps { display: none; }
   .checkout-row-3 { grid-template-columns: 1fr 90px 64px; }
+  /* Prevent iOS auto-zoom on input focus */
+  .checkout-field input,
+  .checkout-field textarea { font-size: 16px; }
+  .checkout-trust { flex-direction: row; flex-wrap: wrap; gap: 10px 18px; }
 }
 @media (max-width: 500px) {
   .checkout-row { grid-template-columns: 1fr; }
   .checkout-row-3 { grid-template-columns: 1fr 80px 60px; }
+  .checkout-nav-back span { display: none; }
 }
 
 /* ─── PRODUCT PAGE ───────────────────────────────────────────────────────── */
