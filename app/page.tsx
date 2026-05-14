@@ -89,7 +89,7 @@ export default function StorefrontPage() {
                 Scopri il catalogo
                 <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.3" viewBox="0 0 16 16" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9 4 13 8 9 12"/></svg>
               </button>
-              <button className="hero-cta-secondary" onClick={() => router.push('/contact')}>
+              <button className="hero-cta-secondary" onClick={() => router.push('/contatti')}>
                 Richiedi preventivo
               </button>
             </div>

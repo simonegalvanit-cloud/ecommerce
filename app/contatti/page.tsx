@@ -96,28 +96,30 @@ export default function ContactPage() {
 
   return (
     <>
-      <NavWrapper />
+      <NavWrapper activeLink="contatti" />
       <CartDrawer />
 
       <div style={{ minHeight: '100vh', background: 'var(--surface)', paddingTop: 'var(--nav-h)' }}>
 
         {/* ── Hero ── */}
-        <div style={{ background: '#111', position: 'relative', overflow: 'hidden', padding: '72px 24px 80px' }}>
-          {/* Decorative grid */}
-          <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(232,114,26,0.07) 1px,transparent 1px),linear-gradient(90deg,rgba(232,114,26,0.07) 1px,transparent 1px)', backgroundSize: '48px 48px', opacity: 0.6 }} />
-          {/* Radial glow */}
-          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 600, height: 300, background: 'radial-gradient(ellipse,rgba(232,114,26,0.12) 0%,transparent 70%)', pointerEvents: 'none' }} />
+        <div style={{ background: 'linear-gradient(135deg,#c45a14 0%,#e8721a 40%,#f08a3a 70%,#f5a05a 100%)', backgroundSize: '200% 200%', position: 'relative', overflow: 'hidden', padding: '72px 24px 80px' }}>
+          {/* White highlight */}
+          <div style={{ position: 'absolute', top: -100, right: -80, width: 500, height: 400, background: 'radial-gradient(ellipse,rgba(255,255,255,0.18) 0%,transparent 65%)', filter: 'blur(30px)', pointerEvents: 'none' }} />
+          {/* Dot grid */}
+          <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle,rgba(255,255,255,0.15) 1px,transparent 1px)', backgroundSize: '36px 36px', opacity: 0.45, pointerEvents: 'none' }} />
+          {/* Dark depth bottom-left */}
+          <div style={{ position: 'absolute', bottom: -60, left: -60, width: 400, height: 300, background: 'radial-gradient(ellipse,rgba(0,0,0,0.18) 0%,transparent 65%)', filter: 'blur(40px)', pointerEvents: 'none' }} />
 
           <div style={{ position: 'relative', maxWidth: 720, margin: '0 auto', textAlign: 'center' }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, background: 'rgba(232,114,26,0.12)', border: '1px solid rgba(232,114,26,0.25)', borderRadius: 100, padding: '5px 14px', marginBottom: 20 }}>
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--accent)', display: 'inline-block' }} />
-              <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--accent)', letterSpacing: '0.4px' }}>CONTATTACI</span>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, background: 'rgba(0,0,0,0.15)', border: '1px solid rgba(255,255,255,0.25)', borderRadius: 100, padding: '5px 14px', marginBottom: 20 }}>
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#fff', display: 'inline-block' }} />
+              <span style={{ fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.85)', letterSpacing: '0.4px' }}>CONTATTACI</span>
             </div>
-            <h1 style={{ fontSize: 'clamp(32px, 5vw, 52px)', fontWeight: 900, color: '#fff', letterSpacing: '-1.5px', lineHeight: 1.1, margin: '0 0 18px' }}>
+            <h1 style={{ fontSize: 'clamp(32px, 5vw, 52px)', fontWeight: 900, color: '#fff', letterSpacing: '-1.5px', lineHeight: 1.1, margin: '0 0 18px', textShadow: '0 2px 16px rgba(0,0,0,0.15)' }}>
               Parliamo del tuo<br />
-              <span style={{ color: 'var(--accent)' }}>prossimo progetto</span>
+              prossimo progetto
             </h1>
-            <p style={{ fontSize: 17, color: 'rgba(255,255,255,0.5)', lineHeight: 1.7, maxWidth: 480, margin: '0 auto', fontWeight: 400 }}>
+            <p style={{ fontSize: 17, color: 'rgba(255,255,255,0.78)', lineHeight: 1.7, maxWidth: 480, margin: '0 auto', fontWeight: 400 }}>
               Dal preventivo alla consegna, il team Briopack ti segue in ogni fase. Rispondiamo entro 24 ore lavorative.
             </p>
           </div>

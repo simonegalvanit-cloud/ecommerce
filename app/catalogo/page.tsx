@@ -39,19 +39,22 @@ export default function CatalogoPage() {
       <CartDrawer />
 
       {/* ── Page header ── */}
-      <div style={{ background: '#09090b', paddingTop: 'var(--nav-h)', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px)', backgroundSize: '36px 36px', maskImage: 'radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%)', WebkitMaskImage: 'radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%)' }} />
-        <div style={{ position: 'absolute', width: 600, height: 400, top: -100, right: -100, background: 'radial-gradient(ellipse, rgba(232,114,26,0.22) 0%, transparent 65%)', filter: 'blur(50px)', pointerEvents: 'none' }} />
+      <div style={{ background: 'linear-gradient(135deg,#c45a14 0%,#e8721a 40%,#f08a3a 70%,#f5a05a 100%)', paddingTop: 'var(--nav-h)', position: 'relative', overflow: 'hidden' }}>
+        {/* White highlight top-right */}
+        <div style={{ position: 'absolute', top: -100, right: -80, width: 600, height: 400, background: 'radial-gradient(ellipse,rgba(255,255,255,0.18) 0%,transparent 65%)', filter: 'blur(30px)', pointerEvents: 'none' }} />
+        {/* Dot grid */}
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle,rgba(255,255,255,0.15) 1px,transparent 1px)', backgroundSize: '36px 36px', opacity: 0.45, pointerEvents: 'none' }} />
+        {/* Dark depth bottom-left */}
+        <div style={{ position: 'absolute', bottom: -60, left: -60, width: 400, height: 300, background: 'radial-gradient(ellipse,rgba(0,0,0,0.18) 0%,transparent 65%)', filter: 'blur(40px)', pointerEvents: 'none' }} />
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '64px 40px 60px', position: 'relative', zIndex: 1 }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(232,114,26,0.12)', border: '1px solid rgba(232,114,26,0.28)', borderRadius: 100, padding: '5px 14px', marginBottom: 20 }}>
-            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#e8721a', display: 'inline-block' }} />
-            <span style={{ fontSize: 12, fontWeight: 600, color: '#f08a3a', letterSpacing: '0.3px' }}>Catalogo completo</span>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(0,0,0,0.15)', border: '1px solid rgba(255,255,255,0.25)', borderRadius: 100, padding: '5px 14px', marginBottom: 20 }}>
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#fff', display: 'inline-block' }} />
+            <span style={{ fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.85)', letterSpacing: '0.3px' }}>Catalogo completo</span>
           </div>
-          <h1 style={{ fontSize: 'clamp(36px,5vw,56px)', fontWeight: 900, color: '#fff', letterSpacing: '-2px', lineHeight: 1.05, margin: '0 0 16px' }}>
-            Tutti i nostri<br />
-            <span style={{ background: 'linear-gradient(135deg,#f5a05a,#e8721a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>prodotti</span>
+          <h1 style={{ fontSize: 'clamp(36px,5vw,56px)', fontWeight: 900, color: '#fff', letterSpacing: '-2px', lineHeight: 1.05, margin: '0 0 16px', textShadow: '0 2px 16px rgba(0,0,0,0.15)' }}>
+            Tutti i nostri prodotti
           </h1>
-          <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.5)', lineHeight: 1.7, maxWidth: 500, margin: 0 }}>
+          <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.78)', lineHeight: 1.7, maxWidth: 500, margin: 0 }}>
             Packaging personalizzato per ogni settore. Scegli la categoria, configura le specifiche e ordina online.
           </p>
         </div>
@@ -173,13 +176,13 @@ export default function CatalogoPage() {
       </div>
 
       {/* ── Footer ── */}
-      <footer style={{ background: '#111', borderTop: '1px solid rgba(255,255,255,0.06)', padding: '32px 40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-        <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.25)' }}>© 2025 Briopack Srl — P.IVA 02540090699</div>
+      <footer style={{ background: 'var(--surface-2)', borderTop: '1px solid var(--border)', padding: '28px 40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+        <div style={{ fontSize: 13, color: 'var(--ink-4)' }}>© 2025 Briopack Srl — P.IVA 02540090699</div>
         <div style={{ display: 'flex', gap: 20 }}>
-          {[{ label: 'Home', href: '/' }, { label: 'Contatti', href: '/contact' }].map(l => (
-            <a key={l.href} href={l.href} style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', textDecoration: 'none', transition: 'color .15s' }}
-              onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = '#e8721a'}
-              onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.35)'}>
+          {[{ label: 'Home', href: '/' }, { label: 'Contatti', href: '/contatti' }].map(l => (
+            <a key={l.href} href={l.href} style={{ fontSize: 13, color: 'var(--ink-4)', textDecoration: 'none', transition: 'color .15s' }}
+              onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = 'var(--accent)'}
+              onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = 'var(--ink-4)'}>
               {l.label}
             </a>
           ))}
