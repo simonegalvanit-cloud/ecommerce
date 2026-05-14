@@ -56,6 +56,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   async function handleLogout() {
     sessionStorage.removeItem('bp_admin_bypass')
+    document.cookie = 'bp_admin_bypass=; path=/; max-age=0'
     await sb.auth.signOut()
     router.push('/')
   }
