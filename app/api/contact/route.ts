@@ -1,15 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 
-const resend  = new Resend(process.env.RESEND_API_KEY)
-const TO      = process.env.CONTACT_TO_EMAIL
-const FROM    = process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev'
-const SITE    = process.env.NEXT_PUBLIC_SITE_URL ?? 'briopack.com'
-
 export async function POST(req: NextRequest) {
+  const apiKey = process.env.RESEND_API_KEY
+  const TO     = process.env.CONTACT_TO_EMAIL
+  const FROM   = process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev'
+  const SITE   = process.env.NEXT_PUBLIC_SITE_URL ?? 'briopack.com'
+
+  if (!apiKey) {
+    return NextResponse.json({ error: 'RESEND_API_KEY not configured.' }, { status: 500 })
+  }
   if (!TO) {
     return NextResponse.json({ error: 'CONTACT_TO_EMAIL not configured.' }, { status: 500 })
   }
+
+  const resend = new Resend(apiKey)
 
   try {
     const { name, company, email, phone, subject, message } = await req.json()
