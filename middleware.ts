@@ -31,8 +31,14 @@ export async function middleware(request: NextRequest) {
   }
 
   if (path.startsWith('/admin')) {
+    // Allow hardcoded bypass token (set by /admin-panel login)
+    const bypassCookie = request.cookies.get('bp_admin_bypass')
+    if (bypassCookie?.value === 'briopack_admin_2025') {
+      return supabaseResponse
+    }
+
     if (!user) {
-      return NextResponse.redirect(new URL('/login', request.url))
+      return NextResponse.redirect(new URL('/admin-panel', request.url))
     }
     const { data: profile } = await supabase
       .from('profiles')
@@ -40,7 +46,7 @@ export async function middleware(request: NextRequest) {
       .eq('id', user.id)
       .single()
     if (profile?.role !== 'admin') {
-      return NextResponse.redirect(new URL('/account', request.url))
+      return NextResponse.redirect(new URL('/admin-panel', request.url))
     }
   }
 

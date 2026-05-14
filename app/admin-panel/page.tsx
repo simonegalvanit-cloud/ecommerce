@@ -22,6 +22,7 @@ export default function AdminPanelLogin() {
 
     setTimeout(() => {
       if (email.trim().toLowerCase() === ADMIN_EMAIL && password === ADMIN_PASS) {
+        document.cookie = `${TOKEN_KEY}=${TOKEN_VAL}; path=/; SameSite=Strict`
         sessionStorage.setItem(TOKEN_KEY, TOKEN_VAL)
         router.push('/admin')
       } else {
