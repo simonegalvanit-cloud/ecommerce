@@ -1,6 +1,20 @@
 'use client'
 import { useState } from 'react'
 
+const SQL_USER_CARTS = `create table if not exists user_carts (
+  user_id    uuid references auth.users primary key,
+  items      jsonb not null default '[]',
+  updated_at timestamptz not null default now()
+);
+
+alter table user_carts enable row level security;
+
+-- Users can only read/write their own cart
+create policy "User manages own cart"
+  on user_carts for all
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);`
+
 const SQL_ORDERS = `create table if not exists orders (
   id                   uuid primary key default gen_random_uuid(),
   stripe_session_id    text unique not null,
@@ -164,6 +178,21 @@ export default function SettingsPage() {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* SQL — user_carts */}
+      <div style={sectionStyle}>
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>Setup database — Carrello utenti</div>
+          <div style={{ fontSize: 12.5, color: 'var(--ink-4)', marginTop: 3 }}>Necessaria per salvare il carrello degli utenti loggati tra sessioni diverse</div>
+        </div>
+        <div style={{ padding: 20 }}>
+          <pre style={{ background: '#0f1117', color: '#e2e8f0', padding: '16px 20px', borderRadius: 10, fontSize: 12, lineHeight: 1.7, overflowX: 'auto', margin: 0, fontFamily: 'monospace' }}>{SQL_USER_CARTS}</pre>
+          <button onClick={() => { navigator.clipboard.writeText(SQL_USER_CARTS); setCopied('sql-carts'); setTimeout(() => setCopied(''), 2000) }}
+            style={{ marginTop: 12, padding: '7px 16px', fontFamily: 'var(--f)', fontSize: 13, fontWeight: 600, background: copied === 'sql-carts' ? 'var(--green-bg)' : 'var(--surface)', color: copied === 'sql-carts' ? 'var(--green)' : 'var(--ink-3)', border: '1px solid var(--border-2)', borderRadius: 'var(--r)', cursor: 'pointer' }}>
+            {copied === 'sql-carts' ? '✓ Copiato' : 'Copia SQL'}
+          </button>
+        </div>
       </div>
 
       {/* SQL — orders */}
