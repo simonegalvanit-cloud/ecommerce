@@ -3,7 +3,7 @@ import { useState, FormEvent } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
-const ADMIN_EMAIL = 'simonegastars@gmail.com'
+const ADMIN_EMAIL = 'simone@gmail.com'
 const ADMIN_PASS  = 'test'
 const TOKEN_KEY   = 'bp_admin_bypass'
 const TOKEN_VAL   = 'briopack_admin_2025'
