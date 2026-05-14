@@ -11,9 +11,26 @@ const STATUS_LABEL: Record<string, string> = {
   refunded:   'Rimborsato',
 }
 
-export async function POST(req: NextRequest) {
+async function isAdmin(req: NextRequest): Promise<boolean> {
+  // Method 1: bypass token cookie (admin-panel login)
   const token = req.cookies.get('bp_admin_bypass')?.value
-  if (!token || token !== process.env.ADMIN_SESSION_TOKEN) {
+  if (token && token === process.env.ADMIN_SESSION_TOKEN) return true
+
+  // Method 2: Supabase session with admin role
+  try {
+    const { createClient } = await import('@/lib/supabase/server')
+    const sb = await createClient()
+    const { data: { user } } = await sb.auth.getUser()
+    if (!user) return false
+    const { data: profile } = await sb.from('profiles').select('role').eq('id', user.id).single()
+    return profile?.role === 'admin'
+  } catch {
+    return false
+  }
+}
+
+export async function POST(req: NextRequest) {
+  if (!(await isAdmin(req))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
