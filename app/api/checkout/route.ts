@@ -26,6 +26,7 @@ export async function POST(req: NextRequest) {
   const paymentIntent = await stripe.paymentIntents.create({
     amount: Math.round(total * 100),
     currency: 'eur',
+    payment_method_types: ['card'], // disables Stripe Link
     receipt_email: form.email,
     description: `Ordine Briopack — ${form.firstName} ${form.lastName}`,
     metadata: {
@@ -39,6 +40,30 @@ export async function POST(req: NextRequest) {
       notes:          form.notes || '',
     },
   })
+
+  // Pre-save order to Supabase with cart details (status: pending)
+  // This lets the webhook read cart items for the confirmation email
+  try {
+    const { createClient } = await import('@/lib/supabase/server')
+    const sb = await createClient()
+    await sb.from('orders').insert({
+      stripe_session_id:     paymentIntent.id,
+      stripe_payment_intent: paymentIntent.id,
+      customer_email:        form.email,
+      customer_name:         `${form.firstName} ${form.lastName}`,
+      customer_phone:        form.phone || '',
+      address:               form.address,
+      city:                  form.city,
+      zip:                   form.zip,
+      province:              form.province,
+      notes:                 form.notes || '',
+      total_eur:             total,
+      cart_json:             cart,
+      status:                'pending',
+    })
+  } catch (err) {
+    console.error('Failed to pre-save order:', err)
+  }
 
   return NextResponse.json({ clientSecret: paymentIntent.client_secret })
 }

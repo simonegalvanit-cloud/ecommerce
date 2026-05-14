@@ -16,21 +16,22 @@ create policy "User manages own cart"
   with check (auth.uid() = user_id);`
 
 const SQL_ORDERS = `create table if not exists orders (
-  id                   uuid primary key default gen_random_uuid(),
-  stripe_session_id    text unique not null,
+  id                    uuid primary key default gen_random_uuid(),
+  stripe_session_id     text unique not null,
   stripe_payment_intent text,
-  customer_email       text not null,
-  customer_name        text,
-  customer_phone       text,
-  address              text,
-  city                 text,
-  zip                  text,
-  province             text,
-  notes                text,
-  total_eur            numeric(10,2) not null default 0,
-  status               text not null default 'paid'
-                         check (status in ('paid','refunded','cancelled')),
-  created_at           timestamptz not null default now()
+  customer_email        text not null,
+  customer_name         text,
+  customer_phone        text,
+  address               text,
+  city                  text,
+  zip                   text,
+  province              text,
+  notes                 text,
+  total_eur             numeric(10,2) not null default 0,
+  cart_json             jsonb not null default '[]',
+  status                text not null default 'pending'
+                          check (status in ('pending','paid','refunded','cancelled')),
+  created_at            timestamptz not null default now()
 );
 
 alter table orders enable row level security;
