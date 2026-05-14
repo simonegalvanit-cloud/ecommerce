@@ -1,6 +1,39 @@
 'use client'
 import { useState } from 'react'
 
+const SQL_PRODUCTS = `create table if not exists products (
+  id         uuid primary key default gen_random_uuid(),
+  key        text unique not null,
+  name       text not null,
+  cat        text not null default '',
+  cat_key    text not null default '',
+  price      numeric(10,2) not null default 0,
+  moq        integer not null default 100,
+  badge_label text,
+  badge_type  text check (badge_type in ('top','eco')),
+  description text not null default '',
+  seo_desc    text not null default '',
+  sizes        jsonb not null default '[]',
+  colors       jsonb not null default '[]',
+  print_options jsonb not null default '[]',
+  qty_presets  jsonb not null default '[]',
+  disc_tiers   jsonb not null default '[]',
+  active      boolean not null default true,
+  sort_order  integer not null default 0,
+  created_at  timestamptz not null default now(),
+  updated_at  timestamptz not null default now()
+);
+
+alter table products enable row level security;
+
+-- Allow anyone to read active products (storefront)
+create policy "Public read active products"
+  on products for select using (active = true);
+
+-- Allow all writes (admin panel uses bypass token, no Supabase session)
+create policy "Admin write all"
+  on products for all using (true) with check (true);`
+
 const sectionStyle: React.CSSProperties = {
   background: 'var(--white)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', marginBottom: 16,
 }
@@ -107,6 +140,21 @@ export default function SettingsPage() {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* SQL setup */}
+      <div style={sectionStyle}>
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>Setup database — Tabella prodotti</div>
+          <div style={{ fontSize: 12.5, color: 'var(--ink-4)', marginTop: 3 }}>Esegui questo SQL nell&apos;editor di Supabase per abilitare la gestione prodotti</div>
+        </div>
+        <div style={{ padding: 20 }}>
+          <pre style={{ background: '#0f1117', color: '#e2e8f0', padding: '16px 20px', borderRadius: 10, fontSize: 12, lineHeight: 1.7, overflowX: 'auto', margin: 0, fontFamily: 'monospace' }}>{SQL_PRODUCTS}</pre>
+          <button onClick={() => { navigator.clipboard.writeText(SQL_PRODUCTS); setCopied('sql'); setTimeout(() => setCopied(''), 2000) }}
+            style={{ marginTop: 12, padding: '7px 16px', fontFamily: 'var(--f)', fontSize: 13, fontWeight: 600, background: copied === 'sql' ? 'var(--green-bg)' : 'var(--surface)', color: copied === 'sql' ? 'var(--green)' : 'var(--ink-3)', border: '1px solid var(--border-2)', borderRadius: 'var(--r)', cursor: 'pointer' }}>
+            {copied === 'sql' ? '✓ Copiato' : 'Copia SQL'}
+          </button>
+        </div>
       </div>
 
       {/* Quick links */}

@@ -1,6 +1,5 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useCart } from '@/lib/cart-context'
 import { type Product, SIZES, PRINT_OPTIONS, QTY_PRESETS, COLORS, DISC_TIERS } from '@/lib/products'
@@ -13,10 +12,17 @@ export default function ProductConfigurator({ product }: { product: Product }) {
   const { addItem, setCartOpen } = useCart()
   const router = useRouter()
 
+  // Per-product config with global fallbacks
+  const sizes       = product.sizes       ?? SIZES
+  const colors      = product.colors      ?? COLORS
+  const printOptions = product.printOptions ?? PRINT_OPTIONS
+  const qtyPresets  = product.qtyPresets  ?? QTY_PRESETS
+  const discTiers   = product.discTiers   ?? DISC_TIERS
+
   const [selSizeIdx, setSelSizeIdx] = useState(0)
   const [basePrice,  setBasePrice]  = useState(product.price)
   const [selColor,   setSelColor]   = useState(0)
-  const [selPrints,  setSelPrints]  = useState<Set<string>>(new Set(['Senza Stampa']))
+  const [selPrints,  setSelPrints]  = useState<Set<string>>(new Set([printOptions[0] ?? 'Senza Stampa']))
   const [qty,        setQty]        = useState(product.moq)
   const [fileOk,     setFileOk]     = useState(false)
   const [customL,    setCustomL]    = useState('')
@@ -27,13 +33,18 @@ export default function ProductConfigurator({ product }: { product: Product }) {
   const prevTotalRef  = useRef<number>(0)
   const [pricePopKey, setPricePopKey] = useState(0)
 
-  const isCustom = SIZES[selSizeIdx]?.label === 'Custom'
+  const isCustom = sizes[selSizeIdx]?.label === 'Custom'
 
   const calcUnit = () => {
     let u = basePrice + (isCustom ? 0.10 : 0)
-    if (qty >= 5000)      u *= 0.68
-    else if (qty >= 1000) u *= 0.80
-    else if (qty >= 500)  u *= 0.90
+    // Apply discount tier
+    const tier = discTiers.find(t =>
+      qty >= t.min && (t.max === null || t.max === Infinity || qty <= (t.max as number))
+    )
+    if (tier?.disc) {
+      const pct = parseFloat(String(tier.disc).replace('-', '').replace('%', ''))
+      u *= (1 - pct / 100)
+    }
     return u
   }
 
@@ -56,23 +67,25 @@ export default function ProductConfigurator({ product }: { product: Product }) {
     }
   }, [total])
 
+  const noprint = printOptions[0] ?? 'Senza Stampa'
+
   const togglePrint = (opt: string) => {
-    if (opt === 'Senza Stampa') { setSelPrints(new Set(['Senza Stampa'])); return }
+    if (opt === noprint) { setSelPrints(new Set([noprint])); return }
     setSelPrints(prev => {
       const next = new Set(prev)
-      next.delete('Senza Stampa')
+      next.delete(noprint)
       next.has(opt) ? next.delete(opt) : next.add(opt)
-      if (next.size === 0) next.add('Senza Stampa')
+      if (next.size === 0) next.add(noprint)
       return next
     })
   }
 
   const handleAddToCart = () => {
     addItem({
-      id: `${product.key}-${SIZES[selSizeIdx]?.label}`,
+      id: `${product.key}-${sizes[selSizeIdx]?.label}`,
       name: product.name,
       cat: product.cat,
-      size: isCustom ? `${customL}×${customW}×${customH} mm` : (SIZES[selSizeIdx]?.label ?? ''),
+      size: isCustom ? `${customL}×${customW}×${customH} mm` : (sizes[selSizeIdx]?.label ?? ''),
       qty,
       unitPrice: unit,
       setupCost: setup,
@@ -83,10 +96,10 @@ export default function ProductConfigurator({ product }: { product: Product }) {
 
   const handleBuyNow = () => {
     addItem({
-      id: `${product.key}-${SIZES[selSizeIdx]?.label}`,
+      id: `${product.key}-${sizes[selSizeIdx]?.label}`,
       name: product.name,
       cat: product.cat,
-      size: isCustom ? `${customL}×${customW}×${customH} mm` : (SIZES[selSizeIdx]?.label ?? ''),
+      size: isCustom ? `${customL}×${customW}×${customH} mm` : (sizes[selSizeIdx]?.label ?? ''),
       qty,
       unitPrice: unit,
       setupCost: setup,
@@ -100,7 +113,14 @@ export default function ProductConfigurator({ product }: { product: Product }) {
       <aside className="cfg-page-preview">
         <div className="cfg-page-visual">
           <div className="cfg-page-visual-inner" style={product.catKey === 'eco' ? { background: '#edf3ee' } : undefined}>
-            <div style={{ transform: 'scale(1.4)' }}>{product.svg}</div>
+            {product.svg ? (
+              <div style={{ transform: 'scale(1.4)' }}>{product.svg}</div>
+            ) : (
+              <svg viewBox="0 0 110 110" fill="none" style={{ width: 108, transform: 'scale(1.4)' }}>
+                <rect x="16" y="34" width="78" height="62" rx="4" fill="#ede9e2" stroke="#b8924a" strokeWidth="1.5"/>
+                <polygon points="16,34 55,16 94,34 55,52" fill="#e6e0d4" stroke="#b8924a" strokeWidth="1.5"/>
+              </svg>
+            )}
           </div>
           {product.badge && (
             <div className={`pcard-badge ${product.badge.type}`} style={{ position: 'absolute', top: 16, left: 16 }}>
@@ -126,7 +146,7 @@ export default function ProductConfigurator({ product }: { product: Product }) {
               <span>
                 {isCustom && customL && customW && customH
                   ? `${customL}×${customW}×${customH} mm`
-                  : SIZES[selSizeIdx]?.label}
+                  : sizes[selSizeIdx]?.label}
               </span>
             </div>
             <div className="cfg-sum-row"><span>Prezzo unitario</span><span>€{fmt(unit)}</span></div>
@@ -143,7 +163,7 @@ export default function ProductConfigurator({ product }: { product: Product }) {
         <div className="cfg-section">
           <div className="cfg-label">Misura</div>
           <div className="size-grid">
-            {SIZES.map((s, i) => (
+            {sizes.map((s, i) => (
               <button key={s.label} className={`size-btn${selSizeIdx === i ? ' sel' : ''}`}
                 onClick={() => { setSelSizeIdx(i); if (s.price) setBasePrice(s.price) }}>
                 <div className="size-btn-name">{s.label}</div>
@@ -175,49 +195,53 @@ export default function ProductConfigurator({ product }: { product: Product }) {
         </div>
 
         {/* Color */}
-        <div className="cfg-section">
-          <div className="cfg-label">Colore Scatola</div>
-          <div className="color-row">
-            {COLORS.map((c, i) => (
-              <div key={c.label} className={`color-swatch${selColor === i ? ' sel' : ''}`}
-                style={{ background: c.hex, border: c.border ? '1px solid #ddd' : undefined }}
-                title={c.label} onClick={() => setSelColor(i)} />
-            ))}
+        {colors.length > 0 && (
+          <div className="cfg-section">
+            <div className="cfg-label">Colore</div>
+            <div className="color-row">
+              {colors.map((c, i) => (
+                <div key={c.label} className={`color-swatch${selColor === i ? ' sel' : ''}`}
+                  style={{ background: c.hex, border: c.border ? '1px solid #ddd' : undefined }}
+                  title={c.label} onClick={() => setSelColor(i)} />
+              ))}
+            </div>
+            <div className="color-selected-label">Colore selezionato: <strong>{colors[selColor]?.label}</strong></div>
           </div>
-          <div className="color-selected-label">Colore selezionato: <strong>{COLORS[selColor].label}</strong></div>
-        </div>
+        )}
 
         {/* Print */}
-        <div className="cfg-section">
-          <div className="cfg-label">Stampa & Finitura</div>
-          <div className="chips">
-            {PRINT_OPTIONS.map(opt => (
-              <button key={opt} className={`chip${selPrints.has(opt) ? ' sel' : ''}`} onClick={() => togglePrint(opt)}>{opt}</button>
-            ))}
+        {printOptions.length > 0 && (
+          <div className="cfg-section">
+            <div className="cfg-label">Stampa & Finitura</div>
+            <div className="chips">
+              {printOptions.map(opt => (
+                <button key={opt} className={`chip${selPrints.has(opt) ? ' sel' : ''}`} onClick={() => togglePrint(opt)}>{opt}</button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Qty */}
         <div className="cfg-section">
           <div className="cfg-label">Quantità</div>
           <div className="qty-wrap">
             <div className="qty-presets">
-              {QTY_PRESETS.map(q => (
+              {qtyPresets.map(q => (
                 <button key={q} className={`qty-preset${qty === q ? ' sel' : ''}`} onClick={() => setQty(q)}>
                   {q.toLocaleString('it-IT')}
                 </button>
               ))}
             </div>
             <div className="qty-stepper">
-              <button className="qty-btn" onClick={() => setQty(q => Math.max(100, q - 50))}>−</button>
-              <input className="qty-input" type="number" value={qty} min={100} step={50}
-                onChange={e => setQty(Math.max(100, parseInt(e.target.value) || 100))} />
+              <button className="qty-btn" onClick={() => setQty(q => Math.max(product.moq, q - 50))}>−</button>
+              <input className="qty-input" type="number" value={qty} min={product.moq} step={50}
+                onChange={e => setQty(Math.max(product.moq, parseInt(e.target.value) || product.moq))} />
               <button className="qty-btn" onClick={() => setQty(q => q + 50)}>+</button>
             </div>
           </div>
           <div className="disc-tiers">
-            {DISC_TIERS.map(t => {
-              const active = qty >= t.min && qty <= t.max
+            {discTiers.map(t => {
+              const active = qty >= t.min && (t.max === null || t.max === Infinity || qty <= (t.max as number))
               return (
                 <div key={t.label} className={`disc-tier${active ? ' active' : ''}`}>
                   <div className="dt-qty">{t.label}</div>
