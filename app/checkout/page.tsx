@@ -57,13 +57,19 @@ export default function CheckoutPage() {
     const errs = validate()
     if (Object.keys(errs).length > 0) { setErrors(errs); return }
     setLoading(true)
-    // TODO: create Stripe Checkout Session via POST /api/checkout
-    // const res = await fetch('/api/checkout', { method: 'POST', body: JSON.stringify({ cart, form }) })
-    // const { url } = await res.json()
-    // router.push(url)
-    await new Promise(r => setTimeout(r, 1200))
-    setLoading(false)
-    alert('Stripe non ancora configurato — integrazione in arrivo!')
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cart, form, shipping, iva, total }),
+      })
+      const data = await res.json()
+      if (!res.ok) { alert(data.error || 'Errore durante il checkout.'); setLoading(false); return }
+      window.location.href = data.url
+    } catch {
+      alert('Errore di rete. Riprova.')
+      setLoading(false)
+    }
   }
 
   if (cart.length === 0) {
