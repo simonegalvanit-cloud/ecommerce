@@ -75,9 +75,9 @@ export default function StorefrontPage() {
             </div>
 
             <h1 className="animate-fade-up delay-1">
-              Packaging<br />
-              <span className="hero-h1-accent">su misura,</span><br />
-              senza compromessi.
+              Le migliori soluzioni<br />
+              per il Packaging<br />
+              e l&apos;Imballaggio
             </h1>
 
             <p className="hero-sub animate-fade-up delay-2">
