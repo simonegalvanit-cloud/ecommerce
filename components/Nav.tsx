@@ -11,12 +11,9 @@ interface NavProps {
 }
 
 const NAV_LINKS = [
-  { href: '/',         label: 'Shop',          key: 'shop' },
-  { href: '#',         label: 'Industriale',   key: 'ind'  },
-  { href: '#',         label: 'Food & Wine',   key: 'food' },
-  { href: '#',         label: 'E-commerce',    key: 'ecom' },
-  { href: '#',         label: 'BrioGreenPack', key: 'eco'  },
-  { href: '/contact',  label: 'Contatti',      key: 'contact' },
+  { href: '/',         label: 'Home',     key: 'home' },
+  { href: '/catalogo', label: 'Catalogo', key: 'catalogo' },
+  { href: '/contact',  label: 'Contatti', key: 'contact' },
 ]
 
 export default function Nav({ cartCount = 0, onCartClick, activeLink }: NavProps) {

@@ -55,47 +55,91 @@ export default function StorefrontPage() {
       {/* ── Scroll-reveal styles ── */}
       <style>{scrollRevealCSS}</style>
 
-      <NavWrapper activeLink="shop" />
+      <NavWrapper activeLink="home" />
 
       {/* ── HERO ── */}
       <section className="hero">
-        {/* Floating orbs */}
+        {/* Background effects */}
+        <div className="hero-glow-1" />
+        <div className="hero-glow-2" />
+        <div className="hero-grid" />
         <div className="hero-orb hero-orb-1" />
         <div className="hero-orb hero-orb-2" />
-        <div className="hero-orb hero-orb-3" />
 
         <div className="hero-inner">
           <div className="hero-left">
-            <h1 className="animate-fade-up">Packaging<br />su misura,<br />senza compromessi.</h1>
-            <p className="hero-sub animate-fade-up delay-1">Scatole, shopper, wine box e packaging food-grade personalizzabili online. MOQ accessibili, stampa professionale, spedizione nazionale.</p>
-            <div className="hero-actions animate-fade-up delay-2">
-              <button className="btn-primary" onClick={() => document.querySelector('.catalog-zone')?.scrollIntoView({ behavior: 'smooth' })}>
-                Scopri i prodotti
+            {/* Eyebrow badge */}
+            <div className="hero-badge animate-fade-up">
+              <span className="hero-badge-dot" />
+              Packaging B2B — Made in Italy
+            </div>
+
+            <h1 className="animate-fade-up delay-1">
+              Packaging<br />
+              <span className="hero-h1-accent">su misura,</span><br />
+              senza compromessi.
+            </h1>
+
+            <p className="hero-sub animate-fade-up delay-2">
+              Scatole, shopper, wine box e packaging food-grade personalizzabili online. MOQ accessibili, stampa professionale, spedizione nazionale.
+            </p>
+
+            <div className="hero-actions animate-fade-up delay-3">
+              <button className="hero-cta-primary" onClick={() => router.push('/catalogo')}>
+                Scopri il catalogo
+                <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.3" viewBox="0 0 16 16" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9 4 13 8 9 12"/></svg>
+              </button>
+              <button className="hero-cta-secondary" onClick={() => router.push('/contact')}>
+                Richiedi preventivo
               </button>
             </div>
+
+            {/* Trust chips */}
+            <div className="hero-trust animate-fade-up delay-4">
+              {['500+ aziende clienti', 'MOQ da 50 pz', 'Consegna in tutta Italia'].map(t => (
+                <span key={t} className="hero-trust-chip">
+                  <svg width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 12 12" strokeLinecap="round"><path d="M1.5 6l3 3 6-6"/></svg>
+                  {t}
+                </span>
+              ))}
+            </div>
           </div>
+
           <div className="hero-right">
             <div className="hero-cards">
               {[
-                { label: 'Shopper & Cartotecnica', title: 'Shopper Lusso', price: 'da €0,65', moq: 'MOQ 250 pz', delay: 'delay-3' },
+                { label: 'Shopper & Cartotecnica', title: 'Shopper Lusso',    price: 'da €0,65', moq: 'MOQ 250 pz', delay: 'delay-3' },
                 { label: 'Imballaggi Industriali', title: 'Scatola Americana', price: 'da €0,38', moq: 'MOQ 100 pz', delay: 'delay-4' },
                 { label: 'BrioGreenPack',          title: 'Scatola Eco 100%', price: 'da €0,45', moq: 'MOQ 100 pz', delay: 'delay-5' },
+                { label: 'E-commerce',             title: 'Mailer Self-Seal',  price: 'da €0,52', moq: 'MOQ 100 pz', delay: 'delay-5' },
               ].map(c => (
-                <div key={c.title} className={`hero-card animate-fade-up ${c.delay}`} onClick={() => { const p = PRODUCTS.find(pr => pr.cat === c.label) || PRODUCTS[0]; router.push(`/products/${p.key}`) }}>
+                <div key={c.title} className={`hero-card animate-fade-up ${c.delay}`}
+                  onClick={() => { const p = PRODUCTS.find(pr => pr.cat === c.label) || PRODUCTS[0]; router.push(`/products/${p.key}`) }}>
                   <span className="hc-label">{c.label}</span>
                   <span className="hc-title">{c.title}</span>
                   <span className="hc-price">{c.price}</span>
                   <span className="hc-moq">{c.moq}</span>
+                  <span className="hc-arrow">→</span>
                 </div>
               ))}
             </div>
           </div>
         </div>
-        {/* Scroll hint */}
-        <div className="hero-scroll">
-          <div className="hero-scroll-dot" />
-        </div>
 
+        {/* Stats bar */}
+        <div className="hero-stats">
+          {[
+            { val: '500+',  lbl: 'Aziende clienti' },
+            { val: '6',     lbl: 'Linee di prodotto' },
+            { val: '24h',   lbl: 'Risposta preventivo' },
+            { val: '100%',  lbl: 'Made in Italy' },
+          ].map(s => (
+            <div key={s.val} className="hero-stat-item">
+              <div className="hero-stat-val">{s.val}</div>
+              <div className="hero-stat-lbl">{s.lbl}</div>
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* ── CATALOG ZONE ── */}
