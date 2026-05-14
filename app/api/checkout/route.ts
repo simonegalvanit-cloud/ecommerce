@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
   if (!cart?.length) return NextResponse.json({ error: 'Carrello vuoto.' }, { status: 400 })
 
   // Build Stripe line items from cart
-  const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = []
+  const lineItems: Stripe.Checkout.SessionCreateParams['line_items'] = []
 
   for (const item of cart) {
     lineItems.push({
