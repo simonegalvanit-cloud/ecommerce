@@ -17,8 +17,9 @@ const NAV_LINKS = [
 ]
 
 export default function Nav({ cartCount = 0, onCartClick, activeLink }: NavProps) {
-  const [accountLabel, setAccountLabel] = useState<string | null>(null)
+  const [accountLabel, setAccountLabel] = useState('Accedi')
   const [accountHref, setAccountHref]   = useState('/login')
+  const [accountReady, setAccountReady] = useState(false)
   const [scrolled, setScrolled]         = useState(false)
   const [menuOpen, setMenuOpen]         = useState(false)
   const [badgeBump, setBadgeBump]       = useState(false)
@@ -27,7 +28,7 @@ export default function Nav({ cartCount = 0, onCartClick, activeLink }: NavProps
   useEffect(() => {
     const sb = createClient()
     sb.auth.getSession().then(async ({ data: { session } }) => {
-      if (!session) { setAccountLabel('Accedi'); return }
+      if (!session) { setAccountReady(true); return }
       const { data: profile } = await sb.from('profiles').select('role,full_name').eq('id', session.user.id).single()
       if (profile?.role === 'admin') {
         setAccountLabel('Admin'); setAccountHref('/admin')
@@ -35,6 +36,7 @@ export default function Nav({ cartCount = 0, onCartClick, activeLink }: NavProps
         const first = (profile?.full_name || '').split(' ')[0] || 'Account'
         setAccountLabel(first); setAccountHref('/account')
       }
+      setAccountReady(true)
     })
   }, [])
 
@@ -81,12 +83,10 @@ export default function Nav({ cartCount = 0, onCartClick, activeLink }: NavProps
         </div>
 
         <div className="nav-right">
-          {accountLabel && (
-            <Link href={accountHref} className="account-pill">
-              <span className="account-pip" />
-              {accountLabel}
-            </Link>
-          )}
+          <Link href={accountHref} className="account-pill" style={{ opacity: accountReady ? 1 : 0, transition: 'opacity .3s ease', pointerEvents: accountReady ? 'auto' : 'none' }}>
+            <span className="account-pip" />
+            {accountLabel}
+          </Link>
           <button className="cart-pill" onClick={onCartClick} aria-label={`Carrello (${cartCount} articoli)`}>
             <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" aria-hidden>
               <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>

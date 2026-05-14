@@ -89,9 +89,6 @@ export default function StorefrontPage() {
                 Scopri il catalogo
                 <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.3" viewBox="0 0 16 16" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9 4 13 8 9 12"/></svg>
               </button>
-              <button className="hero-cta-secondary" onClick={() => router.push('/contatti')}>
-                Richiedi preventivo
-              </button>
             </div>
           </div>
 
@@ -310,7 +307,7 @@ export default function StorefrontPage() {
         </div>
         <div className="footer-bottom">
           <div className="footer-legal">© 2025 Briopack Srl — P.IVA 02540090699 — REA 186673 Chieti</div>
-          <div className="footer-legal">Privacy Policy · Cookie Policy</div>
+          <div className="footer-legal"><a href="/privacy" style={{ color: 'inherit', textDecoration: 'none' }} onMouseOver={e => (e.currentTarget as HTMLElement).style.color='#e8721a'} onMouseOut={e => (e.currentTarget as HTMLElement).style.color=''}>Privacy & Cookie Policy</a></div>
         </div>
       </footer>
 
