@@ -93,16 +93,6 @@ export default function StorefrontPage() {
                 Richiedi preventivo
               </button>
             </div>
-
-            {/* Trust chips */}
-            <div className="hero-trust animate-fade-up delay-4">
-              {['500+ aziende clienti', 'MOQ da 50 pz', 'Consegna in tutta Italia'].map(t => (
-                <span key={t} className="hero-trust-chip">
-                  <svg width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 12 12" strokeLinecap="round"><path d="M1.5 6l3 3 6-6"/></svg>
-                  {t}
-                </span>
-              ))}
-            </div>
           </div>
 
           <div className="hero-right">
@@ -126,20 +116,6 @@ export default function StorefrontPage() {
           </div>
         </div>
 
-        {/* Stats bar */}
-        <div className="hero-stats">
-          {[
-            { val: '500+',  lbl: 'Aziende clienti' },
-            { val: '6',     lbl: 'Linee di prodotto' },
-            { val: '24h',   lbl: 'Risposta preventivo' },
-            { val: '100%',  lbl: 'Made in Italy' },
-          ].map(s => (
-            <div key={s.val} className="hero-stat-item">
-              <div className="hero-stat-val">{s.val}</div>
-              <div className="hero-stat-lbl">{s.lbl}</div>
-            </div>
-          ))}
-        </div>
       </section>
 
       {/* ── CATALOG ZONE ── */}
