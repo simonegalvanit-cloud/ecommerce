@@ -236,9 +236,15 @@ export default function OrdersPage() {
 
   function applyFilter(list: Order[], q: string, st: string, from: string, to: string) {
     setFiltered(list.filter(o => {
-      if (q && !o.id.toLowerCase().includes(q.toLowerCase()) &&
-               !(o.customer_name  || '').toLowerCase().includes(q.toLowerCase()) &&
-               !(o.customer_email || '').toLowerCase().includes(q.toLowerCase())) return false
+      if (q) {
+        const ref = (o.stripe_session_id || o.id).slice(-8).toUpperCase()
+        const ql  = q.replace(/^#/, '').toLowerCase()
+        if (!o.id.toLowerCase().includes(ql) &&
+            !ref.toLowerCase().includes(ql) &&
+            !(o.stripe_session_id || '').toLowerCase().includes(ql) &&
+            !(o.customer_name  || '').toLowerCase().includes(ql) &&
+            !(o.customer_email || '').toLowerCase().includes(ql)) return false
+      }
       if (st && o.status !== st) return false
       const d = new Date(o.created_at)
       if (from && d < new Date(from)) return false
