@@ -1,59 +1,45 @@
 'use client'
-import { useEffect, useState, FormEvent } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import { useState } from 'react'
 
-interface Setting {
-  key: string
-  label: string | null
-  value: string | null
+const sectionStyle: React.CSSProperties = {
+  background: 'var(--white)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', marginBottom: 16,
+}
+const rowStyle: React.CSSProperties = {
+  display: 'flex', alignItems: 'center', gap: 20, padding: '14px 20px', borderBottom: '1px solid var(--border)',
+}
+const labelStyle: React.CSSProperties = {
+  flex: '0 0 220px', fontSize: 13.5, fontWeight: 600, color: 'var(--ink)',
+}
+const subStyle: React.CSSProperties = {
+  fontSize: 11, color: 'var(--ink-4)', fontFamily: 'monospace', marginTop: 2,
+}
+const valStyle: React.CSSProperties = {
+  flex: 1, fontSize: 13.5, color: 'var(--ink-3)',
 }
 
-const inputStyle: React.CSSProperties = {
-  flex: 1, padding: '8px 12px', fontFamily: 'var(--f)', fontSize: 13.5,
-  color: 'var(--ink)', background: 'var(--surface)', border: '1.5px solid var(--border-2)',
-  borderRadius: 'var(--r)', outline: 'none',
-}
+interface InfoRow { label: string; key: string; value: string }
+
+const SHOP_INFO: InfoRow[] = [
+  { label: 'Nome azienda',   key: 'company_name',  value: 'Briopack Packaging' },
+  { label: 'Email contatti', key: 'contact_email', value: 'info@briopack.com' },
+  { label: 'Telefono',       key: 'contact_phone', value: '+39 02 000 0000' },
+  { label: 'Sede',           key: 'address',       value: 'Italia' },
+]
+
+const PAYMENT_INFO: InfoRow[] = [
+  { label: 'Stripe',       key: 'stripe_mode',  value: 'Test mode (configurare chiavi live per produzione)' },
+  { label: 'IVA',         key: 'vat_rate',     value: '22%' },
+  { label: 'Spedizione',  key: 'shipping',     value: 'Da definire (contattare il commerciale)' },
+]
 
 export default function SettingsPage() {
-  const sb = createClient()
+  const [copied, setCopied] = useState('')
 
-  const [settings, setSettings] = useState<Setting[]>([])
-  const [values, setValues]     = useState<Record<string, string>>({})
-  const [loading, setLoading]   = useState(true)
-  const [saving, setSaving]     = useState(false)
-  const [alert, setAlert]       = useState<{ msg: string; type: 'success' | 'error' } | null>(null)
-
-  useEffect(() => { loadSettings() }, [])
-
-  async function loadSettings() {
-    setLoading(true)
-    const { data } = await sb.from('site_settings').select('*').order('key')
-    const list = (data || []) as Setting[]
-    setSettings(list)
-    const vals: Record<string, string> = {}
-    list.forEach(s => { vals[s.key] = s.value || '' })
-    setValues(vals)
-    setLoading(false)
-  }
-
-  async function saveSettings(e: FormEvent) {
-    e.preventDefault()
-    setSaving(true)
-    setAlert(null)
-    const updates = settings.map(s => ({
-      key: s.key,
-      label: s.label,
-      value: values[s.key] ?? s.value ?? '',
-      updated_at: new Date().toISOString(),
-    }))
-    const { error } = await sb.from('site_settings').upsert(updates, { onConflict: 'key' })
-    if (error) {
-      setAlert({ msg: error.message, type: 'error' })
-    } else {
-      setAlert({ msg: 'Impostazioni salvate con successo.', type: 'success' })
-      setTimeout(() => setAlert(null), 3000)
-    }
-    setSaving(false)
+  function copy(text: string, key: string) {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(key)
+      setTimeout(() => setCopied(''), 1800)
+    })
   }
 
   return (
@@ -61,53 +47,86 @@ export default function SettingsPage() {
       {/* Header */}
       <div style={{ marginBottom: 20 }}>
         <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-0.4px' }}>Impostazioni</div>
-        <div style={{ fontSize: 13, color: 'var(--ink-4)', marginTop: 2 }}>Configura i parametri del sito</div>
+        <div style={{ fontSize: 13, color: 'var(--ink-4)', marginTop: 2 }}>Configurazione del negozio Briopack</div>
       </div>
 
-      {alert && (
-        <div style={{ padding: '10px 14px', borderRadius: 'var(--r)', fontSize: 13, fontWeight: 500, marginBottom: 16, background: alert.type === 'success' ? 'var(--green-bg)' : 'var(--red-bg)', color: alert.type === 'success' ? 'var(--green)' : 'var(--red)' }}>
-          {alert.msg}
+      {/* Shop info */}
+      <div style={sectionStyle}>
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>Informazioni negozio</div>
         </div>
-      )}
-
-      <div style={{ background: 'var(--white)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>Impostazioni sito</div>
-          <button
-            form="settingsForm"
-            type="submit"
-            disabled={saving || loading}
-            style={{ padding: '7px 16px', fontFamily: 'var(--f)', fontSize: 13, fontWeight: 600, background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 'var(--r)', cursor: saving || loading ? 'not-allowed' : 'pointer', opacity: saving || loading ? 0.6 : 1 }}>
-            {saving ? 'Salvataggio…' : 'Salva'}
-          </button>
-        </div>
-
-        {loading ? (
-          <div style={{ padding: 48, textAlign: 'center' }}><span className="spinner" /></div>
-        ) : settings.length === 0 ? (
-          <div style={{ padding: '48px 24px', textAlign: 'center', color: 'var(--ink-4)' }}>
-            <div style={{ fontSize: 36, marginBottom: 10 }}>⚙️</div>
-            <p style={{ fontSize: 14 }}>Nessuna impostazione trovata nella tabella <code>site_settings</code>.</p>
+        {SHOP_INFO.map((row, idx) => (
+          <div key={row.key} style={{ ...rowStyle, borderBottom: idx < SHOP_INFO.length - 1 ? '1px solid var(--border)' : 'none' }}>
+            <div style={labelStyle}>
+              {row.label}
+              <div style={subStyle}>{row.key}</div>
+            </div>
+            <div style={valStyle}>{row.value}</div>
           </div>
-        ) : (
-          <form id="settingsForm" onSubmit={saveSettings} style={{ padding: '4px 0' }}>
-            {settings.map((s, idx) => (
-              <div key={s.key} style={{ display: 'flex', alignItems: 'center', gap: 20, padding: '14px 20px', borderBottom: idx < settings.length - 1 ? '1px solid var(--border)' : 'none' }}>
-                <div style={{ flex: '0 0 220px' }}>
-                  <div style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--ink)' }}>{s.label || s.key}</div>
-                  <div style={{ fontSize: 11, color: 'var(--ink-4)', fontFamily: 'monospace', marginTop: 2 }}>{s.key}</div>
-                </div>
-                <input
-                  type="text"
-                  value={values[s.key] ?? ''}
-                  onChange={e => setValues(prev => ({ ...prev, [s.key]: e.target.value }))}
-                  placeholder="—"
-                  style={inputStyle}
-                />
-              </div>
-            ))}
-          </form>
-        )}
+        ))}
+      </div>
+
+      {/* Payment & shipping */}
+      <div style={sectionStyle}>
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>Pagamenti e spedizione</div>
+        </div>
+        {PAYMENT_INFO.map((row, idx) => (
+          <div key={row.key} style={{ ...rowStyle, borderBottom: idx < PAYMENT_INFO.length - 1 ? '1px solid var(--border)' : 'none' }}>
+            <div style={labelStyle}>
+              {row.label}
+              <div style={subStyle}>{row.key}</div>
+            </div>
+            <div style={valStyle}>{row.value}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Admin access */}
+      <div style={sectionStyle}>
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>Accesso amministratore</div>
+        </div>
+        {[
+          { label: 'URL pannello admin', key: 'admin_url',  value: '/admin-panel' },
+          { label: 'Email admin',        key: 'admin_email', value: 'simone@gmail.com' },
+          { label: 'Token sessione',     key: 'token_key',  value: 'bp_admin_bypass' },
+        ].map((row, idx, arr) => (
+          <div key={row.key} style={{ ...rowStyle, borderBottom: idx < arr.length - 1 ? '1px solid var(--border)' : 'none' }}>
+            <div style={labelStyle}>
+              {row.label}
+              <div style={subStyle}>{row.key}</div>
+            </div>
+            <div style={{ ...valStyle, display: 'flex', alignItems: 'center', gap: 10 }}>
+              <code style={{ fontSize: 13, background: 'var(--surface-2)', padding: '3px 8px', borderRadius: 4 }}>{row.value}</code>
+              <button
+                onClick={() => copy(row.value, row.key)}
+                style={{ padding: '4px 10px', fontSize: 11.5, fontWeight: 600, fontFamily: 'var(--f)', background: 'transparent', color: copied === row.key ? 'var(--green)' : 'var(--ink-3)', border: '1px solid var(--border-2)', borderRadius: 'var(--r)', cursor: 'pointer' }}>
+                {copied === row.key ? '✓ Copiato' : 'Copia'}
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Quick links */}
+      <div style={sectionStyle}>
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>Link rapidi</div>
+        </div>
+        <div style={{ padding: 20, display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+          {[
+            { label: '↗ Sito pubblico',       href: '/' },
+            { label: '↗ Account cliente',     href: '/account' },
+            { label: '↗ Checkout',            href: '/checkout' },
+            { label: '↗ Prodotto esempio',    href: '/products/shopper' },
+          ].map(l => (
+            <a key={l.href} href={l.href} target="_blank" rel="noopener noreferrer"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '7px 14px', fontSize: 13, fontWeight: 600, color: 'var(--ink-3)', border: '1px solid var(--border-2)', borderRadius: 'var(--r)', textDecoration: 'none', background: 'var(--surface)' }}>
+              {l.label}
+            </a>
+          ))}
+        </div>
       </div>
     </div>
   )
