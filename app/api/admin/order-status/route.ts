@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
 
   // Email customer
   const resendKey = process.env.RESEND_API_KEY
-  const fromEmail = process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev'
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'
   const siteUrl   = process.env.NEXT_PUBLIC_SITE_URL ?? ''
 
   if (resendKey && customerEmail) {

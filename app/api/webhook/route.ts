@@ -88,7 +88,7 @@ async function handleOrderPaid(pi: Stripe.PaymentIntent) {
   }
 
   const resendKey = process.env.RESEND_API_KEY
-  const fromEmail = process.env.RESEND_FROM_EMAIL ?? 'onboarding@resend.dev'
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'
   const siteUrl   = process.env.NEXT_PUBLIC_SITE_URL ?? ''
   const total     = (pi.amount / 100).toLocaleString('it-IT', { minimumFractionDigits: 2 })
   const ref       = pi.id.slice(-12).toUpperCase()
@@ -106,24 +106,29 @@ async function handleOrderPaid(pi: Stripe.PaymentIntent) {
   const resend = new Resend(resendKey)
 
   // Customer confirmation
+  console.log(`Sending emails — from: ${fromEmail}, to: ${toEmail}, owner: ${process.env.CONTACT_TO_EMAIL}`)
+
   if (toEmail) {
-    await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       from:    `Briopack <${fromEmail}>`,
       to:      [toEmail],
       subject: `Ordine confermato #${ref} — Briopack`,
       html:    customerEmailHtml({ name: m.customer_name || '', total, ref, siteUrl, cartItems, address: `${m.address}, ${m.zip} ${m.city} (${m.province})` }),
-    }).catch((err: unknown) => console.error('Customer email send failed:', err))
+    })
+    if (error) console.error('Customer email failed:', JSON.stringify(error))
+    else console.log('Customer email sent:', data?.id)
   }
 
-  // Owner notification
   const ownerEmail = process.env.CONTACT_TO_EMAIL
   if (ownerEmail) {
-    await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       from:    `Briopack <${fromEmail}>`,
       to:      [ownerEmail],
       subject: `Nuovo ordine #${ref} — €${total} da ${m.customer_name}`,
       html:    ownerEmailHtml({ name: m.customer_name || '', email: m.customer_email || '', phone: m.customer_phone || '', address: `${m.address}, ${m.zip} ${m.city} (${m.province})`, notes: m.notes || '', total, ref, cartItems }),
-    }).catch((err: unknown) => console.error('Owner email send failed:', err))
+    })
+    if (error) console.error('Owner email failed:', JSON.stringify(error))
+    else console.log('Owner email sent:', data?.id)
   }
 }
 
