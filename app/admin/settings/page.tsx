@@ -40,6 +40,9 @@ alter table orders enable row level security;
 create policy "Service role manages orders"
   on orders for all using (true) with check (true);`
 
+const SQL_ADD_TRACKING = `-- Add tracking number column to orders table
+alter table orders add column if not exists tracking_number text;`
+
 const SQL_FIX_STATUS_CONSTRAINT = `-- Run this if your orders table already exists with the old constraint
 -- (only allows pending/paid/refunded/cancelled)
 
@@ -252,6 +255,21 @@ export default function SettingsPage() {
           <button onClick={() => { navigator.clipboard.writeText(SQL_ORDERS); setCopied('sql-orders'); setTimeout(() => setCopied(''), 2000) }}
             style={{ marginTop: 12, padding: '7px 16px', fontFamily: 'var(--f)', fontSize: 13, fontWeight: 600, background: copied === 'sql-orders' ? 'var(--green-bg)' : 'var(--surface)', color: copied === 'sql-orders' ? 'var(--green)' : 'var(--ink-3)', border: '1px solid var(--border-2)', borderRadius: 'var(--r)', cursor: 'pointer' }}>
             {copied === 'sql-orders' ? '✓ Copiato' : 'Copia SQL'}
+          </button>
+        </div>
+      </div>
+
+      {/* SQL — tracking number */}
+      <div style={sectionStyle}>
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>Fix — Colonna tracking number</div>
+          <div style={{ fontSize: 12.5, color: 'var(--ink-4)', marginTop: 3 }}>Aggiunge la colonna per il numero di tracciamento spedizioni</div>
+        </div>
+        <div style={{ padding: 20 }}>
+          <pre style={{ background: '#0f1117', color: '#e2e8f0', padding: '16px 20px', borderRadius: 10, fontSize: 12, lineHeight: 1.7, overflowX: 'auto', margin: 0, fontFamily: 'monospace' }}>{SQL_ADD_TRACKING}</pre>
+          <button onClick={() => { navigator.clipboard.writeText(SQL_ADD_TRACKING); setCopied('sql-tracking'); setTimeout(() => setCopied(''), 2000) }}
+            style={{ marginTop: 12, padding: '7px 16px', fontFamily: 'var(--f)', fontSize: 13, fontWeight: 600, background: copied === 'sql-tracking' ? 'var(--green-bg)' : 'var(--surface)', color: copied === 'sql-tracking' ? 'var(--green)' : 'var(--ink-3)', border: '1px solid var(--border-2)', borderRadius: 'var(--r)', cursor: 'pointer' }}>
+            {copied === 'sql-tracking' ? '✓ Copiato' : 'Copia SQL'}
           </button>
         </div>
       </div>
