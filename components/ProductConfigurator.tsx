@@ -8,6 +8,43 @@ function fmt(n: number) {
   return n.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
+function RollingPrice({ value }: { value: string }) {
+  const prevRef = useRef<string>(value)
+  const prev = prevRef.current
+
+  useEffect(() => { prevRef.current = value })
+
+  const chars = value.split('')
+  const prevChars = prev.split('')
+  // Align from the right so the decimal/cents stay in sync
+  const shift = prevChars.length - chars.length
+
+  return (
+    <div className="cfg-page-price" style={{ display: 'flex', alignItems: 'baseline' }}>
+      <span>€</span>
+      {chars.map((ch, i) => {
+        const pi = i + shift
+        const prevCh = pi >= 0 && pi < prevChars.length ? prevChars[pi] : ''
+        const isDigit = /[0-9]/.test(ch)
+        const changed = isDigit && ch !== prevCh
+        return (
+          <span
+            key={i}
+            style={{ display: 'inline-block', overflow: isDigit ? 'hidden' : 'visible', lineHeight: 1, verticalAlign: 'bottom' }}
+          >
+            <span
+              key={changed ? `${i}-${ch}` : `${i}-s`}
+              style={{ display: 'block', animation: changed ? 'digitRollIn 0.42s cubic-bezier(0.22,1,0.36,1) both' : 'none' }}
+            >
+              {ch}
+            </span>
+          </span>
+        )
+      })}
+    </div>
+  )
+}
+
 export default function ProductConfigurator({ product }: { product: Product }) {
   const { addItem, setCartOpen } = useCart()
   const router = useRouter()
@@ -30,8 +67,6 @@ export default function ProductConfigurator({ product }: { product: Product }) {
   const [customH,    setCustomH]    = useState('')
   const [added,      setAdded]      = useState(false)
 
-  const prevTotalRef  = useRef<number>(0)
-  const [pricePopKey, setPricePopKey] = useState(0)
 
   const isCustom = sizes[selSizeIdx]?.label === 'Custom'
 
@@ -60,12 +95,6 @@ export default function ProductConfigurator({ product }: { product: Product }) {
   const setup = calcSetup()
   const total = unit * qty + setup
 
-  useEffect(() => {
-    if (total !== prevTotalRef.current) {
-      setPricePopKey(k => k + 1)
-      prevTotalRef.current = total
-    }
-  }, [total])
 
   const noprint = printOptions[0] ?? 'Senza Stampa'
 
@@ -136,7 +165,7 @@ export default function ProductConfigurator({ product }: { product: Product }) {
 
           <div className="cfg-page-price-box">
             <div className="cfg-page-price-label">Prezzo unitario</div>
-            <div key={pricePopKey} className="cfg-page-price price-pop">€{fmt(unit)}</div>
+            <RollingPrice value={fmt(unit)} />
             <div className="cfg-page-price-note">IVA esclusa · varia con la quantità</div>
           </div>
 
