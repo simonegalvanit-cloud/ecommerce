@@ -1088,10 +1088,34 @@ tbody tr:hover td { background: var(--surface); }
 .toggle input:checked + .toggle-slider::before { transform: translateX(16px); }
 
 /* ─── RESPONSIVE ─────────────────────────────────────────────────────────── */
+/* ─── CATALOG PAGE LAYOUT ───────────────────────────────────────────────── */
+.catalog-main-layout {
+  max-width: 1280px; margin: 0 auto; padding: 0 40px 80px;
+  display: flex; gap: 32px; align-items: flex-start;
+}
+.catalog-sidebar-panel {
+  width: 220px; flex-shrink: 0; position: sticky;
+  top: calc(var(--nav-h) + 24px); padding-top: 32px;
+}
+.catalog-sidebar-nav { display: flex; flex-direction: column; gap: 2px; }
+.catalog-content-panel { flex: 1; min-width: 0; padding-top: 32px; }
+
+/* ─── CONTATTI PAGE LAYOUT ──────────────────────────────────────────────── */
+.contatti-main-grid {
+  max-width: 1120px; margin: 0 auto; padding: 64px 24px 96px;
+  display: grid; grid-template-columns: 1fr 1.6fr; gap: 48px; align-items: start;
+}
+.contatti-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+/* ─── RESPONSIVE ─────────────────────────────────────────────────────────── */
 @media (max-width: 1024px) {
   nav.site-nav { padding: 0 24px; }
   .nav-center { display: none; }
   .nav-hamburger { display: flex; }
+  /* Prevent iOS auto-zoom on input focus */
+  input[type=text], input[type=email], input[type=password],
+  input[type=number], input[type=tel], input[type=url], select, textarea,
+  .catalog-searchbar input, .cf-field input, .cf-field textarea, .cf-field select { font-size: 16px; }
   .hero { padding: 60px 24px 0; }
   .hero-inner { grid-template-columns: 1fr; gap: 36px; padding-bottom: 40px; }
   .hero h1 { font-size: 48px; letter-spacing: -2.5px; }
@@ -1136,7 +1160,16 @@ tbody tr:hover td { background: var(--surface); }
   .btn-config svg { width: 11px; height: 11px; }
   .catalog-zone { padding: 12px 14px 0; }
   .catalog-searchbar { padding: 5px 5px 5px 16px; margin-bottom: 12px; }
-  .catalog-searchbar input { font-size: 14px; }
+  .catalog-searchbar input { font-size: 16px; }
+  .catalog-main-layout { flex-direction: column; padding: 0 16px 60px; gap: 0; }
+  .catalog-sidebar-panel { width: 100%; position: static; padding-top: 16px; padding-bottom: 4px; }
+  .catalog-sidebar-label { display: none; }
+  .catalog-sidebar-help { display: none; }
+  .catalog-sidebar-nav { flex-direction: row; overflow-x: auto; gap: 6px; padding-bottom: 12px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .catalog-sidebar-nav::-webkit-scrollbar { display: none; }
+  .catalog-content-panel { padding-top: 16px; }
+  .contatti-main-grid { grid-template-columns: 1fr; padding: 32px 16px 64px; gap: 28px; }
+  .contatti-field-row { grid-template-columns: 1fr; }
   .catalog-search-btn { width: 38px; height: 38px; }
   .catalog-pill { padding: 6px 13px; font-size: 12px; }
   .cpill-count { display: none; }
