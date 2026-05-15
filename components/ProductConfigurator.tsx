@@ -8,6 +8,43 @@ function fmt(n: number) {
   return n.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
+function RollingPrice({ value, className }: { value: string; className?: string }) {
+  const prevRef = useRef<string>(value)
+  const prev = prevRef.current
+
+  useEffect(() => { prevRef.current = value })
+
+  const chars = value.split('')
+  const prevChars = prev.split('')
+  // Align from the right so the decimal/cents stay in sync
+  const shift = prevChars.length - chars.length
+
+  return (
+    <div className={className ?? 'cfg-page-price'} style={{ display: 'flex', alignItems: 'baseline' }}>
+      <span>€</span>
+      {chars.map((ch, i) => {
+        const pi = i + shift
+        const prevCh = pi >= 0 && pi < prevChars.length ? prevChars[pi] : ''
+        const isDigit = /[0-9]/.test(ch)
+        const changed = isDigit && ch !== prevCh
+        return (
+          <span
+            key={i}
+            style={{ display: 'inline-block', overflow: isDigit ? 'hidden' : 'visible', lineHeight: 1, verticalAlign: 'bottom' }}
+          >
+            <span
+              key={changed ? `${i}-${ch}` : `${i}-s`}
+              style={{ display: 'block', animation: changed ? 'digitRollIn 0.42s cubic-bezier(0.22,1,0.36,1) both' : 'none' }}
+            >
+              {ch}
+            </span>
+          </span>
+        )
+      })}
+    </div>
+  )
+}
+
 export default function ProductConfigurator({ product }: { product: Product }) {
   const { addItem, setCartOpen } = useCart()
   const router = useRouter()
@@ -29,9 +66,9 @@ export default function ProductConfigurator({ product }: { product: Product }) {
   const [customW,    setCustomW]    = useState('')
   const [customH,    setCustomH]    = useState('')
   const [added,      setAdded]      = useState(false)
+  const [flyAnim,    setFlyAnim]    = useState<{ x: number; y: number; dx: number; dy: number } | null>(null)
+  const addBtnRef = useRef<HTMLButtonElement>(null)
 
-  const prevTotalRef  = useRef<number>(0)
-  const [pricePopKey, setPricePopKey] = useState(0)
 
   const isCustom = sizes[selSizeIdx]?.label === 'Custom'
 
@@ -60,12 +97,6 @@ export default function ProductConfigurator({ product }: { product: Product }) {
   const setup = calcSetup()
   const total = unit * qty + setup
 
-  useEffect(() => {
-    if (total !== prevTotalRef.current) {
-      setPricePopKey(k => k + 1)
-      prevTotalRef.current = total
-    }
-  }, [total])
 
   const noprint = printOptions[0] ?? 'Senza Stampa'
 
@@ -81,6 +112,18 @@ export default function ProductConfigurator({ product }: { product: Product }) {
   }
 
   const handleAddToCart = () => {
+    const btnEl = addBtnRef.current
+    const cartEl = document.querySelector('.cart-pill') as HTMLElement | null
+    if (btnEl) {
+      const btnRect = btnEl.getBoundingClientRect()
+      const cartRect = cartEl?.getBoundingClientRect()
+      const startX = btnRect.left + btnRect.width / 2
+      const startY = btnRect.top + btnRect.height / 2
+      const endX = cartRect ? cartRect.left + cartRect.width / 2 : window.innerWidth - 80
+      const endY = cartRect ? cartRect.top + cartRect.height / 2 : 32
+      setFlyAnim({ x: startX, y: startY, dx: endX - startX, dy: endY - startY })
+      setTimeout(() => setFlyAnim(null), 750)
+    }
     addItem({
       id: `${product.key}-${sizes[selSizeIdx]?.label}`,
       name: product.name,
@@ -91,7 +134,7 @@ export default function ProductConfigurator({ product }: { product: Product }) {
       setupCost: setup,
     })
     setAdded(true)
-    setTimeout(() => setAdded(false), 2000)
+    setTimeout(() => setAdded(false), 2200)
   }
 
   const handleBuyNow = () => {
@@ -108,6 +151,7 @@ export default function ProductConfigurator({ product }: { product: Product }) {
   }
 
   return (
+    <>
     <div className="cfg-page-layout">
       {/* ── LEFT: PREVIEW + INFO ── */}
       <aside className="cfg-page-preview">
@@ -136,7 +180,7 @@ export default function ProductConfigurator({ product }: { product: Product }) {
 
           <div className="cfg-page-price-box">
             <div className="cfg-page-price-label">Prezzo unitario</div>
-            <div key={pricePopKey} className="cfg-page-price price-pop">€{fmt(unit)}</div>
+            <RollingPrice value={fmt(unit)} />
             <div className="cfg-page-price-note">IVA esclusa · varia con la quantità</div>
           </div>
 
@@ -273,7 +317,13 @@ export default function ProductConfigurator({ product }: { product: Product }) {
 
         {/* CTA */}
         <div className="cfg-page-cta">
-          <button className={`cfg-addcart-btn${added ? ' added' : ''}`} onClick={handleAddToCart}>
+          {/* Mobile-only floating price — visible when price box scrolled out of view */}
+          <div className="cfg-cta-price-row">
+            <span className="cfg-cta-price-label-sm">Prezzo unitario</span>
+            <RollingPrice value={fmt(unit)} className="cfg-cta-mini-price" />
+          </div>
+
+          <button ref={addBtnRef} className={`cfg-addcart-btn${added ? ' added' : ''}`} onClick={handleAddToCart}>
             {added ? (
               <>
                 <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
@@ -297,5 +347,26 @@ export default function ProductConfigurator({ product }: { product: Product }) {
         </div>
       </div>
     </div>
+
+    {/* Flying cart dot */}
+    {flyAnim && (
+      <div
+        className="cart-fly-dot"
+        aria-hidden
+        style={{
+          left: flyAnim.x,
+          top: flyAnim.y,
+          '--dx': `${flyAnim.dx}px`,
+          '--dy': `${flyAnim.dy}px`,
+        } as React.CSSProperties}
+      >
+        <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24" strokeLinecap="round">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 01-8 0"/>
+        </svg>
+      </div>
+    )}
+    </>
   )
 }

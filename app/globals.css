@@ -122,6 +122,10 @@ a { color: inherit; }
   0%, 100% { transform: scale(1); }
   40% { transform: scale(1.1); color: var(--accent); }
 }
+@keyframes digitRollIn {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
 @keyframes badgePulse {
   0%, 100% { box-shadow: 0 0 0 0 rgba(26,122,58,0.4); }
   50% { box-shadow: 0 0 0 5px rgba(26,122,58,0); }
@@ -1498,7 +1502,14 @@ tbody tr:hover td { background: var(--surface); }
   display: flex; align-items: center; justify-content: center; gap: 9px;
 }
 .cfg-addcart-btn:hover { background: var(--ink-2); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,0,0,0.18); }
-.cfg-addcart-btn.added { background: #2e7d32; }
+.cfg-addcart-btn:active { transform: scale(0.97); box-shadow: none; }
+.cfg-addcart-btn.added { background: #2e7d32; box-shadow: 0 4px 18px rgba(46,125,50,0.35); }
+@keyframes addedPop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.025); }
+  100% { transform: scale(1); }
+}
+.cfg-addcart-btn.added { animation: addedPop 0.35s var(--spring) both; }
 .cfg-buynow-btn {
   width: 100%; padding: 14px 24px; border-radius: var(--r);
   background: var(--accent); border: none; color: #fff;
@@ -1509,10 +1520,42 @@ tbody tr:hover td { background: var(--surface); }
 }
 .cfg-buynow-btn:hover { background: var(--accent-h); transform: translateY(-1px); box-shadow: 0 6px 24px rgba(232,114,26,0.4); }
 
+/* ── Cart fly-to-cart animation ─────────────────────────────────────────── */
+@keyframes cartFlyPath {
+  0%   { transform: translate(-50%,-50%) scale(1);    opacity: 1; }
+  65%  { opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.15); opacity: 0; }
+}
+.cart-fly-dot {
+  position: fixed; z-index: 9999; pointer-events: none;
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--accent); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 16px rgba(232,114,26,0.5);
+  animation: cartFlyPath 0.65s cubic-bezier(0.4, 0, 0.9, 0.6) forwards;
+}
+
+/* ── Mobile CTA price row ───────────────────────────────────────────────── */
+.cfg-cta-price-row {
+  display: none;
+  align-items: baseline; justify-content: space-between;
+  padding-bottom: 14px; border-bottom: 1px solid var(--border);
+  margin-bottom: 2px;
+}
+.cfg-cta-price-label-sm {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
+  text-transform: uppercase; color: var(--ink-4);
+}
+.cfg-cta-mini-price {
+  font-size: 26px; font-weight: 900; color: var(--accent);
+  letter-spacing: -0.8px; line-height: 1;
+}
+
 @media (max-width: 900px) {
   .cfg-page-layout { grid-template-columns: 1fr; }
   .cfg-page-preview { position: static; }
   .cfg-page-visual { height: 220px; }
   .cfg-page-wrap { padding: 24px 20px 60px; }
   .cfg-breadcrumb { padding: 12px 20px; }
+  .cfg-cta-price-row { display: flex; }
 }
