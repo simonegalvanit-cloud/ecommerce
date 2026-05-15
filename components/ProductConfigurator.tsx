@@ -8,7 +8,7 @@ function fmt(n: number) {
   return n.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
-function RollingPrice({ value }: { value: string }) {
+function RollingPrice({ value, className }: { value: string; className?: string }) {
   const prevRef = useRef<string>(value)
   const prev = prevRef.current
 
@@ -20,7 +20,7 @@ function RollingPrice({ value }: { value: string }) {
   const shift = prevChars.length - chars.length
 
   return (
-    <div className="cfg-page-price" style={{ display: 'flex', alignItems: 'baseline' }}>
+    <div className={className ?? 'cfg-page-price'} style={{ display: 'flex', alignItems: 'baseline' }}>
       <span>€</span>
       {chars.map((ch, i) => {
         const pi = i + shift
@@ -66,6 +66,8 @@ export default function ProductConfigurator({ product }: { product: Product }) {
   const [customW,    setCustomW]    = useState('')
   const [customH,    setCustomH]    = useState('')
   const [added,      setAdded]      = useState(false)
+  const [flyAnim,    setFlyAnim]    = useState<{ x: number; y: number; dx: number; dy: number } | null>(null)
+  const addBtnRef = useRef<HTMLButtonElement>(null)
 
 
   const isCustom = sizes[selSizeIdx]?.label === 'Custom'
@@ -110,6 +112,18 @@ export default function ProductConfigurator({ product }: { product: Product }) {
   }
 
   const handleAddToCart = () => {
+    const btnEl = addBtnRef.current
+    const cartEl = document.querySelector('.cart-pill') as HTMLElement | null
+    if (btnEl) {
+      const btnRect = btnEl.getBoundingClientRect()
+      const cartRect = cartEl?.getBoundingClientRect()
+      const startX = btnRect.left + btnRect.width / 2
+      const startY = btnRect.top + btnRect.height / 2
+      const endX = cartRect ? cartRect.left + cartRect.width / 2 : window.innerWidth - 80
+      const endY = cartRect ? cartRect.top + cartRect.height / 2 : 32
+      setFlyAnim({ x: startX, y: startY, dx: endX - startX, dy: endY - startY })
+      setTimeout(() => setFlyAnim(null), 750)
+    }
     addItem({
       id: `${product.key}-${sizes[selSizeIdx]?.label}`,
       name: product.name,
@@ -120,7 +134,7 @@ export default function ProductConfigurator({ product }: { product: Product }) {
       setupCost: setup,
     })
     setAdded(true)
-    setTimeout(() => setAdded(false), 2000)
+    setTimeout(() => setAdded(false), 2200)
   }
 
   const handleBuyNow = () => {
@@ -137,6 +151,7 @@ export default function ProductConfigurator({ product }: { product: Product }) {
   }
 
   return (
+    <>
     <div className="cfg-page-layout">
       {/* ── LEFT: PREVIEW + INFO ── */}
       <aside className="cfg-page-preview">
@@ -302,7 +317,13 @@ export default function ProductConfigurator({ product }: { product: Product }) {
 
         {/* CTA */}
         <div className="cfg-page-cta">
-          <button className={`cfg-addcart-btn${added ? ' added' : ''}`} onClick={handleAddToCart}>
+          {/* Mobile-only floating price — visible when price box scrolled out of view */}
+          <div className="cfg-cta-price-row">
+            <span className="cfg-cta-price-label-sm">Prezzo unitario</span>
+            <RollingPrice value={fmt(unit)} className="cfg-cta-mini-price" />
+          </div>
+
+          <button ref={addBtnRef} className={`cfg-addcart-btn${added ? ' added' : ''}`} onClick={handleAddToCart}>
             {added ? (
               <>
                 <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
@@ -326,5 +347,26 @@ export default function ProductConfigurator({ product }: { product: Product }) {
         </div>
       </div>
     </div>
+
+    {/* Flying cart dot */}
+    {flyAnim && (
+      <div
+        className="cart-fly-dot"
+        aria-hidden
+        style={{
+          left: flyAnim.x,
+          top: flyAnim.y,
+          '--dx': `${flyAnim.dx}px`,
+          '--dy': `${flyAnim.dy}px`,
+        } as React.CSSProperties}
+      >
+        <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24" strokeLinecap="round">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 01-8 0"/>
+        </svg>
+      </div>
+    )}
+    </>
   )
 }
