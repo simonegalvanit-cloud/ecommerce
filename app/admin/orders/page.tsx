@@ -502,7 +502,7 @@ export default function OrdersPage() {
                 <select
                   value={detail.status}
                   disabled={updatingId === detail.id}
-                  onChange={e => updateStatus(detail, e.target.value)}
+                  onChange={e => handleStatusChange(detail, e.target.value)}
                   style={{ ...inp, padding: '6px 10px', fontSize: 13, width: 'auto', opacity: updatingId === detail.id ? 0.5 : 1 }}>
                   {Object.entries(STATUS_LABEL).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
                 </select>
