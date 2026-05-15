@@ -91,12 +91,12 @@ export default function CatalogoPage() {
       </div>
 
       {/* ── Main layout: sidebar + content ── */}
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 40px 80px', display: 'flex', gap: 32, alignItems: 'flex-start' }}>
+      <div className="catalog-main-layout">
 
         {/* ── Sidebar ── */}
-        <aside style={{ width: 220, flexShrink: 0, position: 'sticky', top: 'calc(var(--nav-h) + 24px)', paddingTop: 32 }}>
-          <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '0.8px', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: 10, paddingLeft: 10 }}>Categorie</div>
-          <nav style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <aside className="catalog-sidebar-panel">
+          <div className="catalog-sidebar-label" style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '0.8px', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: 10, paddingLeft: 10 }}>Categorie</div>
+          <nav className="catalog-sidebar-nav">
             {CATEGORIES.map(c => {
               const count = c.key === 'all' ? PRODUCTS.length : PRODUCTS.filter(p => p.catKey === c.key).length
               const active = activeCat === c.key
@@ -125,7 +125,7 @@ export default function CatalogoPage() {
           </nav>
 
           {/* Info block */}
-          <div style={{ marginTop: 28, padding: '16px', background: 'var(--surface)', borderRadius: 12, border: '1px solid var(--border)' }}>
+          <div className="catalog-sidebar-help" style={{ marginTop: 28, padding: '16px', background: 'var(--surface)', borderRadius: 12, border: '1px solid var(--border)' }}>
             <div style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--ink-2)', marginBottom: 6 }}>Hai bisogno di aiuto?</div>
             <div style={{ fontSize: 12, color: 'var(--ink-4)', lineHeight: 1.6, marginBottom: 10 }}>
               Per ordini speciali o quantità elevate contattaci direttamente.
@@ -138,7 +138,7 @@ export default function CatalogoPage() {
         </aside>
 
         {/* ── Product content ── */}
-        <div style={{ flex: 1, minWidth: 0, paddingTop: 32 }}>
+        <div className="catalog-content-panel">
           {/* Results info */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 8 }}>
             <div style={{ fontSize: 13, color: 'var(--ink-4)' }}>

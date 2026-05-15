@@ -126,7 +126,7 @@ export default function ContactPage() {
         </div>
 
         {/* ── Main content ── */}
-        <div style={{ maxWidth: 1120, margin: '0 auto', padding: '64px 24px 96px', display: 'grid', gridTemplateColumns: '1fr 1.6fr', gap: 48, alignItems: 'start' }}>
+        <div className="contatti-main-grid">
 
           {/* ── Left: contact info ── */}
           <div>
@@ -211,7 +211,7 @@ export default function ContactPage() {
 
                 <form onSubmit={handleSubmit} style={{ padding: '28px 32px' }}>
                   {/* Name + Company */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 18 }}>
+                  <div className="contatti-field-row" style={{ marginBottom: 18 }}>
                     <FormField label="Nome *">
                       <input value={form.name} onChange={e => set('name', e.target.value)} placeholder="Mario Rossi" required />
                     </FormField>
@@ -221,7 +221,7 @@ export default function ContactPage() {
                   </div>
 
                   {/* Email + Phone */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 18 }}>
+                  <div className="contatti-field-row" style={{ marginBottom: 18 }}>
                     <FormField label="Email *">
                       <input type="email" value={form.email} onChange={e => set('email', e.target.value)} placeholder="mario@azienda.it" required />
                     </FormField>
@@ -289,7 +289,7 @@ function FormField({ label, children }: { label: string; children: React.ReactNo
       </label>
       <style>{`
         .cf-field input, .cf-field textarea, .cf-field select {
-          width: 100%; padding: 11px 14px; font-family: var(--f); font-size: 14px;
+          width: 100%; padding: 11px 14px; font-family: var(--f); font-size: 16px;
           color: var(--ink); background: var(--surface); border: 1.5px solid var(--border-2);
           border-radius: 10px; outline: none; box-sizing: border-box; transition: border-color .18s, box-shadow .18s;
         }

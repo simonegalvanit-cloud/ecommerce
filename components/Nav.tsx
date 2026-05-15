@@ -124,7 +124,7 @@ export default function Nav({ cartCount = 0, onCartClick, activeLink }: NavProps
             <div className="mobile-nav-actions">
               {accountLabel ? (
                 <Link href={accountHref} className="mobile-nav-btn primary" onClick={() => setMenuOpen(false)}>
-                  {accountLabel === 'Admin' ? '⚙ Admin' : `👤 ${accountLabel}`}
+                  {accountLabel}
                 </Link>
               ) : (
                 <Link href="/login" className="mobile-nav-btn primary" onClick={() => setMenuOpen(false)}>
