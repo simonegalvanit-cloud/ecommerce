@@ -164,7 +164,7 @@ function cartTable(items: CartItem[]) {
 
 function emailWrap(content: string, siteUrl: string) {
   const logo = siteUrl
-    ? `<img src="${siteUrl}/logo.svg" alt="Briopack" style="height:32px;width:auto;" />`
+    ? `<img src="${siteUrl}/logo.png" alt="Briopack" style="height:28px;width:auto;" />`
     : `<span style="font-size:22px;font-weight:900;color:#e8721a;letter-spacing:-0.5px;">BRIOPACK</span>`
 
   return `<!DOCTYPE html>

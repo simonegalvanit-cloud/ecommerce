@@ -217,6 +217,8 @@ export default function OrdersPage() {
   const [statusError, setStatusError] = useState<string | null>(null)
 
   const [detail, setDetail] = useState<Order | null>(null)
+  const [trackingModal, setTrackingModal] = useState<{ order: Order; status: string } | null>(null)
+  const [trackingInput, setTrackingInput] = useState('')
 
   useEffect(() => { loadOrders() }, [])
 
@@ -258,19 +260,30 @@ export default function OrdersPage() {
   function onFrom(v: string)   { setDateFrom(v);     applyFilter(all, search, statusFilter, v, dateTo) }
   function onTo(v: string)     { setDateTo(v);       applyFilter(all, search, statusFilter, dateFrom, v) }
 
-  async function updateStatus(order: Order, status: string) {
+  function handleStatusChange(order: Order, status: string) {
+    if (status === 'shipped') {
+      setTrackingInput('')
+      setTrackingModal({ order, status })
+    } else {
+      updateStatus(order, status)
+    }
+  }
+
+  async function updateStatus(order: Order, status: string, trackingNumber?: string) {
     setUpdatingId(order.id)
     setStatusError(null)
+    setTrackingModal(null)
     try {
       const res = await fetch('/api/admin/order-status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          orderId:       order.id,
+          orderId:        order.id,
           status,
-          customerEmail: order.customer_email,
-          customerName:  order.customer_name,
-          orderRef:      order.stripe_session_id || order.id,
+          customerEmail:  order.customer_email,
+          customerName:   order.customer_name,
+          orderRef:       order.stripe_session_id || order.id,
+          trackingNumber: trackingNumber || undefined,
         }),
       })
       if (res.ok) {
@@ -401,7 +414,7 @@ export default function OrdersPage() {
                         <select
                           value={o.status}
                           disabled={updatingId === o.id}
-                          onChange={e => updateStatus(o, e.target.value)}
+                          onChange={e => handleStatusChange(o, e.target.value)}
                           style={{ ...inp, padding: '5px 8px', fontSize: 12, width: 'auto', opacity: updatingId === o.id ? 0.5 : 1 }}>
                           {Object.entries(STATUS_LABEL).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
                         </select>
@@ -414,6 +427,53 @@ export default function OrdersPage() {
           </div>
         )}
       </div>
+
+      {/* Tracking number modal */}
+      {trackingModal && (
+        <div onClick={e => { if (e.target === e.currentTarget) setTrackingModal(null) }}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+          <div style={{ background: 'var(--white)', borderRadius: 'var(--r-xl)', width: '100%', maxWidth: 440, boxShadow: 'var(--shadow-lg)', overflow: 'hidden' }}>
+            <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ width: 36, height: 36, borderRadius: 9, background: 'var(--accent-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <svg width="18" height="18" fill="none" stroke="var(--accent)" strokeWidth="1.8" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </div>
+              <div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--ink)' }}>Ordine spedito</div>
+                <div style={{ fontSize: 12.5, color: 'var(--ink-4)', marginTop: 1 }}>Inserisci il numero di tracciamento per il cliente</div>
+              </div>
+            </div>
+            <div style={{ padding: '20px 24px' }}>
+              <label style={{ display: 'block', fontSize: 12.5, fontWeight: 600, color: 'var(--ink-2)', marginBottom: 8 }}>
+                Numero di tracciamento
+              </label>
+              <input
+                autoFocus
+                type="text"
+                placeholder="es. GD123456789IT"
+                value={trackingInput}
+                onChange={e => setTrackingInput(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter' && trackingInput.trim()) updateStatus(trackingModal.order, trackingModal.status, trackingInput.trim()) }}
+                style={{ ...inp, width: '100%', fontSize: 15, fontFamily: 'monospace', letterSpacing: '0.5px', marginBottom: 8 }}
+              />
+              <div style={{ fontSize: 12, color: 'var(--ink-4)', marginBottom: 20 }}>
+                Verrà inviato via email al cliente insieme alla conferma di spedizione.
+              </div>
+              <div style={{ display: 'flex', gap: 10 }}>
+                <button
+                  onClick={() => updateStatus(trackingModal.order, trackingModal.status, trackingInput.trim() || undefined)}
+                  style={{ flex: 1, padding: '10px 0', background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 'var(--r)', fontFamily: 'var(--f)', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>
+                  {trackingInput.trim() ? 'Conferma spedizione' : 'Conferma senza tracking'}
+                </button>
+                <button
+                  onClick={() => setTrackingModal(null)}
+                  style={{ padding: '10px 16px', background: 'transparent', color: 'var(--ink-3)', border: '1px solid var(--border-2)', borderRadius: 'var(--r)', fontFamily: 'var(--f)', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
+                  Annulla
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Detail Modal */}
       {detail && (
