@@ -64,8 +64,8 @@ export async function POST(req: NextRequest) {
     const color = statusColor[status] || '#374151'
 
     const logo = siteUrl
-      ? `<img src="${siteUrl}/logo.png" alt="Briopack" style="height:28px;width:auto;" />`
-      : `<span style="font-size:20px;font-weight:800;color:#e8721a;">BRIOPACK</span>`
+      ? `<img src="${siteUrl}/logo.svg" alt="Briopack" style="height:32px;width:auto;" />`
+      : `<span style="font-size:22px;font-weight:900;color:#e8721a;letter-spacing:-0.5px;">BRIOPACK</span>`
 
     await resend.emails.send({
       from:    `Briopack <${fromEmail}>`,

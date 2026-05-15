@@ -164,8 +164,8 @@ function cartTable(items: CartItem[]) {
 
 function emailWrap(content: string, siteUrl: string) {
   const logo = siteUrl
-    ? `<img src="${siteUrl}/logo.png" alt="Briopack" style="height:28px;width:auto;" />`
-    : `<span style="font-size:20px;font-weight:800;color:#e8721a;letter-spacing:-0.5px;">BRIOPACK</span>`
+    ? `<img src="${siteUrl}/logo.svg" alt="Briopack" style="height:32px;width:auto;" />`
+    : `<span style="font-size:22px;font-weight:900;color:#e8721a;letter-spacing:-0.5px;">BRIOPACK</span>`
 
   return `<!DOCTYPE html>
 <html lang="it">
@@ -198,9 +198,7 @@ function infoRow(label: string, value: string) {
 function customerEmailHtml({ name, total, ref, siteUrl, cartItems, address }: { name: string; total: string; ref: string; siteUrl: string; cartItems: CartItem[]; address: string }) {
   return emailWrap(`
     <div style="background:linear-gradient(135deg,#c45a14 0%,#e8721a 60%,#f08a3a 100%);padding:36px 36px 32px;">
-      <div style="width:52px;height:52px;background:rgba(255,255,255,0.25);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:18px;">
-        <span style="color:#fff;font-size:24px;font-weight:700;line-height:52px;display:block;text-align:center;">✓</span>
-      </div>
+      <div style="width:52px;height:52px;background:rgba(255,255,255,0.25);border-radius:50%;margin:0 0 18px;text-align:center;line-height:52px;font-size:28px;color:#fff;font-weight:700;">✓</div>
       <div style="color:#fff;font-size:24px;font-weight:800;letter-spacing:-0.5px;margin-bottom:6px;">Ordine confermato!</div>
       <div style="color:rgba(255,255,255,0.85);font-size:14px;">Il tuo pagamento è stato ricevuto con successo.</div>
     </div>
