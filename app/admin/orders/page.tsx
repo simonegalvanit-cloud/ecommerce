@@ -562,6 +562,15 @@ export default function OrdersPage() {
                           <td style={{ padding: '10px 12px', fontSize: 13.5, borderBottom: '1px solid var(--border)', fontWeight: 500 }}>
                             {item.name}
                             {item.size && <span style={{ fontSize: 12, color: 'var(--ink-4)', marginLeft: 6 }}>· {item.size}</span>}
+                            {(item as any).artworkUrl && (
+                              <div style={{ marginTop: 5 }}>
+                                <a href={(item as any).artworkUrl} target="_blank" rel="noopener noreferrer"
+                                  style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 12, fontWeight: 600, color: 'var(--accent)', textDecoration: 'none', background: 'var(--accent-bg)', border: '1px solid var(--accent-border)', borderRadius: 6, padding: '3px 9px' }}>
+                                  <svg width="11" height="11" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 16 16" strokeLinecap="round"><path d="M8 2v8M4 6l4 4 4-4"/><rect x="2" y="11" width="12" height="3" rx="1"/></svg>
+                                  Scarica artwork
+                                </a>
+                              </div>
+                            )}
                           </td>
                           <td style={{ padding: '10px 12px', fontSize: 13.5, borderBottom: '1px solid var(--border)' }}>{item.qty.toLocaleString('it-IT')} pz</td>
                           <td style={{ padding: '10px 12px', fontSize: 13.5, borderBottom: '1px solid var(--border)' }}>€{fmt(item.unitPrice)}</td>
