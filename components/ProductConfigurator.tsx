@@ -61,12 +61,16 @@ export default function ProductConfigurator({ product }: { product: Product }) {
   const [selColor,   setSelColor]   = useState(0)
   const [selPrints,  setSelPrints]  = useState<Set<string>>(new Set([printOptions[0] ?? 'Senza Stampa']))
   const [qty,        setQty]        = useState(product.moq)
-  const [fileOk,     setFileOk]     = useState(false)
+
   const [customL,    setCustomL]    = useState('')
   const [customW,    setCustomW]    = useState('')
   const [customH,    setCustomH]    = useState('')
-  const [added,      setAdded]      = useState(false)
-  const [flyAnim,    setFlyAnim]    = useState<{ x: number; y: number; dx: number; dy: number } | null>(null)
+  const [added,        setAdded]       = useState(false)
+  const [flyAnim,      setFlyAnim]     = useState<{ x: number; y: number; dx: number; dy: number } | null>(null)
+  const [artworkUrl,   setArtworkUrl]  = useState<string | null>(null)
+  const [artworkName,  setArtworkName] = useState<string | null>(null)
+  const [uploading,    setUploading]   = useState(false)
+  const [uploadError,  setUploadError] = useState('')
   const addBtnRef = useRef<HTMLButtonElement>(null)
 
 
@@ -132,6 +136,7 @@ export default function ProductConfigurator({ product }: { product: Product }) {
       qty,
       unitPrice: unit,
       setupCost: setup,
+      ...(artworkUrl ? { artworkUrl } : {}),
     })
     setAdded(true)
     setTimeout(() => setAdded(false), 2200)
@@ -146,8 +151,31 @@ export default function ProductConfigurator({ product }: { product: Product }) {
       qty,
       unitPrice: unit,
       setupCost: setup,
+      ...(artworkUrl ? { artworkUrl } : {}),
     })
     router.push('/checkout')
+  }
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+    setUploadError('')
+    setArtworkUrl(null)
+    setArtworkName(null)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      const res = await fetch('/api/upload-artwork', { method: 'POST', body: fd })
+      const data = await res.json()
+      if (!res.ok) { setUploadError(data.error || 'Errore caricamento.'); return }
+      setArtworkUrl(data.url)
+      setArtworkName(data.name)
+    } catch {
+      setUploadError('Errore di rete. Riprova.')
+    } finally {
+      setUploading(false)
+    }
   }
 
   return (
@@ -299,20 +327,55 @@ export default function ProductConfigurator({ product }: { product: Product }) {
         {/* File upload */}
         <div className="cfg-section">
           <div className="cfg-label">Logo / Artwork</div>
-          <div className="upload-zone" onClick={() => document.getElementById('file-upload-cfg')?.click()}>
+          <div
+            className={`upload-zone${uploading ? ' uploading' : ''}${artworkUrl ? ' done' : ''}`}
+            onClick={() => !uploading && document.getElementById('file-upload-cfg')?.click()}
+          >
             <div className="upload-icon-wrap">
-              <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="16 16 12 12 8 16"/>
-                <line x1="12" y1="12" x2="12" y2="21"/>
-                <path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/>
-              </svg>
+              {uploading ? (
+                <span className="spinner" style={{ width: 24, height: 24, borderWidth: 2.5, borderTopColor: 'var(--accent)', borderColor: 'rgba(232,114,26,0.2)' }} />
+              ) : artworkUrl ? (
+                <svg width="24" height="24" fill="none" stroke="#16a34a" strokeWidth="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              ) : (
+                <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/>
+                  <path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/>
+                </svg>
+              )}
             </div>
-            <div className="upload-main">Carica il tuo file logo o grafica</div>
-            <div className="upload-sub">SVG · AI · EPS · PDF · PNG — max 50 MB</div>
+            {uploading ? (
+              <>
+                <div className="upload-main">Caricamento in corso…</div>
+                <div className="upload-sub">Attendere prego</div>
+              </>
+            ) : artworkUrl ? (
+              <>
+                <div className="upload-main" style={{ color: '#16a34a' }}>File caricato</div>
+                <div className="upload-sub" style={{ wordBreak: 'break-all' }}>{artworkName}</div>
+              </>
+            ) : (
+              <>
+                <div className="upload-main">Carica il tuo logo o artwork</div>
+                <div className="upload-sub">SVG · PDF — max 50 MB</div>
+              </>
+            )}
           </div>
-          <input type="file" id="file-upload-cfg" accept=".svg,.ai,.eps,.pdf,.png" style={{ display: 'none' }}
-            onChange={e => { if (e.target.files?.length) setFileOk(true) }} />
-          {fileOk && <div className="upload-ok" style={{ display: 'block' }}>✓ File caricato — il team invierà una bozza di stampa</div>}
+          <input type="file" id="file-upload-cfg" accept=".svg,.pdf" style={{ display: 'none' }}
+            onChange={handleFileChange} />
+          {uploadError && (
+            <div style={{ marginTop: 8, fontSize: 13, color: 'var(--red)', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 16 16" strokeLinecap="round"><circle cx="8" cy="8" r="7"/><line x1="8" y1="5" x2="8" y2="8.5"/><circle cx="8" cy="11" r=".5" fill="currentColor"/></svg>
+              {uploadError}
+            </div>
+          )}
+          {artworkUrl && (
+            <div style={{ marginTop: 8, fontSize: 12.5, color: 'var(--ink-4)', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <button onClick={() => { setArtworkUrl(null); setArtworkName(null) }}
+                style={{ fontSize: 12, color: 'var(--ink-4)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--f)', textDecoration: 'underline', padding: 0 }}>
+                Rimuovi e carica un altro
+              </button>
+            </div>
+          )}
         </div>
 
         {/* CTA */}
