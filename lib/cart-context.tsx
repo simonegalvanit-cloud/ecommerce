@@ -41,7 +41,8 @@ function mergeItems(base: CartItem[], extra: CartItem[]): CartItem[] {
   const result = [...base]
   for (const item of extra) {
     const idx = result.findIndex(i => i.id === item.id)
-    if (idx >= 0) result[idx] = { ...result[idx], qty: result[idx].qty + item.qty }
+    // Use max qty (not sum) — prevents doubling when same cart exists on both sides
+    if (idx >= 0) result[idx] = { ...result[idx], qty: Math.max(result[idx].qty, item.qty) }
     else result.push(item)
   }
   return result
@@ -52,6 +53,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [cartOpen, setCartOpen] = useState(false)
   const [userId, setUserId]     = useState<string | null>(null)
   const syncTimer               = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // Track which userId was already handled by INITIAL_SESSION to prevent
+  // Supabase double-firing both INITIAL_SESSION + SIGNED_IN on page load,
+  // which caused mergeWithRemote to double quantities on every page refresh.
+  const handledUserRef          = useRef<string | null>(null)
 
   // ── Restore anonymous cart immediately on mount ─────────────────────────────
   useEffect(() => {
@@ -65,15 +70,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const { data: { subscription } } = sb.auth.onAuthStateChange((event, session) => {
       if (event === 'INITIAL_SESSION') {
         if (session?.user) {
+          handledUserRef.current = session.user.id
           setUserId(session.user.id)
           loadRemote(session.user.id)   // fire-and-forget — do NOT await in callback
         }
         // anonymous: cart already set from localStorage above
       } else if (event === 'SIGNED_IN' && session?.user) {
+        // Supabase sometimes fires SIGNED_IN right after INITIAL_SESSION on page
+        // load — skip if we already handled this user to avoid doubling quantities
+        if (handledUserRef.current === session.user.id) return
+        handledUserRef.current = session.user.id
         const localBefore = readLocal()
         setUserId(session.user.id)
         mergeWithRemote(session.user.id, localBefore)   // fire-and-forget
       } else if (event === 'SIGNED_OUT') {
+        handledUserRef.current = null
         setUserId(null)
         setCart([])
         clearLocal()
