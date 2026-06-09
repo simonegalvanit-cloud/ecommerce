@@ -28,8 +28,12 @@ interface CartCtx {
 const CartContext = createContext<CartCtx | null>(null)
 const LS_KEY = 'bp_cart'
 
+const MAX_QTY = 50000
+function sanitize(items: CartItem[]): CartItem[] {
+  return items.filter(i => i && typeof i.qty === 'number').map(i => ({ ...i, qty: Math.min(i.qty, MAX_QTY) }))
+}
 function readLocal(): CartItem[] {
-  try { const s = localStorage.getItem(LS_KEY); return s ? JSON.parse(s) : [] } catch { return [] }
+  try { const s = localStorage.getItem(LS_KEY); return s ? sanitize(JSON.parse(s)) : [] } catch { return [] }
 }
 function writeLocal(items: CartItem[]) {
   try { localStorage.setItem(LS_KEY, JSON.stringify(items)) } catch {}
@@ -95,22 +99,28 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [])
 
   // ── Persist cart changes ────────────────────────────────────────────────────
+  // Only sync to Supabase when cart actually changes (not when userId changes),
+  // so a login event can't overwrite the remote cart before loadRemote finishes.
+  const userIdRef = useRef<string | null>(null)
+  useEffect(() => { userIdRef.current = userId }, [userId])
+
   useEffect(() => {
     writeLocal(cart)
-    if (!userId) return
+    const uid = userIdRef.current
+    if (!uid) return
     if (syncTimer.current) clearTimeout(syncTimer.current)
     syncTimer.current = setTimeout(async () => {
       const sb = createClient()
       await sb.from('user_carts')
-        .upsert({ user_id: userId, items: cart, updated_at: new Date().toISOString() })
+        .upsert({ user_id: uid, items: cart, updated_at: new Date().toISOString() })
     }, 800)
-  }, [cart, userId])
+  }, [cart])
 
   async function loadRemote(uid: string) {
     try {
       const sb = createClient()
       const { data } = await sb.from('user_carts').select('items').eq('user_id', uid).single()
-      const remote: CartItem[] = Array.isArray(data?.items) ? data.items : []
+      const remote: CartItem[] = sanitize(Array.isArray(data?.items) ? data.items : [])
       setCart(remote)
       writeLocal(remote)
     } catch {
@@ -122,7 +132,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     try {
       const sb = createClient()
       const { data } = await sb.from('user_carts').select('items').eq('user_id', uid).single()
-      const remote: CartItem[] = Array.isArray(data?.items) ? data.items : []
+      const remote: CartItem[] = sanitize(Array.isArray(data?.items) ? data.items : [])
       const merged = localItems.length > 0 ? mergeItems(remote, localItems) : remote
       setCart(merged)
       writeLocal(merged)
@@ -159,7 +169,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [userId])
 
-  const cartCount = cart.reduce((s, i) => s + i.qty, 0)
+  const cartCount = cart.length
   const cartTotal = cart.reduce((s, i) => s + i.unitPrice * i.qty + i.setupCost, 0)
 
   return (
