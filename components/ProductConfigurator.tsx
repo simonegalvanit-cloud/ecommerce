@@ -185,7 +185,9 @@ export default function ProductConfigurator({ product }: { product: Product }) {
       <aside className="cfg-page-preview">
         <div className="cfg-page-visual">
           <div className="cfg-page-visual-inner" style={product.catKey === 'eco' ? { background: '#edf3ee' } : undefined}>
-            {product.svg ? (
+            {product.image ? (
+              <img src={product.image} alt={product.name} style={{ width: 180, height: 180, objectFit: 'contain', display: 'block' }} />
+            ) : product.svg ? (
               <div style={{ transform: 'scale(1.4)' }}>{product.svg}</div>
             ) : (
               <svg viewBox="0 0 110 110" fill="none" style={{ width: 108, transform: 'scale(1.4)' }}>
