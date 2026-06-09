@@ -38,15 +38,45 @@ export const PRODUCTS: Product[] = [
     ),
   },
   {
-    key: 'shopper', name: 'Shopper Lusso in Carta',
-    cat: 'Shopper & Cartotecnica', catKey: 'shopper', price: 0.65, moq: 250,
-    desc: 'Borsa in carta con manico ritorto. Stampa litografica o digitale, plastificazione opaca o lucida.',
-    seoDesc: 'Shopper in carta di lusso con manico ritorto. Stampa litografica o digitale, plastificazione opaca o lucida. MOQ 250 pz. Personalizzabile online su Briopack.',
+    key: 'shopper', name: 'Shopper Lusso Monopatinato Lucido',
+    cat: 'Shopper & Cartotecnica', catKey: 'shopper', price: 0.65, moq: 100,
+    badge: { label: 'Più venduto', type: 'top' },
+    desc: 'Bordo risvoltato · Plastificazione lucida · Maniglia di cotone in tinta. Disponibile in 6 formati e 4 colori, 190 g/m².',
+    seoDesc: 'Shopper lusso monopatinato lucido con bordo risvoltato, plastificazione lucida e maniglia di cotone. 6 formati dal 11+11×40 al 54+13×45 cm. Personalizzabile online su Briopack.',
+    sizes: [
+      { label: '11+11×40 cm', dim: '190 g/m² · 100 pz/scatola', price: null },
+      { label: '16+8×24 cm',  dim: '190 g/m² · 100 pz/scatola', price: null },
+      { label: '24+10×32 cm', dim: '190 g/m² · 100 pz/scatola', price: null },
+      { label: '32+10×27 cm', dim: '190 g/m² · 100 pz/scatola', price: null },
+      { label: '42+13×36 cm', dim: '190 g/m² · 100 pz/scatola', price: null },
+      { label: '54+13×45 cm', dim: '190 g/m² · 100 pz/scatola', price: null },
+    ],
+    colors: [
+      { label: 'Bianco',   hex: '#f5f4f2', border: true },
+      { label: 'Nero',     hex: '#1a1a1a' },
+      { label: 'Tortora',  hex: '#b0a090' },
+      { label: 'Rosso',    hex: '#c0281e' },
+    ],
+    printOptions: [
+      'Senza Stampa', 'Flexo 1 colore', 'Flexo 4 colori', 'Stampa Digitale',
+    ],
+    qtyPresets: [100, 250, 500, 1000, 2500],
     svg: (
       <svg viewBox="0 0 110 110" fill="none" style={{ width: 108 }}>
-        <rect x="20" y="38" width="70" height="58" rx="4" fill="#ede9e2" stroke="#b8924a" strokeWidth="1.5"/>
-        <path d="M36 38 Q36 20 55 20 Q74 20 74 38" stroke="#b8924a" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
-        <rect x="32" y="54" width="46" height="28" rx="2" fill="none" stroke="#b8924a" strokeWidth="1" strokeDasharray="3,2.5"/>
+        {/* Bag body */}
+        <rect x="18" y="34" width="74" height="66" rx="3" fill="#ede9e2" stroke="#b8924a" strokeWidth="1.5"/>
+        {/* Folded top edge (bordo risvoltato) */}
+        <rect x="18" y="34" width="74" height="9" rx="3" fill="#e4ddd2" stroke="#b8924a" strokeWidth="1.2"/>
+        <line x1="18" y1="43" x2="92" y2="43" stroke="#b8924a" strokeWidth="0.8"/>
+        {/* Cotton cord handles - left */}
+        <path d="M32 34 Q32 17 42 17 Q52 17 52 34" stroke="#b8924a" strokeWidth="2.2" fill="none" strokeLinecap="round"/>
+        {/* Cotton cord handles - right */}
+        <path d="M58 34 Q58 17 68 17 Q78 17 78 34" stroke="#b8924a" strokeWidth="2.2" fill="none" strokeLinecap="round"/>
+        {/* Glossy shine highlight */}
+        <path d="M26 56 Q42 48 58 54" stroke="rgba(255,255,255,0.55)" strokeWidth="2" fill="none" strokeLinecap="round"/>
+        {/* Side gusset line */}
+        <line x1="28" y1="43" x2="28" y2="100" stroke="#b8924a" strokeWidth="0.7" strokeDasharray="2,2"/>
+        <line x1="82" y1="43" x2="82" y2="100" stroke="#b8924a" strokeWidth="0.7" strokeDasharray="2,2"/>
       </svg>
     ),
   },
