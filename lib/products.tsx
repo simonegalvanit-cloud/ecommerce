@@ -14,6 +14,7 @@ export interface Product {
   badge?: { label: string; type: 'top' | 'eco' }
   desc: string
   seoDesc: string
+  image?: string
   svg?: ReactNode
   // Optional per-product config — falls back to global constants when absent
   sizes?: ProductSize[]
@@ -61,6 +62,7 @@ export const PRODUCTS: Product[] = [
       'Senza Stampa', 'Flexo 1 colore', 'Flexo 4 colori', 'Stampa Digitale',
     ],
     qtyPresets: [100, 250, 500, 1000, 2500],
+    image: '/products/shopper-lusso.png',
     svg: (
       <svg viewBox="0 0 110 110" fill="none" style={{ width: 108 }}>
         {/* Bag body */}

@@ -294,7 +294,9 @@ function ProductCard({ product: p, meta, hovered, onHover, onClick }: {
         )}
 
         <div style={{ transform: hovered ? 'scale(1.06)' : 'scale(1)', transition: 'transform .3s cubic-bezier(.25,.8,.25,1)' }}>
-          {p.svg ?? (
+          {p.image ? (
+            <img src={p.image} alt={p.name} style={{ width: 108, height: 108, objectFit: 'contain', display: 'block' }} />
+          ) : p.svg ?? (
             <svg viewBox="0 0 80 80" fill="none" style={{ width: 64, opacity: 0.25 }}>
               <rect x="10" y="24" width="60" height="46" rx="3" stroke="#888" strokeWidth="1.5"/>
               <polygon points="10,24 40,10 70,24 40,38" stroke="#888" strokeWidth="1.5"/>
