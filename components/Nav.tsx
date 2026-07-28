@@ -19,7 +19,7 @@ const NAV_LINKS = [
 export default function Nav({ cartCount = 0, onCartClick, activeLink }: NavProps) {
   const [accountLabel, setAccountLabel] = useState('Accedi')
   const [accountHref, setAccountHref]   = useState('/login')
-  const [accountReady, setAccountReady] = useState(false)
+  const [accountReady, setAccountReady] = useState(true)
   const [scrolled, setScrolled]         = useState(false)
   const [menuOpen, setMenuOpen]         = useState(false)
   const [badgeBump, setBadgeBump]       = useState(false)
@@ -37,7 +37,7 @@ export default function Nav({ cartCount = 0, onCartClick, activeLink }: NavProps
         setAccountLabel(first); setAccountHref('/account')
       }
       setAccountReady(true)
-    })
+    }).catch(() => setAccountReady(true))
   }, [])
 
   useEffect(() => {
