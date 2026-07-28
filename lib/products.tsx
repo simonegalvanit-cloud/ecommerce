@@ -15,6 +15,7 @@ export interface Product {
   desc: string
   seoDesc: string
   image?: string
+  images?: Record<string, string>  // color label → image path
   svg?: ReactNode
   // Optional per-product config — falls back to global constants when absent
   sizes?: ProductSize[]
@@ -148,6 +149,11 @@ export const PRODUCTS: Product[] = [
     printOptions: ['Senza Stampa'],
     qtyPresets: [200, 300, 350, 500, 1000],
     image: '/products/maniglia-piatta-avana.png',
+    images: {
+      'Avana':         '/products/maniglia-piatta-avana.png',
+      'Bianco':        '/products/maniglia-piatta-bianco.png',
+      'Sealing Avana': '/products/maniglia-piatta-avana.png',
+    },
     svg: (
       <svg viewBox="0 0 110 110" fill="none" style={{ width: 108 }}>
         {/* Bag body */}

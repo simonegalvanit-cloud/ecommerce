@@ -185,16 +185,22 @@ export default function ProductConfigurator({ product }: { product: Product }) {
       <aside className="cfg-page-preview">
         <div className="cfg-page-visual">
           <div className="cfg-page-visual-inner" style={product.catKey === 'eco' ? { background: '#edf3ee' } : undefined}>
-            {product.image ? (
-              <img src={product.image} alt={product.name} style={{ width: 180, height: 180, objectFit: 'contain', display: 'block' }} />
-            ) : product.svg ? (
-              <div style={{ transform: 'scale(1.4)' }}>{product.svg}</div>
-            ) : (
-              <svg viewBox="0 0 110 110" fill="none" style={{ width: 108, transform: 'scale(1.4)' }}>
-                <rect x="16" y="34" width="78" height="62" rx="4" fill="#ede9e2" stroke="#b8924a" strokeWidth="1.5"/>
-                <polygon points="16,34 55,16 94,34 55,52" fill="#e6e0d4" stroke="#b8924a" strokeWidth="1.5"/>
-              </svg>
-            )}
+            {(() => {
+              const colorLabel = colors[selColor]?.label
+              const resolvedImg = (colorLabel && product.images?.[colorLabel]) ?? product.image
+              if (resolvedImg) return (
+                <img src={resolvedImg} alt={product.name} style={{ width: 180, height: 180, objectFit: 'contain', display: 'block' }} />
+              )
+              if (product.svg) return (
+                <div style={{ transform: 'scale(1.4)' }}>{product.svg}</div>
+              )
+              return (
+                <svg viewBox="0 0 110 110" fill="none" style={{ width: 108, transform: 'scale(1.4)' }}>
+                  <rect x="16" y="34" width="78" height="62" rx="4" fill="#ede9e2" stroke="#b8924a" strokeWidth="1.5"/>
+                  <polygon points="16,34 55,16 94,34 55,52" fill="#e6e0d4" stroke="#b8924a" strokeWidth="1.5"/>
+                </svg>
+              )
+            })()}
           </div>
           {product.badge && (
             <div className={`pcard-badge ${product.badge.type}`} style={{ position: 'absolute', top: 16, left: 16 }}>
