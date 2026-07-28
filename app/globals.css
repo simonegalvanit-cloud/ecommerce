@@ -195,7 +195,7 @@ nav.site-nav.scrolled {
   transition: all .2s; white-space: nowrap;
 }
 .account-pill:hover { color: var(--accent); border-color: var(--accent-border); background: var(--accent-bg); }
-.account-pip { width: 7px; height: 7px; border-radius: 50%; background: #4caf50; }
+.account-pip { width: 15px; height: 15px; flex-shrink: 0; opacity: 0.75; }
 
 /* Mobile nav */
 .nav-hamburger {
