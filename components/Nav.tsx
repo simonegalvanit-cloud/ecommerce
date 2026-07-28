@@ -84,7 +84,10 @@ export default function Nav({ cartCount = 0, onCartClick, activeLink }: NavProps
 
         <div className="nav-right">
           <Link href={accountHref} className="account-pill" style={{ opacity: accountReady ? 1 : 0, transition: 'opacity .3s ease', pointerEvents: accountReady ? 'auto' : 'none' }}>
-            <span className="account-pip" />
+            <svg className="account-pip" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <circle cx="12" cy="8" r="4"/>
+              <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+            </svg>
             {accountLabel}
           </Link>
           <button className="cart-pill" onClick={onCartClick} aria-label={`Carrello (${cartCount} articoli)`}>
