@@ -128,6 +128,46 @@ export const PRODUCTS: Product[] = [
     ),
   },
   {
+    key: 'maniglia-piatta', name: 'Shopper Maniglia Piatta',
+    cat: 'Shopper & Cartotecnica', catKey: 'shopper', price: 0.65, moq: 200,
+    desc: 'Maniglia piatta in carta. Disponibile in carta avana, bianca e sealing avana. 6 formati dal 18+8×24 al 45+15×49 cm.',
+    seoDesc: 'Shopper maniglia piatta in carta avana, bianca e sealing avana. 6 formati disponibili, senza stampa. MOQ 200 pz. Ordina su Briopack.',
+    sizes: [
+      { label: '18+8×24 cm',  dim: '80 g · 250 pz/scatola',  price: null },
+      { label: '22+10×29 cm', dim: '80 g · 250 pz/scatola',  price: null },
+      { label: '27+12×37 cm', dim: '90 g · 350 pz/scatola',  price: null },
+      { label: '32+13×41 cm', dim: '90 g · 300 pz/scatola',  price: null },
+      { label: '32+17×45 cm', dim: '90 g · 250 pz/scatola',  price: null },
+      { label: '45+15×49 cm', dim: '110 g · 200 pz/scatola', price: null },
+    ],
+    colors: [
+      { label: 'Avana',         hex: '#c4a060' },
+      { label: 'Bianco',        hex: '#f5f4f2', border: true },
+      { label: 'Sealing Avana', hex: '#a07840' },
+    ],
+    printOptions: ['Senza Stampa'],
+    qtyPresets: [200, 300, 350, 500, 1000],
+    image: '/products/maniglia-piatta-avana.png',
+    svg: (
+      <svg viewBox="0 0 110 110" fill="none" style={{ width: 108 }}>
+        {/* Bag body */}
+        <rect x="18" y="32" width="74" height="68" rx="3" fill="#ede9e2" stroke="#b8924a" strokeWidth="1.5"/>
+        {/* Flat handle left */}
+        <rect x="30" y="20" width="18" height="14" rx="2" fill="#e4ddd2" stroke="#b8924a" strokeWidth="1.3"/>
+        {/* Flat handle right */}
+        <rect x="62" y="20" width="18" height="14" rx="2" fill="#e4ddd2" stroke="#b8924a" strokeWidth="1.3"/>
+        {/* Handle attachment lines */}
+        <line x1="33" y1="34" x2="33" y2="32" stroke="#b8924a" strokeWidth="1"/>
+        <line x1="45" y1="34" x2="45" y2="32" stroke="#b8924a" strokeWidth="1"/>
+        <line x1="65" y1="34" x2="65" y2="32" stroke="#b8924a" strokeWidth="1"/>
+        <line x1="77" y1="34" x2="77" y2="32" stroke="#b8924a" strokeWidth="1"/>
+        {/* Gusset lines */}
+        <line x1="28" y1="32" x2="28" y2="100" stroke="#b8924a" strokeWidth="0.7" strokeDasharray="2,2"/>
+        <line x1="82" y1="32" x2="82" y2="100" stroke="#b8924a" strokeWidth="0.7" strokeDasharray="2,2"/>
+      </svg>
+    ),
+  },
+  {
     key: 'mailer', name: 'Scatola Self-Seal Mailer',
     cat: 'E-commerce', catKey: 'ecom', price: 0.52, moq: 100,
     desc: 'Chiusura a click, nastro antieffrazione. Ideale per spedizioni corriere di qualsiasi tipo di prodotto.',
