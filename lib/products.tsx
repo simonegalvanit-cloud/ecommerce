@@ -63,7 +63,13 @@ export const PRODUCTS: Product[] = [
       'Senza Stampa', 'Flexo 1 colore', 'Flexo 4 colori', 'Stampa Digitale',
     ],
     qtyPresets: [100, 250, 500, 1000, 2500],
-    image: '/products/shopper-lusso.png',
+    image: '/products/shopper-lusso-bianco.png',
+    images: {
+      'Bianco':  '/products/shopper-lusso-bianco.png',
+      'Nero':    '/products/shopper-lusso-nero.png',
+      'Tortora': '/products/shopper-lusso-tortora.png',
+      'Rosso':   '/products/shopper-lusso-rosso.png',
+    },
     svg: (
       <svg viewBox="0 0 110 110" fill="none" style={{ width: 108 }}>
         {/* Bag body */}
