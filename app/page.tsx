@@ -59,13 +59,6 @@ export default function StorefrontPage() {
 
       {/* ── HERO ── */}
       <section className="hero">
-        {/* Background effects */}
-        <div className="hero-glow-1" />
-        <div className="hero-glow-2" />
-        <div className="hero-grid" />
-        <div className="hero-orb hero-orb-1" />
-        <div className="hero-orb hero-orb-2" />
-
         <div className="hero-inner">
           <div className="hero-left">
             {/* Eyebrow badge */}
@@ -152,7 +145,7 @@ export default function StorefrontPage() {
       <section className="section">
         <div className="section-head">
           <div>
-            <div className="section-title"><span className="section-title-gradient">Catalogo Prodotti</span></div>
+            <div className="section-title">Catalogo Prodotti</div>
             <div className="section-sub">{filteredProducts.length} prodott{filteredProducts.length === 1 ? 'o' : 'i'} trovati</div>
           </div>
           <a href="#" className="section-link">Vedi tutto il catalogo →</a>
