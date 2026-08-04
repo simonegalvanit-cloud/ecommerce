@@ -322,67 +322,67 @@ nav.site-nav.scrolled {
 /* Hero right — logo-shaped 2×2 diamond grid */
 .hero-right { align-self: center; display: flex; align-items: center; justify-content: center; }
 
-/* Outer wrapper: rotated 45° → appears as a diamond in screen space.
-   border-radius rounds the 4 diamond tips (logo outer corners).
-   overflow:hidden clips the grid to the diamond shape. */
+/* Outer wrapper: rotate 45° so the square grid APPEARS as a diamond.
+   overflow+border-radius clips to a rounded diamond (= logo outer shape).
+   gap between cells = the white cross divider + center hole of the logo. */
 .hero-logo-wrap {
   width: 320px; height: 320px;
   transform: rotate(45deg);
   overflow: hidden;
-  border-radius: 36px;
+  border-radius: 32px;
   flex-shrink: 0;
 }
-
-/* Inner grid: fills the wrapper. gap creates the white cross separator. */
 .hero-cards {
   display: grid; grid-template-columns: 1fr 1fr;
   gap: 14px; width: 320px; height: 320px;
 }
 
-/* Each card counter-rotates -45° so its content appears fully upright.
-   Net screen rotation = +45° (wrapper) − 45° (card) = 0°. */
+/* Each card has NO rotation — it fills its grid cell as a rectangle in
+   wrapper-local space, which the wrapper's 45° rotation makes into a
+   diamond panel in screen space. This gives 4 clean diamond panels. */
 .hero-card {
-  background: rgba(255,255,255,0.13);
-  border: none;
-  border-radius: 0;
-  padding: 15px 14px 12px;
-  display: flex; flex-direction: column; gap: 5px; cursor: pointer;
+  background: rgba(255,255,255,0.14);
+  border: none; border-radius: 0; padding: 0;
+  cursor: pointer; overflow: visible; position: relative;
+  transition: background .22s;
+}
+.hero-card:hover { background: rgba(255,255,255,0.24); }
+.hero-card:active { background: rgba(255,255,255,0.08); transition-duration: .08s; }
+
+/* Inner content div rotates -45°: net 0° from screen = content is upright.
+   Sized 100×100% so it exactly covers the diamond cell (corners land on
+   cell edges — proven geometrically: a square rotated 45° inscribes
+   its corners on the parent square's edge midpoints). */
+.hc-inner {
+  position: absolute; inset: 0;
   transform: rotate(-45deg);
   transform-origin: center center;
-  transition: transform .28s var(--ease-out), box-shadow .28s var(--ease-out),
-              background .22s;
-  position: relative; overflow: hidden;
+  display: flex; flex-direction: column; gap: 5px;
+  justify-content: center; padding: 14px;
+  overflow: hidden;
 }
-/* Shimmer sweep on hover (runs in card's local = screen space) */
-.hero-card::before {
+/* Shimmer sweeps left→right in screen space (hc-inner is upright) */
+.hc-inner::before {
   content: '';
   position: absolute; top: 0; left: -80%;
   width: 55%; height: 100%;
-  background: linear-gradient(105deg, transparent 20%, rgba(255,255,255,0.30) 50%, transparent 80%);
+  background: linear-gradient(105deg, transparent 20%, rgba(255,255,255,0.28) 50%, transparent 80%);
   transform: skewX(-12deg);
   transition: left 0s;
   pointer-events: none;
 }
-.hero-card:hover::before {
+.hero-card:hover .hc-inner::before {
   left: 140%;
   transition: left .55s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.hero-card:hover {
-  background: rgba(255,255,255,0.24);
-  transform: rotate(-45deg) scale(1.04);
-  box-shadow: 0 12px 32px rgba(0,0,0,0.20);
-}
-.hero-card:active {
-  transform: rotate(-45deg) scale(0.97);
-  transition-duration: .08s;
-}
+.hero-card:hover .hc-label { color: rgba(255,255,255,0.8); }
+.hero-card:hover .hc-arrow  { color: rgba(255,255,255,0.9); transform: translateX(5px); }
+
 .hc-label { font-size: 8.5px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: rgba(255,255,255,0.5); transition: color .2s; }
 .hc-title { font-size: 13.5px; font-weight: 700; color: #fff; line-height: 1.25; }
 .hc-price { font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
 .hc-moq   { font-size: 9.5px; color: rgba(255,255,255,0.5); }
 .hc-arrow { font-size: 16px; color: rgba(255,255,255,0.35); margin-top: 2px; transition: transform .25s var(--ease-out), color .2s; }
-.hero-card:hover .hc-label { color: rgba(255,255,255,0.8); }
-.hero-card:hover .hc-arrow { color: rgba(255,255,255,0.9); transform: translateX(5px); }
 
 /* Trust strip */
 .trust-strip {
