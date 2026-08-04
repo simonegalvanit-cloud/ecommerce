@@ -65,11 +65,6 @@ export default function StorefrontPage() {
         <div className="hero-inner">
           <div className="hero-left">
             {/* Eyebrow badge */}
-            <div className="hero-badge animate-fade-up">
-              <span className="hero-badge-dot" />
-              Packaging B2B — Made in Italy
-            </div>
-
             <h1 className="animate-fade-up delay-1">
               Le migliori soluzioni<br />
               per il Packaging<br />
@@ -168,7 +163,6 @@ export default function StorefrontPage() {
             <div className="section-title"><span className="section-title-gradient">Catalogo Prodotti</span></div>
             <div className="section-sub">{filteredProducts.length} prodott{filteredProducts.length === 1 ? 'o' : 'i'} trovati</div>
           </div>
-          <a href="#" className="section-link">Vedi tutto il catalogo →</a>
         </div>
         <div className="pgrid">
           {filteredProducts.length === 0 ? (
