@@ -102,7 +102,10 @@ function exportReport(orders: Order[], dateFrom: string, dateTo: string) {
         ${o.zip || ''} ${o.city || ''} ${o.province ? `(${o.province})` : ''}
       </td>
       <td style="padding:10px 12px;font-size:12px;">
-        ${(o.cart_json || []).map(i => `<div>${i.name}${i.size ? ` <span style="color:#9ca3af">· ${i.size}</span>` : ''} <strong>× ${i.qty}</strong></div>`).join('') || '—'}
+        ${(o.cart_json || []).map(i => {
+          const specs = [i.size, (i as any).color, (i as any).print].filter(Boolean).join(' · ')
+          return `<div>${i.name}${specs ? ` <span style="color:#9ca3af">· ${specs}</span>` : ''} <strong>× ${i.qty}</strong></div>`
+        }).join('') || '—'}
       </td>
       <td style="padding:10px 12px;font-weight:700;font-size:13.5px;white-space:nowrap;">
         €${(o.total_eur || 0).toFixed(2)}
@@ -561,7 +564,11 @@ export default function OrdersPage() {
                         <tr key={i}>
                           <td style={{ padding: '10px 12px', fontSize: 13.5, borderBottom: '1px solid var(--border)', fontWeight: 500 }}>
                             {item.name}
-                            {item.size && <span style={{ fontSize: 12, color: 'var(--ink-4)', marginLeft: 6 }}>· {item.size}</span>}
+                            <div style={{ fontSize: 12, color: 'var(--ink-4)', marginTop: 3, display: 'flex', flexWrap: 'wrap', gap: '4px 10px' }}>
+                              {item.size && <span><b style={{ color: 'var(--ink-3)' }}>Formato:</b> {item.size}</span>}
+                              {(item as any).color && <span><b style={{ color: 'var(--ink-3)' }}>Colore:</b> {(item as any).color}</span>}
+                              {(item as any).print && <span><b style={{ color: 'var(--ink-3)' }}>Stampa:</b> {(item as any).print}</span>}
+                            </div>
                             {(item as any).artworkUrl && (
                               <div style={{ marginTop: 5 }}>
                                 <a href={(item as any).artworkUrl} target="_blank" rel="noopener noreferrer"
