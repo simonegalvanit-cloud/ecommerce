@@ -129,10 +129,12 @@ export default function ProductConfigurator({ product }: { product: Product }) {
       setTimeout(() => setFlyAnim(null), 750)
     }
     addItem({
-      id: `${product.key}-${sizes[selSizeIdx]?.label}`,
+      id: `${product.key}-${sizes[selSizeIdx]?.label}-${colors[selColor]?.label}`,
       name: product.name,
       cat: product.cat,
       size: isCustom ? `${customL}×${customW}×${customH} mm` : (sizes[selSizeIdx]?.label ?? ''),
+      color: colors[selColor]?.label,
+      print: [...selPrints].join(', '),
       qty,
       unitPrice: unit,
       setupCost: setup,
@@ -144,10 +146,12 @@ export default function ProductConfigurator({ product }: { product: Product }) {
 
   const handleBuyNow = () => {
     addItem({
-      id: `${product.key}-${sizes[selSizeIdx]?.label}`,
+      id: `${product.key}-${sizes[selSizeIdx]?.label}-${colors[selColor]?.label}`,
       name: product.name,
       cat: product.cat,
       size: isCustom ? `${customL}×${customW}×${customH} mm` : (sizes[selSizeIdx]?.label ?? ''),
+      color: colors[selColor]?.label,
+      print: [...selPrints].join(', '),
       qty,
       unitPrice: unit,
       setupCost: setup,
