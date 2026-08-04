@@ -327,18 +327,42 @@ nav.site-nav.scrolled {
   border: 1px solid rgba(255,255,255,0.22);
   border-radius: var(--r-lg); padding: 18px 16px 14px;
   display: flex; flex-direction: column; gap: 6px; cursor: pointer;
-  transition: all .25s var(--ease-out);
+  transition: transform .28s var(--ease-out), box-shadow .28s var(--ease-out),
+              background .22s, border-color .22s;
+  position: relative; overflow: hidden;
+}
+/* Shimmer sweep on hover */
+.hero-card::before {
+  content: '';
+  position: absolute; top: 0; left: -80%;
+  width: 55%; height: 100%;
+  background: linear-gradient(105deg, transparent 20%, rgba(255,255,255,0.28) 50%, transparent 80%);
+  transform: skewX(-12deg);
+  transition: left 0s;
+  pointer-events: none;
+}
+.hero-card:hover::before {
+  left: 140%;
+  transition: left .55s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .hero-card:hover {
-  background: rgba(255,255,255,0.22); transform: translateY(-3px);
-  box-shadow: 0 8px 28px rgba(0,0,0,0.15);
+  background: rgba(255,255,255,0.22);
+  border-color: rgba(255,255,255,0.5);
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.22), 0 0 0 1px rgba(255,255,255,0.3);
 }
-.hc-label { font-size: 9px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: rgba(255,255,255,0.5); }
+.hero-card:active {
+  transform: translateY(-2px) scale(0.97);
+  transition-duration: .08s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.hc-label { font-size: 9px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: rgba(255,255,255,0.5); transition: color .2s; }
 .hc-title { font-size: 15px; font-weight: 700; color: #fff; line-height: 1.25; }
 .hc-price { font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
 .hc-moq   { font-size: 10px; color: rgba(255,255,255,0.5); }
-.hc-arrow { font-size: 18px; color: rgba(255,255,255,0.35); margin-top: 4px; transition: all .2s; }
-.hero-card:hover .hc-arrow { color: #fff; transform: translateX(3px); }
+.hc-arrow { font-size: 18px; color: rgba(255,255,255,0.35); margin-top: 4px; transition: transform .25s var(--ease-out), color .2s; }
+.hero-card:hover .hc-label { color: rgba(255,255,255,0.75); }
+.hero-card:hover .hc-arrow { color: #fff; transform: translateX(6px); }
 
 /* Trust strip */
 .trust-strip {
