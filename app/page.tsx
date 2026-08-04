@@ -84,7 +84,6 @@ export default function StorefrontPage() {
           </div>
 
           <div className="hero-right animate-fade-up delay-3">
-            <div className="hero-logo-wrap">
             <div className="hero-cards">
               {[
                 { label: 'Shopper & Cartotecnica', title: 'Shopper Lusso',     price: '€0,65', moq: 'MOQ 100 pz' },
@@ -94,16 +93,13 @@ export default function StorefrontPage() {
               ].map(c => (
                 <div key={c.title} className="hero-card"
                   onClick={() => { const p = PRODUCTS.find(pr => pr.cat === c.label) || PRODUCTS[0]; router.push(`/products/${p.key}`) }}>
-                  <div className="hc-inner">
-                    <span className="hc-label">{c.label}</span>
-                    <span className="hc-title">{c.title}</span>
-                    <span className="hc-price">{c.price}<sub style={{ fontSize: '11px', fontWeight: 500, opacity: 0.7 }}> / pz</sub></span>
-                    <span className="hc-moq">{c.moq}</span>
-                    <span className="hc-arrow">→</span>
-                  </div>
+                  <span className="hc-label">{c.label}</span>
+                  <span className="hc-title">{c.title}</span>
+                  <span className="hc-price">{c.price}<sub style={{ fontSize: '11px', fontWeight: 500, opacity: 0.7 }}> / pz</sub></span>
+                  <span className="hc-moq">{c.moq}</span>
+                  <span className="hc-arrow">→</span>
                 </div>
               ))}
-            </div>
             </div>
           </div>
         </div>
