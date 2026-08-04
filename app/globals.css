@@ -319,50 +319,20 @@ nav.site-nav.scrolled {
 }
 .hero-cta-secondary:hover { background: rgba(255,255,255,0.20); color: #fff; border-color: rgba(255,255,255,0.5); }
 
-/* Hero right — logo-shaped 2×2 diamond grid */
-.hero-right { align-self: center; display: flex; align-items: center; justify-content: center; }
-
-/* Outer wrapper: rotate 45° so the square grid APPEARS as a diamond.
-   overflow+border-radius clips to a rounded diamond (= logo outer shape).
-   gap between cells = the white cross divider + center hole of the logo. */
-.hero-logo-wrap {
-  width: 320px; height: 320px;
-  transform: rotate(45deg);
-  overflow: hidden;
-  border-radius: 32px;
-  flex-shrink: 0;
-}
-.hero-cards {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 14px; width: 320px; height: 320px;
-}
-
-/* Each card has NO rotation — it fills its grid cell as a rectangle in
-   wrapper-local space, which the wrapper's 45° rotation makes into a
-   diamond panel in screen space. This gives 4 clean diamond panels. */
+/* Hero right — 2×2 product tile grid */
+.hero-right { align-self: center; }
+.hero-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .hero-card {
-  background: rgba(255,255,255,0.14);
-  border: none; border-radius: 0; padding: 0;
-  cursor: pointer; overflow: visible; position: relative;
-  transition: background .22s;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.22);
+  border-radius: var(--r-lg); padding: 18px 16px 14px;
+  display: flex; flex-direction: column; gap: 6px; cursor: pointer;
+  transition: transform .28s var(--ease-out), box-shadow .28s var(--ease-out),
+              background .22s, border-color .22s;
+  position: relative; overflow: hidden;
 }
-.hero-card:hover { background: rgba(255,255,255,0.24); }
-.hero-card:active { background: rgba(255,255,255,0.08); transition-duration: .08s; }
-
-/* Inner content div rotates -45°: net 0° from screen = content is upright.
-   Sized 100×100% so it exactly covers the diamond cell (corners land on
-   cell edges — proven geometrically: a square rotated 45° inscribes
-   its corners on the parent square's edge midpoints). */
-.hc-inner {
-  position: absolute; inset: 0;
-  transform: rotate(-45deg);
-  transform-origin: center center;
-  display: flex; flex-direction: column; gap: 5px;
-  justify-content: center; padding: 14px;
-  overflow: hidden;
-}
-/* Shimmer sweeps left→right in screen space (hc-inner is upright) */
-.hc-inner::before {
+/* Shimmer sweep on hover */
+.hero-card::before {
   content: '';
   position: absolute; top: 0; left: -80%;
   width: 55%; height: 100%;
@@ -371,18 +341,28 @@ nav.site-nav.scrolled {
   transition: left 0s;
   pointer-events: none;
 }
-.hero-card:hover .hc-inner::before {
+.hero-card:hover::before {
   left: 140%;
   transition: left .55s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.hero-card:hover .hc-label { color: rgba(255,255,255,0.8); }
-.hero-card:hover .hc-arrow  { color: rgba(255,255,255,0.9); transform: translateX(5px); }
-
-.hc-label { font-size: 8.5px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: rgba(255,255,255,0.5); transition: color .2s; }
-.hc-title { font-size: 13.5px; font-weight: 700; color: #fff; line-height: 1.25; }
-.hc-price { font-size: 20px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
-.hc-moq   { font-size: 9.5px; color: rgba(255,255,255,0.5); }
-.hc-arrow { font-size: 16px; color: rgba(255,255,255,0.35); margin-top: 2px; transition: transform .25s var(--ease-out), color .2s; }
+.hero-card:hover {
+  background: rgba(255,255,255,0.22);
+  border-color: rgba(255,255,255,0.5);
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.22), 0 0 0 1px rgba(255,255,255,0.3);
+}
+.hero-card:active {
+  transform: translateY(-2px) scale(0.97);
+  transition-duration: .08s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.hc-label { font-size: 9px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: rgba(255,255,255,0.5); transition: color .2s; }
+.hc-title { font-size: 15px; font-weight: 700; color: #fff; line-height: 1.25; }
+.hc-price { font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+.hc-moq   { font-size: 10px; color: rgba(255,255,255,0.5); }
+.hc-arrow { font-size: 18px; color: rgba(255,255,255,0.35); margin-top: 4px; transition: transform .25s var(--ease-out), color .2s; }
+.hero-card:hover .hc-label { color: rgba(255,255,255,0.75); }
+.hero-card:hover .hc-arrow { color: #fff; transform: translateX(6px); }
 
 /* Trust strip */
 .trust-strip {
