@@ -48,7 +48,11 @@ export default function CartDrawer() {
                 <li key={item.id} className="cart-item">
                   <div className="cart-item-info">
                     <div className="cart-item-name">{item.name}</div>
-                    <div className="cart-item-meta">{item.cat}{item.size ? ` · ${item.size}` : ''}</div>
+                    <div className="cart-item-meta">
+                      {item.cat}{item.size ? ` · ${item.size}` : ''}
+                      {item.color ? ` · ${item.color}` : ''}
+                      {item.print && item.print !== 'Senza Stampa' ? ` · ${item.print}` : ''}
+                    </div>
                   </div>
                   <div className="cart-item-right">
                     <div className="cart-item-qty">

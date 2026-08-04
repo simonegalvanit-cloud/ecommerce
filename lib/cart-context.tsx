@@ -7,6 +7,8 @@ export interface CartItem {
   name: string
   cat: string
   size: string
+  color?: string
+  print?: string
   qty: number
   unitPrice: number
   setupCost: number

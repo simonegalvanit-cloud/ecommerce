@@ -340,6 +340,25 @@ function CheckoutInner() {
                 </div>
               </div>
 
+              {/* Shipping method */}
+              <div className="checkout-section-label">Metodo di spedizione</div>
+              <div className="checkout-section">
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: 14,
+                  padding: '14px 16px', borderRadius: 10,
+                  border: '2px solid var(--accent)', background: 'rgba(232,114,26,0.04)',
+                }}>
+                  <svg width="22" height="22" fill="none" stroke="var(--accent)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" style={{ flexShrink: 0 }}>
+                    <rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+                  </svg>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--ink)' }}>Spedizione standard — tutta Italia</div>
+                    <div style={{ fontSize: 12, color: 'var(--ink-4)', marginTop: 2 }}>Consegna stimata 48–72h lavorative</div>
+                  </div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', flexShrink: 0 }}>€{fmt(shipping)}</div>
+                </div>
+              </div>
+
               <button className="checkout-pay-btn" type="submit" disabled={loading}>
                 {loading ? <span className="checkout-spinner" /> : (
                   <>
@@ -399,7 +418,11 @@ function CheckoutInner() {
                     <div className="csi-qty">{item.qty.toLocaleString('it-IT')} pz</div>
                     <div>
                       <div className="csi-name">{item.name}</div>
-                      <div className="csi-meta">{item.cat}{item.size ? ` · ${item.size}` : ''}</div>
+                      <div className="csi-meta">
+                        {item.size || item.cat}
+                        {item.color ? ` · ${item.color}` : ''}
+                        {item.print && item.print !== 'Senza Stampa' ? ` · ${item.print}` : ''}
+                      </div>
                       {item.setupCost > 0 && <div className="csi-setup">+ €{fmt(item.setupCost)} avviamento stampa</div>}
                     </div>
                   </div>
