@@ -84,6 +84,7 @@ export default function StorefrontPage() {
           </div>
 
           <div className="hero-right animate-fade-up delay-3">
+            <div className="hero-logo-wrap">
             <div className="hero-cards">
               {[
                 { label: 'Shopper & Cartotecnica', title: 'Shopper Lusso',     price: '€0,65', moq: 'MOQ 100 pz' },
@@ -100,6 +101,7 @@ export default function StorefrontPage() {
                   <span className="hc-arrow">→</span>
                 </div>
               ))}
+            </div>
             </div>
           </div>
         </div>
