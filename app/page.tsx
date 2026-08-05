@@ -83,6 +83,60 @@ export default function StorefrontPage() {
             </div>
           </div>
 
+          {/* ── Hero showcase — floating product cards ── */}
+          <div className="hero-right animate-fade-up delay-3">
+            <div className="hero-showcase">
+
+              {/* Card 1 — Shopper */}
+              <div className="hero-pv-card hpv-1" onClick={() => router.push('/products/shopper')}>
+                <div className="hpv-accent" style={{ background: '#ec4899' }} />
+                <div className="hpv-body">
+                  <div className="hpv-cat">Shopper & Cartotecnica</div>
+                  <div className="hpv-name">Shopper Lusso Lucido</div>
+                  <div className="hpv-row">
+                    <span className="hpv-price">€0,65</span>
+                    <span className="hpv-unit">/ pz</span>
+                  </div>
+                  <div className="hpv-moq">MOQ 100 pz</div>
+                  <div className="hpv-badge">Più venduto</div>
+                </div>
+                <div className="hpv-arrow">→</div>
+              </div>
+
+              {/* Card 2 — Wine */}
+              <div className="hero-pv-card hpv-2" onClick={() => router.push('/products/portabottiglie-carta')}>
+                <div className="hpv-accent" style={{ background: '#8b5cf6' }} />
+                <div className="hpv-body">
+                  <div className="hpv-cat">Wine Packaging</div>
+                  <div className="hpv-name">Portabottiglie Lusso</div>
+                  <div className="hpv-row">
+                    <span className="hpv-price">€0,65</span>
+                    <span className="hpv-unit">/ pz</span>
+                  </div>
+                  <div className="hpv-moq">MOQ 70 pz</div>
+                </div>
+                <div className="hpv-arrow">→</div>
+              </div>
+
+              {/* Card 3 — E-commerce */}
+              <div className="hero-pv-card hpv-3" onClick={() => router.push('/products/busta-ecommerce')}>
+                <div className="hpv-accent" style={{ background: '#0ea5e9' }} />
+                <div className="hpv-body">
+                  <div className="hpv-cat">E-commerce</div>
+                  <div className="hpv-name">Busta E-Commerce in Carta</div>
+                  <div className="hpv-row">
+                    <span className="hpv-price">€0,35</span>
+                    <span className="hpv-unit">/ pz</span>
+                  </div>
+                  <div className="hpv-moq">MOQ 200 pz</div>
+                  <div className="hpv-badge">Nuovo</div>
+                </div>
+                <div className="hpv-arrow">→</div>
+              </div>
+
+            </div>
+          </div>
+
         </div>
 
       </section>
