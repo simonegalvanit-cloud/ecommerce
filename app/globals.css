@@ -272,9 +272,10 @@ nav.site-nav.scrolled {
 }
 
 .hero-inner {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 64px; align-items: center;
-  position: relative; z-index: 1; max-width: 1280px; margin: 0 auto;
+  display: flex; flex-direction: column;
+  align-items: flex-start;
+  position: relative; z-index: 1; max-width: 760px; margin: 0 auto;
+  width: 100%;
 }
 
 .hero-badge {
@@ -1315,12 +1316,13 @@ tbody tr:hover td { background: var(--surface); }
   nav.site-nav { padding: 0 24px; }
   .nav-center { display: none; }
   .nav-hamburger { display: flex; }
+  .account-pill { display: none; }
   /* Prevent iOS auto-zoom on input focus */
   input[type=text], input[type=email], input[type=password],
   input[type=number], input[type=tel], input[type=url], select, textarea,
   .catalog-searchbar input, .cf-field input, .cf-field textarea, .cf-field select { font-size: 16px; }
   .hero { padding: 60px 24px 0; }
-  .hero-inner { grid-template-columns: 1fr; gap: 36px; padding-bottom: 40px; }
+  .hero-inner { padding-bottom: 40px; }
   .hero h1 { font-size: 48px; letter-spacing: -2.5px; }
   .hero-right { display: none; }
   .hero-stats { grid-template-columns: repeat(2,1fr); }
@@ -1342,6 +1344,8 @@ tbody tr:hover td { background: var(--surface); }
 @media (max-width: 640px) {
   :root { --nav-h: 60px; }
   nav.site-nav { padding: 0 16px; }
+  .cart-pill { padding: 8px 14px; gap: 6px; }
+  .nav-right { gap: 6px; }
   .hero { padding: 48px 16px 0; }
   .hero h1 { font-size: 38px; letter-spacing: -1.8px; }
   .hero-sub { font-size: 15px; line-height: 1.65; }
