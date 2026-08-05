@@ -83,45 +83,9 @@ export default function StorefrontPage() {
             </div>
           </div>
 
-          <div className="hero-right animate-fade-up delay-3">
-            <div className="hero-cards">
-              {[
-                { label: 'Shopper & Cartotecnica', title: 'Shopper Lusso',     price: '€0,65', moq: 'MOQ 100 pz' },
-                { label: 'Imballaggi Industriali', title: 'Scatola Americana', price: '€0,38', moq: 'MOQ 100 pz' },
-                { label: 'BrioGreenPack',          title: 'Scatola Eco 100%', price: '€0,45', moq: 'MOQ 100 pz' },
-                { label: 'E-commerce',             title: 'Mailer Self-Seal',  price: '€0,52', moq: 'MOQ 100 pz' },
-              ].map(c => (
-                <div key={c.title} className="hero-card"
-                  onClick={() => { const p = PRODUCTS.find(pr => pr.cat === c.label) || PRODUCTS[0]; router.push(`/products/${p.key}`) }}>
-                  <span className="hc-label">{c.label}</span>
-                  <span className="hc-title">{c.title}</span>
-                  <span className="hc-price">{c.price}<sub style={{ fontSize: '11px', fontWeight: 500, opacity: 0.7 }}> / pz</sub></span>
-                  <span className="hc-moq">{c.moq}</span>
-                  <span className="hc-arrow">→</span>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
 
       </section>
-
-      {/* ── TRUST STRIP ── */}
-      <div className="trust-strip">
-        <div className="trust-strip-inner">
-          {[
-            { icon: <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>, label: '6+ Categorie di prodotto' },
-            { icon: <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>, label: 'Consegna 48–72h in Italia' },
-            { icon: <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>, label: 'MOQ accessibili da 50 pz' },
-            { icon: <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>, label: 'Stampa professionale certificata' },
-          ].map(t => (
-            <div key={t.label} className="trust-item">
-              {t.icon}
-              {t.label}
-            </div>
-          ))}
-        </div>
-      </div>
 
       {/* ── CATALOG ZONE ── */}
       <div className="catalog-zone">

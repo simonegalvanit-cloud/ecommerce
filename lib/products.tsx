@@ -27,19 +27,6 @@ export interface Product {
 
 export const PRODUCTS: Product[] = [
   {
-    key: 'americanbox', name: 'Scatola Americana — Ondulato',
-    cat: 'Imballaggi Industriali', catKey: 'industrial', price: 0.38, moq: 100,
-    badge: { label: 'Più venduto', type: 'top' },
-    desc: 'Cartone ondulato con stampa flessografica fino a 6 colori. Disponibile da XS a XXL, personalizzabile su misura.',
-    seoDesc: 'Scatola americana in cartone ondulato personalizzabile. Stampa flessografica fino a 6 colori, formati da XS a XXL e su misura. MOQ 100 pz. Ordina online su Briopack.',
-    svg: (
-      <svg viewBox="0 0 110 110" fill="none" style={{ width: 108 }}>
-        <rect x="16" y="34" width="78" height="62" rx="4" fill="#ede9e2" stroke="#b8924a" strokeWidth="1.5"/>
-        <polygon points="16,34 55,16 94,34 55,52" fill="#e6e0d4" stroke="#b8924a" strokeWidth="1.5"/>
-      </svg>
-    ),
-  },
-  {
     key: 'shopper', name: 'Shopper Lusso Monopatinato Lucido',
     cat: 'Shopper & Cartotecnica', catKey: 'shopper', price: 0.65, moq: 100,
     badge: { label: 'Più venduto', type: 'top' },
@@ -86,51 +73,6 @@ export const PRODUCTS: Product[] = [
         {/* Side gusset line */}
         <line x1="28" y1="43" x2="28" y2="100" stroke="#b8924a" strokeWidth="0.7" strokeDasharray="2,2"/>
         <line x1="82" y1="43" x2="82" y2="100" stroke="#b8924a" strokeWidth="0.7" strokeDasharray="2,2"/>
-      </svg>
-    ),
-  },
-  {
-    key: 'winebox', name: 'Scatola Bottiglie da 1 a 6',
-    cat: 'Wine Packaging', catKey: 'wine', price: 1.20, moq: 50,
-    desc: 'Ondulato con alveari separatori. Da 1 a 6 bottiglie verticali o orizzontali. Stampa personalizzata.',
-    seoDesc: 'Scatola vino in cartone ondulato con separatori alveare, da 1 a 6 bottiglie. Stampa personalizzata. MOQ 50 pz. Ordina il tuo packaging vino su Briopack.',
-    svg: (
-      <svg viewBox="0 0 110 110" fill="none" style={{ width: 108 }}>
-        <rect x="18" y="28" width="74" height="70" rx="4" fill="#ede9e2" stroke="#b8924a" strokeWidth="1.5"/>
-        <line x1="55" y1="28" x2="55" y2="98" stroke="#b8924a" strokeWidth="0.8"/>
-        <line x1="18" y1="63" x2="92" y2="63" stroke="#b8924a" strokeWidth="0.8"/>
-        <ellipse cx="36" cy="46" rx="10" ry="14" fill="none" stroke="#b8924a" strokeWidth="1"/>
-        <ellipse cx="74" cy="46" rx="10" ry="14" fill="none" stroke="#b8924a" strokeWidth="1"/>
-        <ellipse cx="36" cy="80" rx="10" ry="14" fill="none" stroke="#b8924a" strokeWidth="1"/>
-        <ellipse cx="74" cy="80" rx="10" ry="14" fill="none" stroke="#b8924a" strokeWidth="1"/>
-      </svg>
-    ),
-  },
-  {
-    key: 'food', name: 'Scatola Food-Grade',
-    cat: 'Food Delivery', catKey: 'food', price: 0.28, moq: 200,
-    desc: 'Certificata per il contatto alimentare. Scatole e buste in carta e cartone per delivery e take away.',
-    seoDesc: 'Scatola food-grade certificata per il contatto alimentare. Packaging pizza, delivery e take away in carta e cartone. MOQ 200 pz. Ordina su Briopack.',
-    svg: (
-      <svg viewBox="0 0 110 110" fill="none" style={{ width: 108 }}>
-        <rect x="18" y="46" width="74" height="50" rx="4" fill="#ede9e2" stroke="#b8924a" strokeWidth="1.5"/>
-        <path d="M18 58 L55 38 L92 58" stroke="#b8924a" strokeWidth="1.5" fill="none"/>
-        <rect x="36" y="60" width="38" height="24" rx="2" fill="none" stroke="#b8924a" strokeWidth="1" strokeDasharray="3,2.5"/>
-      </svg>
-    ),
-  },
-  {
-    key: 'eco', name: 'Scatola 100% Riciclata',
-    cat: 'BrioGreenPack', catKey: 'eco', price: 0.45, moq: 100,
-    badge: { label: 'Eco', type: 'eco' },
-    desc: 'Packaging eco-certificato da materiale riciclato. Stessa qualità e configurabilità, zero impatto.',
-    seoDesc: 'Scatola 100% riciclata certificata CONAI. Packaging sostenibile con stessa qualità e configurabilità del prodotto standard. MOQ 100 pz. BrioGreenPack by Briopack.',
-    svg: (
-      <svg viewBox="0 0 110 110" fill="none" style={{ width: 108 }}>
-        <rect x="15" y="34" width="80" height="65" rx="4" fill="#d4e6d9" stroke="#2d5a3d" strokeWidth="1.5"/>
-        <polygon points="15,34 55,16 95,34 55,52" fill="#c6deca" stroke="#2d5a3d" strokeWidth="1.5"/>
-        <circle cx="55" cy="74" r="14" fill="none" stroke="#2d5a3d" strokeWidth="1.5"/>
-        <path d="M49 74 Q53 67 59 74 Q55 81 49 74" fill="#2d5a3d" opacity="0.5"/>
       </svg>
     ),
   },
@@ -471,32 +413,14 @@ export const PRODUCTS: Product[] = [
       </svg>
     ),
   },
-  // ── FINE NUOVI PRODOTTI ────────────────────────────────────────────────────
-  {
-    key: 'mailer', name: 'Scatola Self-Seal Mailer',
-    cat: 'E-commerce', catKey: 'ecom', price: 0.52, moq: 100,
-    desc: 'Chiusura a click, nastro antieffrazione. Ideale per spedizioni corriere di qualsiasi tipo di prodotto.',
-    seoDesc: 'Scatola mailer self-seal con chiusura a click e nastro antieffrazione. Ideale per e-commerce e spedizioni corriere. MOQ 100 pz. Personalizzabile su Briopack.',
-    svg: (
-      <svg viewBox="0 0 110 110" fill="none" style={{ width: 108 }}>
-        <rect x="15" y="30" width="80" height="68" rx="4" fill="#ede9e2" stroke="#b8924a" strokeWidth="1.5"/>
-        <path d="M15 52 L95 52" stroke="#b8924a" strokeWidth="0.8"/>
-        <path d="M55 30 L55 52" stroke="#b8924a" strokeWidth="0.8"/>
-        <rect x="30" y="60" width="50" height="26" rx="2" fill="none" stroke="#b8924a" strokeWidth="1" strokeDasharray="3,2.5"/>
-        <path d="M44 30 Q44 22 55 22 Q66 22 66 30" stroke="#b8924a" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
-      </svg>
-    ),
-  },
 ]
 
 export const CATEGORIES = [
-  { key: 'all',        label: 'Tutti' },
-  { key: 'industrial', label: 'Industriale' },
-  { key: 'shopper',    label: 'Shopper' },
-  { key: 'food',       label: 'Food Delivery' },
-  { key: 'wine',       label: 'Wine' },
-  { key: 'ecom',       label: 'E-commerce' },
-  { key: 'eco',        label: 'BrioGreenPack' },
+  { key: 'all',     label: 'Tutti' },
+  { key: 'shopper', label: 'Shopper' },
+  { key: 'food',    label: 'Food Delivery' },
+  { key: 'wine',    label: 'Wine' },
+  { key: 'ecom',    label: 'E-commerce' },
 ]
 
 export const SIZES = [
