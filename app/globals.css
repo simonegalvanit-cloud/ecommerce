@@ -396,10 +396,10 @@ nav.site-nav.scrolled {
 .hero-ac-item:hover .hero-ac-price { opacity: 1; }
 .hero-search-input {
   flex: 1; border: none; outline: none;
-  font-size: 15px; font-weight: 500; color: #fff; background: transparent;
+  font-size: 15px; font-weight: 500; color: #1a1a1a; background: transparent;
   font-family: var(--f); min-width: 0;
 }
-.hero-search-input::placeholder { color: rgba(255,255,255,0.82); font-weight: 400; }
+.hero-search-input::placeholder { color: #888; font-weight: 400; }
 .hero-search-btn {
   background: #fff;
   color: var(--accent); border: none; border-radius: 12px; padding: 11px 26px;
