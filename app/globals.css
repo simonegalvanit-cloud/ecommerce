@@ -399,7 +399,7 @@ nav.site-nav.scrolled {
   font-size: 15px; font-weight: 500; color: #fff; background: transparent;
   font-family: var(--f); min-width: 0;
 }
-.hero-search-input::placeholder { color: rgba(255,255,255,0.55); font-weight: 400; }
+.hero-search-input::placeholder { color: rgba(255,255,255,0.82); font-weight: 400; }
 .hero-search-btn {
   background: #fff;
   color: var(--accent); border: none; border-radius: 12px; padding: 11px 26px;
