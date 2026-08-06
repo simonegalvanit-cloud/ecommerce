@@ -88,11 +88,6 @@ export default function ServiziPage() {
             Briopack non è solo packaging — è un partner che progetta, produce e gestisce.
             Dalla struttura tecnica alla grafica finita, dallo stoccaggio alla consegna.
           </p>
-          <div className="sv-hero-pills">
-            <span className="sv-hero-pill"><svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Preventivo gratuito</span>
-            <span className="sv-hero-pill"><svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Risposta in 24h</span>
-            <span className="sv-hero-pill"><svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Team dedicato</span>
-          </div>
         </div>
         <div className="sv-hero-glow" />
       </div>
