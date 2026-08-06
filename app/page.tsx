@@ -124,7 +124,7 @@ export default function StorefrontPage() {
 
           <div className="hero-search-wrap animate-fade-up delay-2" ref={searchWrapRef}>
             <form className="hero-search-bar" onSubmit={handleHeroSearch} ref={searchBarRef}>
-              <svg width="16" height="16" fill="none" stroke="#9ca3af" strokeWidth="2" viewBox="0 0 24 24" style={{ flexShrink: 0 }}>
+              <svg width="18" height="18" fill="none" stroke="#999" strokeWidth="2" viewBox="0 0 24 24" style={{ flexShrink: 0 }}>
                 <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
               </svg>
               <input
