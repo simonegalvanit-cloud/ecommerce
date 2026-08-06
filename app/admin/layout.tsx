@@ -12,19 +12,21 @@ const IcUsers = () => <svg width="15" height="15" fill="none" stroke="currentCol
 const IcSettings = () => <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 16 16"><circle cx="8" cy="8" r="2.5"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41"/></svg>
 const IcExternalLink = () => <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 16 16"><path d="M7 3H3a1 1 0 00-1 1v9a1 1 0 001 1h9a1 1 0 001-1V9"/><path d="M10 1h5v5"/><path d="M15 1L8 8"/></svg>
 const IcLogout = () => <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" viewBox="0 0 16 16"><path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M11 5l4 3-4 3M15 8H7"/></svg>
+const IcMail = () => <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 16 16"><rect x="1" y="3" width="14" height="10" rx="1"/><polyline points="1,3 8,9 15,3"/></svg>
 
-type NavItem  = { href: string; label: string; icon: React.ReactElement; external?: boolean }
+type NavItem  = { href: string; label: string; icon: React.ReactElement; external?: boolean; badgeKey?: string }
 type NavGroup = { section: string; items: NavItem[] }
 
 const NAV_ITEMS: NavGroup[] = [
   { section: 'Principale', items: [
     { href: '/admin',          label: 'Dashboard', icon: <IcGrid /> },
     { href: '/admin/products', label: 'Prodotti',  icon: <IcBox /> },
-    { href: '/admin/orders',   label: 'Ordini',    icon: <IcClipboard /> },
+    { href: '/admin/orders',   label: 'Ordini',    icon: <IcClipboard />, badgeKey: 'orders' },
   ]},
   { section: 'Gestione', items: [
-    { href: '/admin/customers', label: 'Clienti',      icon: <IcUsers /> },
-    { href: '/admin/settings',  label: 'Impostazioni', icon: <IcSettings /> },
+    { href: '/admin/customers', label: 'Clienti',         icon: <IcUsers /> },
+    { href: '/admin/servizi',   label: 'Rich. Servizi',   icon: <IcMail />, badgeKey: 'servizi' },
+    { href: '/admin/settings',  label: 'Impostazioni',    icon: <IcSettings /> },
   ]},
   { section: 'Negozio', items: [
     { href: '/', label: 'Vai al negozio', icon: <IcExternalLink />, external: true },
@@ -39,6 +41,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [adminName, setAdminName] = useState('Admin')
   const [ready, setReady] = useState(false)
   const [newOrders, setNewOrders] = useState(0)
+  const [newServizi, setNewServizi] = useState(0)
 
   useEffect(() => {
     // Cookie is httpOnly — if middleware allowed through, bypass is valid
@@ -58,18 +61,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
   }, [])
 
-  // Poll for new orders every 30s
+  // Poll for new orders + unread servizi requests every 30s
   useEffect(() => {
-    async function checkNewOrders() {
+    async function checkBadges() {
       const lastSeen = localStorage.getItem('bp_admin_orders_seen') || new Date(0).toISOString()
-      const { count } = await sb
-        .from('orders')
-        .select('*', { count: 'exact', head: true })
-        .gt('created_at', lastSeen)
-      setNewOrders(count ?? 0)
+      const [{ count: ordersCount }, { count: serviziCount }] = await Promise.all([
+        sb.from('orders').select('*', { count: 'exact', head: true }).gt('created_at', lastSeen),
+        sb.from('servizi_requests').select('*', { count: 'exact', head: true }).eq('status', 'new'),
+      ])
+      setNewOrders(ordersCount ?? 0)
+      setNewServizi(serviziCount ?? 0)
     }
-    checkNewOrders()
-    const t = setInterval(checkNewOrders, 30000)
+    checkBadges()
+    const t = setInterval(checkBadges, 30000)
     return () => clearInterval(t)
   }, [])
 
@@ -118,15 +122,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     </a>
                   )
                 }
-                const isOrders = item.href === '/admin/orders'
-                const badge = isOrders && newOrders > 0
+                const badgeCount = item.badgeKey === 'orders' ? newOrders : item.badgeKey === 'servizi' ? newServizi : 0
+                const badge = badgeCount > 0
                 return (
                   <Link key={item.href} href={item.href}
                     onClick={() => {
-                      if (isOrders) {
+                      if (item.badgeKey === 'orders') {
                         localStorage.setItem('bp_admin_orders_seen', new Date().toISOString())
                         setNewOrders(0)
                       }
+                      if (item.badgeKey === 'servizi') setNewServizi(0)
                     }}
                     style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '8px 12px', borderRadius: 8, fontSize: 13, fontWeight: isActive ? 600 : 500, color: isActive ? '#fff' : 'rgba(255,255,255,0.5)', background: isActive ? 'rgba(232,114,26,0.18)' : 'transparent', cursor: 'pointer', transition: 'all .15s', textDecoration: 'none' }}
                     onMouseEnter={e => { if (!isActive) { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.06)'; (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.8)' }}}
@@ -135,7 +140,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     {item.label}
                     {badge && (
                       <span style={{ marginLeft: 'auto', minWidth: 18, height: 18, borderRadius: 9, background: '#ef4444', color: '#fff', fontSize: 10.5, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 5px', flexShrink: 0 }}>
-                        {newOrders > 99 ? '99+' : newOrders}
+                        {badgeCount > 99 ? '99+' : badgeCount}
                       </span>
                     )}
                   </Link>

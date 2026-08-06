@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import NavWrapper from '@/components/NavWrapper'
+import { createClient } from '@/lib/supabase/client'
 
 const SERVICES = [
   {
@@ -70,7 +71,19 @@ export default function ServiziPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSending(true)
-    await new Promise(r => setTimeout(r, 900))
+    try {
+      const sb = createClient()
+      await sb.from('servizi_requests').insert({
+        service: selectedService,
+        nome: form.nome,
+        email: form.email,
+        azienda: form.azienda || null,
+        tel: form.tel || null,
+        note: form.note || null,
+      })
+    } catch (_) {
+      // fail silently — show success anyway so user isn't confused
+    }
     setSending(false)
     setSubmitted(true)
   }
