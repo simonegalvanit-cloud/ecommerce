@@ -171,6 +171,7 @@ nav.site-nav.scrolled {
 }
 .nav-link:hover { color: var(--ink); background: var(--accent-bg); }
 .nav-link.active { color: var(--accent); background: var(--accent-bg); font-weight: 600; }
+.nav-link:active { transform: scale(0.93); transition: transform .08s cubic-bezier(0.16,1,0.3,1), color .18s, background .18s; }
 .nav-right { display: flex; align-items: center; gap: 8px; }
 .cart-pill {
   display: flex; align-items: center; gap: 8px;
@@ -180,7 +181,7 @@ nav.site-nav.scrolled {
   transition: all .2s; font-family: var(--f); white-space: nowrap;
 }
 .cart-pill:hover { background: var(--accent-h); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(232,114,26,0.35); }
-.cart-pill:active { transform: translateY(0); }
+.cart-pill:active { transform: scale(0.93) translateY(0); transition: transform .08s cubic-bezier(0.16,1,0.3,1); }
 .cart-badge {
   background: #fff; color: var(--accent); font-size: 11px; font-weight: 800;
   width: 20px; height: 20px; border-radius: 50%;
@@ -279,12 +280,12 @@ nav.site-nav.scrolled {
 .hero-topbar-item { font-size: 11.5px; color: rgba(255,255,255,0.7); font-weight: 500; letter-spacing: 0.2px; display: flex; align-items: center; gap: 6px; }
 .hero-topbar-sep  { color: rgba(255,255,255,0.3); }
 
-/* Center block */
+/* Center block — z-index 2 keeps the autocomplete dropdown above the strip */
 .hero-center {
   flex: 1; display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   text-align: center; padding: 48px 24px 40px;
-  gap: 0; position: relative; z-index: 1;
+  gap: 0; position: relative; z-index: 2;
 }
 .hero-headline {
   font-size: 42px; font-weight: 500; color: #fff;
@@ -387,6 +388,7 @@ nav.site-nav.scrolled {
   transition: background .18s, border-color .18s, color .18s;
 }
 .hero-popular-link:hover { background: rgba(255,255,255,0.24); border-color: rgba(255,255,255,0.4); color: #fff; }
+.hero-popular-link:active { transform: scale(0.91); transition: transform .08s cubic-bezier(0.16,1,0.3,1); }
 
 /* Product strip */
 .hero-strip {
@@ -405,6 +407,7 @@ nav.site-nav.scrolled {
 }
 .hero-strip-cell:last-child { border-right: none; }
 .hero-strip-cell:hover { background: rgba(255,255,255,0.07); }
+.hero-strip-cell:active { transform: scale(0.97); transition: transform .08s cubic-bezier(0.16,1,0.3,1), background .18s; }
 .hero-strip-thumb {
   width: 48px; height: 48px; border-radius: 10px; flex-shrink: 0;
   background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
@@ -628,6 +631,7 @@ nav.site-nav.scrolled {
   font-family: var(--f); flex-shrink: 0;
 }
 .catalog-pill:hover { border-color: var(--accent-border); color: var(--accent); background: var(--accent-bg); }
+.catalog-pill:active { transform: scale(0.93); transition: transform .08s cubic-bezier(0.16,1,0.3,1); }
 .catalog-pill.active {
   background: var(--accent); border-color: var(--accent); color: #fff;
   box-shadow: 0 4px 14px rgba(232,114,26,0.28);
@@ -809,7 +813,7 @@ nav.site-nav.scrolled {
   box-shadow: 0 4px 14px rgba(232,114,26,0.3);
 }
 .btn-config:hover { background: var(--accent-h); transform: translateY(-1px); box-shadow: 0 8px 22px rgba(232,114,26,0.4); }
-.btn-config:active { transform: translateY(0); }
+.btn-config:active { transform: scale(0.93) translateY(0); transition: transform .08s cubic-bezier(0.16,1,0.3,1); }
 .btn-config svg { width: 13px; height: 13px; transition: transform .2s; }
 .btn-config:hover svg { transform: translateX(3px); }
 
@@ -1393,6 +1397,7 @@ tbody tr:hover td { background: var(--surface); }
   cursor: pointer; transition: all .15s; margin: 8px 0;
 }
 .cat-filter-pill:hover { border-color: var(--accent-border); color: var(--accent); background: var(--accent-bg); }
+.cat-filter-pill:active { transform: scale(0.93); transition: transform .08s cubic-bezier(0.16,1,0.3,1); }
 .cat-pill-count {
   font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 100px;
   background: var(--surface-2); color: var(--ink-4); transition: all .15s;
@@ -1488,6 +1493,7 @@ tbody tr:hover td { background: var(--surface); }
   cursor: pointer; transition: all .18s; flex-shrink: 0;
 }
 .cat-card-cta:hover { background: var(--surface-2); }
+.cat-card-cta:active { transform: scale(0.93); transition: transform .08s cubic-bezier(0.16,1,0.3,1); }
 
 /* ── Empty state ── */
 .cat-empty { text-align: center; padding: 80px 20px; }
