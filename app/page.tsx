@@ -85,8 +85,11 @@ export default function StorefrontPage() {
 
       {/* ── HERO ── */}
       <section className="hero hero-v2">
-        <div className="hero-glow-1" />
-        <div className="hero-grid" />
+        {/* Background decorations in their own clipping layer */}
+        <div className="hero-bg">
+          <div className="hero-glow-1" />
+          <div className="hero-grid" />
+        </div>
 
         {/* Center focal point */}
         <div className="hero-center">
