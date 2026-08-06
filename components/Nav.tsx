@@ -13,6 +13,7 @@ interface NavProps {
 const NAV_LINKS = [
   { href: '/',         label: 'Home',     key: 'home' },
   { href: '/catalogo', label: 'Catalogo', key: 'catalogo' },
+  { href: '/servizi',  label: 'Servizi',  key: 'servizi' },
   { href: '/contatti', label: 'Contatti', key: 'contatti' },
 ]
 

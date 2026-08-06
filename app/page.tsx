@@ -18,7 +18,10 @@ export default function StorefrontPage() {
   const [search, setSearch]   = useState('')
   const [heroSearch, setHeroSearch] = useState('')
   const [suggestionsOpen, setSuggestionsOpen] = useState(false)
+  const [acPos, setAcPos] = useState({ top: 0, left: 0, width: 0 })
   const searchWrapRef = useRef<HTMLDivElement>(null)
+  const searchBarRef = useRef<HTMLFormElement>(null)
+  const autocompleteRef = useRef<HTMLDivElement>(null)
 
   const heroSuggestions = heroSearch.trim().length > 1
     ? PRODUCTS.filter(p => {
@@ -27,11 +30,30 @@ export default function StorefrontPage() {
       }).slice(0, 6)
     : []
 
+  // Recompute fixed position whenever suggestions open or search changes
+  useEffect(() => {
+    const compute = () => {
+      if (searchBarRef.current) {
+        const r = searchBarRef.current.getBoundingClientRect()
+        setAcPos({ top: r.bottom + 8, left: r.left, width: r.width })
+      }
+    }
+    if (suggestionsOpen) {
+      compute()
+      window.addEventListener('resize', compute)
+      window.addEventListener('scroll', compute, true)
+      return () => {
+        window.removeEventListener('resize', compute)
+        window.removeEventListener('scroll', compute, true)
+      }
+    }
+  }, [suggestionsOpen, heroSearch])
+
   useEffect(() => {
     const handle = (e: MouseEvent) => {
-      if (searchWrapRef.current && !searchWrapRef.current.contains(e.target as Node)) {
-        setSuggestionsOpen(false)
-      }
+      const inBar = searchWrapRef.current?.contains(e.target as Node)
+      const inAc  = autocompleteRef.current?.contains(e.target as Node)
+      if (!inBar && !inAc) setSuggestionsOpen(false)
     }
     document.addEventListener('mousedown', handle)
     return () => document.removeEventListener('mousedown', handle)
@@ -101,7 +123,7 @@ export default function StorefrontPage() {
           </p>
 
           <div className="hero-search-wrap animate-fade-up delay-2" ref={searchWrapRef}>
-            <form className="hero-search-bar" onSubmit={handleHeroSearch}>
+            <form className="hero-search-bar" onSubmit={handleHeroSearch} ref={searchBarRef}>
               <svg width="16" height="16" fill="none" stroke="#9ca3af" strokeWidth="2" viewBox="0 0 24 24" style={{ flexShrink: 0 }}>
                 <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
               </svg>
@@ -116,26 +138,6 @@ export default function StorefrontPage() {
               />
               <button type="submit" className="hero-search-btn">Cerca</button>
             </form>
-
-            {suggestionsOpen && heroSuggestions.length > 0 && (
-              <div className="hero-autocomplete">
-                {heroSuggestions.map(p => (
-                  <div key={p.key} className="hero-ac-item"
-                    onMouseDown={e => { e.preventDefault(); setSuggestionsOpen(false); router.push(`/products/${p.key}`) }}>
-                    <div className="hero-ac-thumb">
-                      <div style={{ transform: 'scale(0.35)', transformOrigin: 'center', width: 108, height: 108, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        {p.svg}
-                      </div>
-                    </div>
-                    <div className="hero-ac-info">
-                      <div className="hero-ac-name">{p.name}</div>
-                      <div className="hero-ac-cat">{p.cat}</div>
-                    </div>
-                    <div className="hero-ac-price">€{fmt(p.price)}/pz</div>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
 
           <div className="hero-popular animate-fade-up delay-3">
@@ -407,6 +409,31 @@ export default function StorefrontPage() {
         </svg>
         {cartCount > 0 && <span className="fab-badge">{cartCount}</span>}
       </button>
+
+      {/* ── HERO AUTOCOMPLETE — fixed positioning escapes every stacking context ── */}
+      {suggestionsOpen && heroSuggestions.length > 0 && (
+        <div
+          ref={autocompleteRef}
+          className="hero-autocomplete"
+          style={{ position: 'fixed', top: acPos.top, left: acPos.left, width: acPos.width, zIndex: 9999 }}
+        >
+          {heroSuggestions.map(p => (
+            <div key={p.key} className="hero-ac-item"
+              onMouseDown={e => { e.preventDefault(); setSuggestionsOpen(false); router.push(`/products/${p.key}`) }}>
+              <div className="hero-ac-thumb">
+                <div style={{ transform: 'scale(0.35)', transformOrigin: 'center', width: 108, height: 108, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {p.svg}
+                </div>
+              </div>
+              <div className="hero-ac-info">
+                <div className="hero-ac-name">{p.name}</div>
+                <div className="hero-ac-cat">{p.cat}</div>
+              </div>
+              <div className="hero-ac-price">€{fmt(p.price)}/pz</div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* ── CART DRAWER ── */}
       <CartDrawer />
