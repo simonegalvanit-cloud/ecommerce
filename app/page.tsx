@@ -320,13 +320,25 @@ export default function StorefrontPage() {
           <div className="scroll-reveal" style={{ transitionDelay: '0.1s' }}>
             <div className="footer-col-title">Prodotti</div>
             <ul className="footer-links">
-              {['Imballaggi Industriali','Shopper & Cartotecnica','Wine Packaging','Food Delivery','E-commerce','BrioGreenPack'].map(l => <li key={l}><a href="#">{l}</a></li>)}
+              {[
+                { label: 'Shopper & Cartotecnica', href: '/catalogo' },
+                { label: 'Wine Packaging',          href: '/catalogo' },
+                { label: 'Food Delivery',           href: '/catalogo' },
+                { label: 'E-commerce',              href: '/catalogo' },
+                { label: 'Imballaggi Industriali',  href: '#' },
+                { label: 'BrioGreenPack',           href: '#' },
+              ].map(l => <li key={l.label}><a href={l.href}>{l.label}</a></li>)}
             </ul>
           </div>
           <div className="scroll-reveal" style={{ transitionDelay: '0.18s' }}>
             <div className="footer-col-title">Azienda</div>
             <ul className="footer-links">
-              {['Chi Siamo','Contatti','Richiedi Preventivo','Area Amministrativa'].map(l => <li key={l}><a href="#">{l}</a></li>)}
+              {[
+                { label: 'Chi Siamo',           href: '#' },
+                { label: 'Contatti',            href: '/contatti' },
+                { label: 'Richiedi Preventivo', href: '/contatti' },
+                { label: 'Area Amministrativa', href: '/admin' },
+              ].map(l => <li key={l.label}><a href={l.href}>{l.label}</a></li>)}
             </ul>
           </div>
         </div>
