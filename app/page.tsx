@@ -16,6 +16,12 @@ export default function StorefrontPage() {
   const router = useRouter()
   const [activeCat, setActiveCat] = useState('all')
   const [search, setSearch]   = useState('')
+  const [heroSearch, setHeroSearch] = useState('')
+
+  const handleHeroSearch = (e?: React.FormEvent) => {
+    e?.preventDefault()
+    router.push(`/catalogo${heroSearch.trim() ? `?q=${encodeURIComponent(heroSearch.trim())}` : ''}`)
+  }
 
   // ── IntersectionObserver for scroll-reveal ──────────────────────────────────
   const observerRef = useRef<IntersectionObserver | null>(null)
@@ -58,87 +64,82 @@ export default function StorefrontPage() {
       <NavWrapper activeLink="home" />
 
       {/* ── HERO ── */}
-      <section className="hero">
+      <section className="hero hero-v2">
         <div className="hero-glow-1" />
         <div className="hero-grid" />
-        <div className="hero-orb hero-orb-1" />
-        <div className="hero-inner">
-          <div className="hero-left">
-            {/* Eyebrow badge */}
-            <h1 className="animate-fade-up delay-1">
-              Le migliori soluzioni<br />
-              per il Packaging<br />
-              e l&apos;Imballaggio
-            </h1>
 
-            <p className="hero-sub animate-fade-up delay-2">
-              Scatole, shopper, wine box e packaging food-grade personalizzabili online. MOQ accessibili, stampa professionale, spedizione nazionale.
-            </p>
-
-            <div className="hero-actions animate-fade-up delay-3">
-              <button className="hero-cta-primary" onClick={() => router.push('/catalogo')}>
-                Scopri il catalogo
-                <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.3" viewBox="0 0 16 16" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9 4 13 8 9 12"/></svg>
-              </button>
-            </div>
-          </div>
-
-          {/* ── Hero showcase — floating product cards ── */}
-          <div className="hero-right animate-fade-up delay-3">
-            <div className="hero-showcase">
-
-              {/* Card 1 — Shopper */}
-              <div className="hero-pv-card hpv-1" onClick={() => router.push('/products/shopper')}>
-                <div className="hpv-accent" style={{ background: '#ec4899' }} />
-                <div className="hpv-body">
-                  <div className="hpv-cat">Shopper & Cartotecnica</div>
-                  <div className="hpv-name">Shopper Lusso Lucido</div>
-                  <div className="hpv-row">
-                    <span className="hpv-price">€0,65</span>
-                    <span className="hpv-unit">/ pz</span>
-                  </div>
-                  <div className="hpv-moq">MOQ 100 pz</div>
-                  <div className="hpv-badge">Più venduto</div>
-                </div>
-                <div className="hpv-arrow">→</div>
-              </div>
-
-              {/* Card 2 — Wine */}
-              <div className="hero-pv-card hpv-2" onClick={() => router.push('/products/portabottiglie-carta')}>
-                <div className="hpv-accent" style={{ background: '#8b5cf6' }} />
-                <div className="hpv-body">
-                  <div className="hpv-cat">Wine Packaging</div>
-                  <div className="hpv-name">Portabottiglie Lusso</div>
-                  <div className="hpv-row">
-                    <span className="hpv-price">€0,65</span>
-                    <span className="hpv-unit">/ pz</span>
-                  </div>
-                  <div className="hpv-moq">MOQ 70 pz</div>
-                </div>
-                <div className="hpv-arrow">→</div>
-              </div>
-
-              {/* Card 3 — E-commerce */}
-              <div className="hero-pv-card hpv-3" onClick={() => router.push('/products/busta-ecommerce')}>
-                <div className="hpv-accent" style={{ background: '#0ea5e9' }} />
-                <div className="hpv-body">
-                  <div className="hpv-cat">E-commerce</div>
-                  <div className="hpv-name">Busta E-Commerce in Carta</div>
-                  <div className="hpv-row">
-                    <span className="hpv-price">€0,35</span>
-                    <span className="hpv-unit">/ pz</span>
-                  </div>
-                  <div className="hpv-moq">MOQ 200 pz</div>
-                  <div className="hpv-badge">Nuovo</div>
-                </div>
-                <div className="hpv-arrow">→</div>
-              </div>
-
-            </div>
-          </div>
-
+        {/* Top bar */}
+        <div className="hero-topbar">
+          {['Spedizione 48–72h in Italia', 'MOQ da 50 pz', 'Stampa professionale', 'Packaging Made in Italy'].map((t, i) => (
+            <span key={t} className="hero-topbar-item">
+              {i > 0 && <span className="hero-topbar-sep" aria-hidden>·</span>}
+              {t}
+            </span>
+          ))}
         </div>
 
+        {/* Center focal point */}
+        <div className="hero-center">
+          <h1 className="hero-headline animate-fade-up">
+            Il packaging professionale,<br />ordinato online.
+          </h1>
+          <p className="hero-subline animate-fade-up delay-1">
+            Shopper, wine box, buste e-commerce e molto altro — su misura, con stampa.
+          </p>
+
+          <form className="hero-search-bar animate-fade-up delay-2" onSubmit={handleHeroSearch}>
+            <svg width="16" height="16" fill="none" stroke="#9ca3af" strokeWidth="2" viewBox="0 0 24 24" style={{ flexShrink: 0 }}>
+              <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+            </svg>
+            <input
+              type="text"
+              placeholder="Cerca shopper, portabottiglie, buste…"
+              value={heroSearch}
+              onChange={e => setHeroSearch(e.target.value)}
+              className="hero-search-input"
+            />
+            <button type="submit" className="hero-search-btn">Cerca</button>
+          </form>
+
+          <div className="hero-popular animate-fade-up delay-3">
+            <span className="hero-popular-label">Popolari:</span>
+            {[
+              { label: 'Shopper',      cat: 'shopper' },
+              { label: 'Wine box',     cat: 'wine' },
+              { label: 'Buste',        cat: 'ecom' },
+              { label: 'Cesti regalo', cat: 'regalo' },
+            ].map(l => (
+              <button key={l.label} className="hero-popular-link" onClick={() => router.push(`/catalogo?cat=${l.cat}`)}>
+                {l.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Bottom product strip */}
+        <div className="hero-strip">
+          {[
+            { key: 'shopper-colorati',       name: 'Shopper Colorati',        price: '0,32', accent: '#ec4899' },
+            { key: 'scatola-portabottiglia', name: 'Portabottiglia Kraft',     price: '0,75', accent: '#8b5cf6' },
+            { key: 'busta-ecommerce',        name: 'Busta E-Commerce',         price: '0,35', accent: '#0ea5e9' },
+          ].map(p => {
+            const product = PRODUCTS.find(pr => pr.key === p.key)
+            return (
+              <div key={p.key} className="hero-strip-cell" onClick={() => router.push(`/products/${p.key}`)}>
+                <div className="hero-strip-thumb" style={{ borderColor: p.accent + '55' }}>
+                  <div style={{ transform: 'scale(0.38)', transformOrigin: 'center', width: 108, height: 108, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {product?.svg}
+                  </div>
+                </div>
+                <div className="hero-strip-info">
+                  <div className="hero-strip-name">{p.name}</div>
+                  <div className="hero-strip-price">da <strong>€{p.price}</strong>/pz</div>
+                </div>
+                <svg className="hero-strip-arrow" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 16 16" strokeLinecap="round"><line x1="3" y1="8" x2="13" y2="8"/><polyline points="9 4 13 8 9 12"/></svg>
+              </div>
+            )
+          })}
+        </div>
       </section>
 
       {/* ── CATALOG ZONE ── */}

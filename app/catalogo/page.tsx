@@ -1,5 +1,5 @@
 'use client'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import NavWrapper from '@/components/NavWrapper'
 import CartDrawer from '@/components/CartDrawer'
@@ -36,6 +36,13 @@ export default function CatalogoPage() {
   const [search, setSearch] = useState('')
   const [hovered, setHovered] = useState<string | null>(null)
   const searchRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const q = params.get('q'); const cat = params.get('cat')
+    if (q) setSearch(q)
+    if (cat) setActiveCat(cat)
+  }, [])
 
   const filteredProducts = PRODUCTS.filter(p => {
     const matchCat = activeCat === 'all' || p.catKey === activeCat

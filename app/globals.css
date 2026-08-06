@@ -255,6 +255,110 @@ nav.site-nav.scrolled {
   padding: 100px 40px 80px; position: relative; overflow: hidden;
 }
 
+/* ── Hero v2 — search-centered layout ── */
+.hero.hero-v2 {
+  padding: 0;
+  display: flex; flex-direction: column;
+  min-height: 500px;
+}
+
+/* Top bar */
+.hero-topbar {
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px; padding: 11px 24px;
+  background: rgba(0,0,0,0.12);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  flex-wrap: wrap;
+}
+.hero-topbar-item { font-size: 11.5px; color: rgba(255,255,255,0.7); font-weight: 500; letter-spacing: 0.2px; display: flex; align-items: center; gap: 6px; }
+.hero-topbar-sep  { color: rgba(255,255,255,0.3); }
+
+/* Center block */
+.hero-center {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 48px 24px 40px;
+  gap: 0;
+}
+.hero-headline {
+  font-size: 42px; font-weight: 500; color: #fff;
+  line-height: 1.12; letter-spacing: -1.5px;
+  margin-bottom: 14px;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.12);
+}
+.hero-subline {
+  font-size: 15px; color: rgba(255,255,255,0.72);
+  line-height: 1.6; margin-bottom: 28px; max-width: 500px;
+}
+
+/* Search bar */
+.hero-search-bar {
+  display: flex; align-items: center; gap: 10px;
+  background: #fff; border-radius: 12px;
+  padding: 8px 8px 8px 18px;
+  width: 100%; max-width: 560px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 16px;
+}
+.hero-search-input {
+  flex: 1; border: none; outline: none;
+  font-size: 14px; color: var(--ink); background: transparent;
+  font-family: var(--f); min-width: 0;
+}
+.hero-search-input::placeholder { color: #9ca3af; }
+.hero-search-btn {
+  background: var(--accent); color: #fff; border: none;
+  border-radius: 8px; padding: 10px 22px;
+  font-size: 14px; font-weight: 700; cursor: pointer;
+  font-family: var(--f); transition: background .18s, transform .15s;
+  white-space: nowrap; flex-shrink: 0;
+}
+.hero-search-btn:hover  { background: var(--accent-h); }
+.hero-search-btn:active { transform: scale(0.97); }
+
+/* Popular links */
+.hero-popular {
+  display: flex; align-items: center; gap: 8px;
+  flex-wrap: wrap; justify-content: center;
+}
+.hero-popular-label { font-size: 12px; color: rgba(255,255,255,0.55); font-weight: 500; }
+.hero-popular-link {
+  background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.24);
+  border-radius: 100px; padding: 5px 14px;
+  font-size: 12.5px; font-weight: 600; color: rgba(255,255,255,0.88);
+  cursor: pointer; font-family: var(--f);
+  transition: background .18s, border-color .18s, color .18s;
+}
+.hero-popular-link:hover { background: rgba(255,255,255,0.24); border-color: rgba(255,255,255,0.4); color: #fff; }
+
+/* Product strip */
+.hero-strip {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  background: rgba(0,0,0,0.2);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(255,255,255,0.14);
+}
+.hero-strip-cell {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px 24px; cursor: pointer;
+  border-right: 1px solid rgba(255,255,255,0.1);
+  transition: background .18s;
+  text-decoration: none;
+}
+.hero-strip-cell:last-child { border-right: none; }
+.hero-strip-cell:hover { background: rgba(255,255,255,0.07); }
+.hero-strip-thumb {
+  width: 48px; height: 48px; border-radius: 10px; flex-shrink: 0;
+  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+  overflow: hidden; display: flex; align-items: center; justify-content: center;
+}
+.hero-strip-info { flex: 1; min-width: 0; }
+.hero-strip-name  { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.9); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hero-strip-price { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+.hero-strip-price strong { color: rgba(255,255,255,0.82); }
+.hero-strip-arrow { color: rgba(255,255,255,0.35); flex-shrink: 0; transition: transform .18s, color .18s; }
+.hero-strip-cell:hover .hero-strip-arrow { transform: translateX(4px); color: rgba(255,255,255,0.7); }
+
 .hero-glow-1 {
   position: absolute; pointer-events: none;
   width: 700px; height: 500px; right: -80px; top: -150px;
@@ -1360,10 +1464,15 @@ tbody tr:hover td { background: var(--surface); }
   input[type=text], input[type=email], input[type=password],
   input[type=number], input[type=tel], input[type=url], select, textarea,
   .catalog-searchbar input, .cf-field input, .cf-field textarea, .cf-field select { font-size: 16px; }
-  .hero { padding: 60px 24px 0; }
+  .hero:not(.hero-v2) { padding: 60px 24px 0; }
   .hero-inner { grid-template-columns: 1fr; gap: 36px; padding-bottom: 40px; }
   .hero h1 { font-size: 48px; letter-spacing: -2.5px; }
   .hero-right { display: none; }
+  .hero-headline { font-size: 32px; letter-spacing: -1px; }
+  .hero-strip { grid-template-columns: 1fr; }
+  .hero-strip-cell { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .hero-strip-cell:last-child { border-bottom: none; }
+  .hero-topbar { display: none; }
   .hero-stats { grid-template-columns: repeat(2,1fr); }
   .hero-stat-item:nth-child(2) { border-right: none; }
   .cat-hero-inner { padding: 32px 24px 28px; }
