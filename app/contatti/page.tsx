@@ -22,8 +22,8 @@ const INFO_ITEMS = [
       </svg>
     ),
     label: 'Telefono',
-    value: '+39 02 000 0000',
-    href: 'tel:+390200000000',
+    value: '0871 869378',
+    href: 'tel:+390871869378',
   },
   {
     icon: (
@@ -55,7 +55,7 @@ const INFO_ITEMS = [
       </svg>
     ),
     label: 'Orari',
-    value: 'Lun–Ven · 9:00–18:00',
+    value: 'Lun–Ven · 8:30–17:30',
     href: undefined,
   },
 ]

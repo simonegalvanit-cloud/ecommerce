@@ -17,9 +17,29 @@ export default function StorefrontPage() {
   const [activeCat, setActiveCat] = useState('all')
   const [search, setSearch]   = useState('')
   const [heroSearch, setHeroSearch] = useState('')
+  const [suggestionsOpen, setSuggestionsOpen] = useState(false)
+  const searchWrapRef = useRef<HTMLDivElement>(null)
+
+  const heroSuggestions = heroSearch.trim().length > 1
+    ? PRODUCTS.filter(p => {
+        const q = heroSearch.toLowerCase()
+        return p.name.toLowerCase().includes(q) || p.cat.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q)
+      }).slice(0, 6)
+    : []
+
+  useEffect(() => {
+    const handle = (e: MouseEvent) => {
+      if (searchWrapRef.current && !searchWrapRef.current.contains(e.target as Node)) {
+        setSuggestionsOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handle)
+    return () => document.removeEventListener('mousedown', handle)
+  }, [])
 
   const handleHeroSearch = (e?: React.FormEvent) => {
     e?.preventDefault()
+    setSuggestionsOpen(false)
     router.push(`/catalogo${heroSearch.trim() ? `?q=${encodeURIComponent(heroSearch.trim())}` : ''}`)
   }
 
@@ -68,16 +88,6 @@ export default function StorefrontPage() {
         <div className="hero-glow-1" />
         <div className="hero-grid" />
 
-        {/* Top bar */}
-        <div className="hero-topbar">
-          {['Spedizione 48–72h in Italia', 'MOQ da 50 pz', 'Stampa professionale', 'Packaging Made in Italy'].map((t, i) => (
-            <span key={t} className="hero-topbar-item">
-              {i > 0 && <span className="hero-topbar-sep" aria-hidden>·</span>}
-              {t}
-            </span>
-          ))}
-        </div>
-
         {/* Center focal point */}
         <div className="hero-center">
           <h1 className="hero-headline animate-fade-up">
@@ -87,19 +97,43 @@ export default function StorefrontPage() {
             Shopper, wine box, buste e-commerce e molto altro — su misura, con stampa.
           </p>
 
-          <form className="hero-search-bar animate-fade-up delay-2" onSubmit={handleHeroSearch}>
-            <svg width="16" height="16" fill="none" stroke="#9ca3af" strokeWidth="2" viewBox="0 0 24 24" style={{ flexShrink: 0 }}>
-              <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
-            </svg>
-            <input
-              type="text"
-              placeholder="Cerca shopper, portabottiglie, buste…"
-              value={heroSearch}
-              onChange={e => setHeroSearch(e.target.value)}
-              className="hero-search-input"
-            />
-            <button type="submit" className="hero-search-btn">Cerca</button>
-          </form>
+          <div className="hero-search-wrap animate-fade-up delay-2" ref={searchWrapRef}>
+            <form className="hero-search-bar" onSubmit={handleHeroSearch}>
+              <svg width="16" height="16" fill="none" stroke="#9ca3af" strokeWidth="2" viewBox="0 0 24 24" style={{ flexShrink: 0 }}>
+                <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+              </svg>
+              <input
+                type="text"
+                placeholder="Cerca shopper, portabottiglie, buste…"
+                value={heroSearch}
+                onChange={e => { setHeroSearch(e.target.value); setSuggestionsOpen(true) }}
+                onFocus={() => setSuggestionsOpen(true)}
+                onKeyDown={e => e.key === 'Escape' && setSuggestionsOpen(false)}
+                className="hero-search-input"
+              />
+              <button type="submit" className="hero-search-btn">Cerca</button>
+            </form>
+
+            {suggestionsOpen && heroSuggestions.length > 0 && (
+              <div className="hero-autocomplete">
+                {heroSuggestions.map(p => (
+                  <div key={p.key} className="hero-ac-item"
+                    onMouseDown={e => { e.preventDefault(); setSuggestionsOpen(false); router.push(`/products/${p.key}`) }}>
+                    <div className="hero-ac-thumb">
+                      <div style={{ transform: 'scale(0.35)', transformOrigin: 'center', width: 108, height: 108, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {p.svg}
+                      </div>
+                    </div>
+                    <div className="hero-ac-info">
+                      <div className="hero-ac-name">{p.name}</div>
+                      <div className="hero-ac-cat">{p.cat}</div>
+                    </div>
+                    <div className="hero-ac-price">€{fmt(p.price)}/pz</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
           <div className="hero-popular animate-fade-up delay-3">
             <span className="hero-popular-label">Popolari:</span>
@@ -316,7 +350,7 @@ export default function StorefrontPage() {
               <span style={{ fontSize: 18, fontWeight: 800, color: 'rgba(255,255,255,0.7)', letterSpacing: '1.5px', textTransform: 'uppercase' }}>BRIOPACK</span>
             </div>
             <div className="footer-tagline">Lo stato dell&apos;arte nel packaging. Progettiamo e produciamo imballaggi su misura per aziende di ogni settore, in tutta Italia.</div>
-            <div className="footer-contact">C.da Sodera, 38 — 66030 Poggiofiorito (CH)<br />+39 0871 869378<br />info@briopack.com</div>
+            <div className="footer-contact">C.da Sodera, 38 — 66030 Poggiofiorito (CH)<br /><a href="tel:+390871869378" style={{ color: 'inherit', textDecoration: 'none' }}>0871 869378</a><br />info@briopack.com</div>
             <div className="footer-social">
               <a href="https://www.facebook.com/Briopack/" target="_blank" rel="noopener noreferrer" className="footer-social-link" aria-label="Facebook">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>

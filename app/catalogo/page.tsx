@@ -154,7 +154,7 @@ export default function CatalogoPage() {
 
       {/* Footer */}
       <footer style={{ background: 'var(--surface-2)', borderTop: '1px solid var(--border)', padding: '24px 40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-        <div style={{ fontSize: 13, color: 'var(--ink-4)' }}>© 2025 Briopack Srl — P.IVA 02540090699</div>
+        <div style={{ fontSize: 13, color: 'var(--ink-4)' }}>© 2025 Briopack Srl — P.IVA 02540090699 — <a href="tel:+390871869378" style={{ color: 'inherit', textDecoration: 'none' }}>0871 869378</a></div>
         <div style={{ display: 'flex', gap: 20 }}>
           {[{ label: 'Home', href: '/' }, { label: 'Contatti', href: '/contatti' }].map(l => (
             <a key={l.href} href={l.href} style={{ fontSize: 13, color: 'var(--ink-4)', textDecoration: 'none', transition: 'color .15s' }}
