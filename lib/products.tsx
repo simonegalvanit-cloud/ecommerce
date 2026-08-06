@@ -413,6 +413,137 @@ export const PRODUCTS: Product[] = [
       </svg>
     ),
   },
+  // ── CESTI E SCATOLE REGALO ───────────────────────────────────────────────
+  {
+    key: 'scatola-segreto-cordini', name: 'Scatola Segreto con Cordini',
+    cat: 'Cesti & Scatole Regalo', catKey: 'regalo', price: 1.20, moq: 50,
+    desc: 'Scatola segreto in kraft avana liscio con cordini. Chiusura a incastro, ideale per confezioni regalo. 2 formati.',
+    seoDesc: 'Scatola segreto con cordini in kraft avana liscio. 2 formati dal 24,5×24,5×18 al 29×35,5×19,5 cm. Disponibile in seta e nero. MOQ 50 pz. Briopack.',
+    sizes: [
+      { label: '24,5×24,5×18 cm', dim: 'Art. 035 · Kraft avana liscio', price: null },
+      { label: '29×35,5×19,5 cm', dim: 'Art. 036 · Kraft avana liscio', price: null },
+    ],
+    colors: [
+      { label: 'Seta', hex: '#e8dcc8', border: true },
+      { label: 'Nero', hex: '#1a1a1a' },
+    ],
+    printOptions: ['Senza Stampa', 'Stampa a Caldo'],
+    qtyPresets: [50, 100, 250, 500],
+    svg: (
+      <svg viewBox="0 0 110 110" fill="none" style={{ width: 108 }}>
+        <rect x="18" y="30" width="74" height="62" rx="3" fill="#ede9e2" stroke="#b8924a" strokeWidth="1.5"/>
+        <path d="M18 48 Q55 40 92 48" stroke="#b8924a" strokeWidth="1.2" fill="none"/>
+        <rect x="18" y="30" width="74" height="18" rx="3" fill="#e4ddd2" stroke="#b8924a" strokeWidth="1.2"/>
+        <line x1="30" y1="30" x2="22" y2="16" stroke="#b8924a" strokeWidth="1.5" strokeLinecap="round"/>
+        <line x1="80" y1="30" x2="88" y2="16" stroke="#b8924a" strokeWidth="1.5" strokeLinecap="round"/>
+      </svg>
+    ),
+  },
+  {
+    key: 'portapanettone', name: 'Portapanettone + Bottiglia Kraft',
+    cat: 'Cesti & Scatole Regalo', catKey: 'regalo', price: 1.50, moq: 50,
+    desc: 'Scatola in kraft avana con manico integrale per panettone e bottiglia. 2 formati da 28×20×35 a 33×25×35 cm.',
+    seoDesc: 'Portapanettone con bottiglia in kraft avana. Manico integrale, 2 formati. Art. 037–038. MOQ 50 pz. Briopack.',
+    sizes: [
+      { label: '28×20×35 cm', dim: 'Art. 037 · Kraft avana', price: null },
+      { label: '33×25×35 cm', dim: 'Art. 038 · Kraft avana', price: null },
+    ],
+    colors: [
+      { label: 'Seta', hex: '#e8dcc8', border: true },
+      { label: 'Nero', hex: '#1a1a1a' },
+    ],
+    printOptions: ['Senza Stampa', 'Stampa a Caldo'],
+    qtyPresets: [50, 100, 250, 500],
+    svg: (
+      <svg viewBox="0 0 110 110" fill="none" style={{ width: 108 }}>
+        <rect x="22" y="34" width="66" height="68" rx="3" fill="#ede9e2" stroke="#b8924a" strokeWidth="1.5"/>
+        <rect x="36" y="20" width="38" height="16" rx="2" fill="#e4ddd2" stroke="#b8924a" strokeWidth="1.3"/>
+        <rect x="48" y="20" width="14" height="16" rx="2" fill="none" stroke="#b8924a" strokeWidth="1"/>
+        <line x1="22" y1="34" x2="88" y2="34" stroke="#b8924a" strokeWidth="0.8"/>
+      </svg>
+    ),
+  },
+  {
+    key: 'scatola-segreto', name: 'Scatola Segreto Kraft Avana',
+    cat: 'Cesti & Scatole Regalo', catKey: 'regalo', price: 0.95, moq: 50,
+    desc: 'Scatola segreto rettangolare in kraft avana liscio. 3 formati dal 30×30×24 al 46×32×29 cm.',
+    seoDesc: 'Scatola segreto in kraft avana liscio. 3 formati: 30×30×24, 39×27×23,5, 46×32×29 cm. Art. 039–041. Seta e nero. MOQ 50 pz. Briopack.',
+    sizes: [
+      { label: '30×30×24 cm',   dim: 'Art. 039 · Kraft avana liscio', price: null },
+      { label: '39×27×23,5 cm', dim: 'Art. 040 · Kraft avana liscio', price: null },
+      { label: '46×32×29 cm',   dim: 'Art. 041 · Kraft avana liscio', price: null },
+    ],
+    colors: [
+      { label: 'Seta', hex: '#e8dcc8', border: true },
+      { label: 'Nero', hex: '#1a1a1a' },
+    ],
+    printOptions: ['Senza Stampa', 'Stampa a Caldo'],
+    qtyPresets: [50, 100, 250, 500],
+    svg: (
+      <svg viewBox="0 0 110 110" fill="none" style={{ width: 108 }}>
+        <rect x="14" y="38" width="82" height="58" rx="3" fill="#ede9e2" stroke="#b8924a" strokeWidth="1.5"/>
+        <rect x="14" y="38" width="82" height="16" rx="3" fill="#e4ddd2" stroke="#b8924a" strokeWidth="1.2"/>
+        <line x1="14" y1="54" x2="96" y2="54" stroke="#b8924a" strokeWidth="0.8"/>
+        <path d="M40 54 Q55 48 70 54" stroke="#b8924a" strokeWidth="1" fill="none" strokeLinecap="round"/>
+      </svg>
+    ),
+  },
+  {
+    key: 'cesto-incastro', name: 'Cesto a Incastro c/Maniglie',
+    cat: 'Cesti & Scatole Regalo', catKey: 'regalo', price: 0.85, moq: 50,
+    desc: 'Cesto a incastro con maniglie in cartone onda avana. Ideale per confezioni regalo e food gifting. 4 formati.',
+    seoDesc: 'Cesto a incastro con maniglie in onda avana. 4 formati dal 22×15,5×6 al 43×30×11 cm. Art. 042–045. MOQ 50 pz. Briopack.',
+    sizes: [
+      { label: '22×15,5×6 cm', dim: 'Art. 042 · Onda avana', price: null },
+      { label: '32×22×8,5 cm', dim: 'Art. 043 · Onda avana', price: null },
+      { label: '37×26,5×10 cm', dim: 'Art. 044 · Onda avana', price: null },
+      { label: '43×30×11 cm',  dim: 'Art. 045 · Onda avana', price: null },
+    ],
+    colors: [
+      { label: 'Seta', hex: '#e8dcc8', border: true },
+      { label: 'Nero', hex: '#1a1a1a' },
+    ],
+    printOptions: ['Senza Stampa', 'Stampa a Caldo'],
+    qtyPresets: [50, 100, 250, 500],
+    svg: (
+      <svg viewBox="0 0 110 110" fill="none" style={{ width: 108 }}>
+        <path d="M14 50 L14 92 Q14 95 17 95 L93 95 Q96 95 96 92 L96 50 Q96 47 93 47 L17 47 Q14 47 14 50Z" fill="#ede9e2" stroke="#b8924a" strokeWidth="1.5"/>
+        <path d="M14 50 Q14 38 55 38 Q96 38 96 50" stroke="#b8924a" strokeWidth="1.3" fill="none"/>
+        <rect x="32" y="30" width="18" height="18" rx="4" fill="none" stroke="#b8924a" strokeWidth="1.3"/>
+        <rect x="60" y="30" width="18" height="18" rx="4" fill="none" stroke="#b8924a" strokeWidth="1.3"/>
+      </svg>
+    ),
+  },
+  {
+    key: 'cassetta-legno', name: 'Cassetta Effetto Legno',
+    cat: 'Cesti & Scatole Regalo', catKey: 'regalo', price: 1.80, moq: 30,
+    desc: 'Cassetta stile rustico con finitura effetto legno. Con maniglie laterali. 3 formati dal 30×20×9 al 42×29×14 cm.',
+    seoDesc: 'Cassetta effetto legno con maniglie laterali. 3 formati: 30×20×9, 35,5×24×12,5, 42×29×14 cm. Art. 046–048. Seta e nero. MOQ 30 pz. Briopack.',
+    sizes: [
+      { label: '30×20×9 cm',     dim: 'Art. 046 · Effetto legno', price: null },
+      { label: '35,5×24×12,5 cm', dim: 'Art. 047 · Effetto legno', price: null },
+      { label: '42×29×14 cm',    dim: 'Art. 048 · Effetto legno', price: null },
+    ],
+    colors: [
+      { label: 'Seta', hex: '#e8dcc8', border: true },
+      { label: 'Nero', hex: '#1a1a1a' },
+    ],
+    printOptions: ['Senza Stampa', 'Stampa a Caldo'],
+    qtyPresets: [30, 50, 100, 250],
+    svg: (
+      <svg viewBox="0 0 110 110" fill="none" style={{ width: 108 }}>
+        <rect x="12" y="44" width="86" height="54" rx="3" fill="#c8a87a" stroke="#8b6a3a" strokeWidth="1.5"/>
+        <line x1="12" y1="56" x2="98" y2="56" stroke="#8b6a3a" strokeWidth="0.8"/>
+        <line x1="12" y1="68" x2="98" y2="68" stroke="#8b6a3a" strokeWidth="0.8"/>
+        <line x1="12" y1="80" x2="98" y2="80" stroke="#8b6a3a" strokeWidth="0.8"/>
+        <line x1="36" y1="44" x2="36" y2="98" stroke="#8b6a3a" strokeWidth="0.7"/>
+        <line x1="60" y1="44" x2="60" y2="98" stroke="#8b6a3a" strokeWidth="0.7"/>
+        <line x1="84" y1="44" x2="84" y2="98" stroke="#8b6a3a" strokeWidth="0.7"/>
+        <rect x="20" y="34" width="18" height="12" rx="3" fill="none" stroke="#8b6a3a" strokeWidth="1.3"/>
+        <rect x="72" y="34" width="18" height="12" rx="3" fill="none" stroke="#8b6a3a" strokeWidth="1.3"/>
+      </svg>
+    ),
+  },
 ]
 
 export const CATEGORIES = [
@@ -421,6 +552,7 @@ export const CATEGORIES = [
   { key: 'food',    label: 'Food Delivery' },
   { key: 'wine',    label: 'Wine' },
   { key: 'ecom',    label: 'E-commerce' },
+  { key: 'regalo',  label: 'Cesti & Regalo' },
 ]
 
 export const SIZES = [

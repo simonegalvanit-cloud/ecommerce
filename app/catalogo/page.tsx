@@ -16,6 +16,7 @@ const CAT_COLOR: Record<string, string> = {
   food:       '#f59e0b',
   eco:        '#10b981',
   ecom:       '#0ea5e9',
+  regalo:     '#d97706',
 }
 
 const CAT_ICONS: Record<string, React.ReactNode> = {
@@ -26,6 +27,7 @@ const CAT_ICONS: Record<string, React.ReactNode> = {
   food:       <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.9" viewBox="0 0 24 24" strokeLinecap="round"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8zM6 1v3M10 1v3M14 1v3"/></svg>,
   eco:        <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.9" viewBox="0 0 24 24" strokeLinecap="round"><path d="M2 22a10 10 0 0118-6M6 18a6 6 0 0112-4"/><path d="M22 2s-5 1-8 4c-4 4-4 9-4 9"/></svg>,
   ecom:       <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.9" viewBox="0 0 24 24" strokeLinecap="round"><path d="M5 12H3l9-9 9 9h-2M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>,
+  regalo:     <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.9" viewBox="0 0 24 24" strokeLinecap="round"><path d="M20 12v10H4V12M22 7H2v5h20V7zM12 22V7M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>,
 }
 
 export default function CatalogoPage() {
