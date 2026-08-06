@@ -152,6 +152,32 @@ insert into public.site_settings (key, value, label) values
   ('free_shipping_threshold', '150',         'Soglia spedizione gratuita (€)');
 
 
+-- ─── SERVIZI REQUESTS ────────────────────────────────────────
+create table if not exists public.servizi_requests (
+  id         uuid primary key default gen_random_uuid(),
+  created_at timestamptz default now(),
+  service    text not null,          -- stoccaggio | progettazione-tecnica | progettazione-grafica
+  nome       text not null,
+  email      text not null,
+  azienda    text,
+  tel        text,
+  note       text,
+  status     text not null default 'new' check (status in ('new','read','replied'))
+);
+
+alter table public.servizi_requests enable row level security;
+
+-- Anyone can insert (public contact form)
+create policy "servizi_requests: public insert" on public.servizi_requests for insert with check (true);
+-- Only admins can read / update
+create policy "servizi_requests: admin read" on public.servizi_requests for select using (
+  exists (select 1 from public.profiles where id = auth.uid() and role = 'admin')
+);
+create policy "servizi_requests: admin update" on public.servizi_requests for update using (
+  exists (select 1 from public.profiles where id = auth.uid() and role = 'admin')
+);
+
+
 -- ─── HELPER: promote user to admin ───────────────────────────
 -- Run this manually in SQL Editor to make someone an admin:
 --
