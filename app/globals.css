@@ -1343,7 +1343,8 @@ tbody tr:hover td { background: var(--surface); }
 
 /* ─── RESPONSIVE ─────────────────────────────────────────────────────────── */
 @media (max-width: 1024px) {
-  nav.site-nav { padding: 0 24px; }
+  nav.site-nav { padding: 0 20px; display: flex; justify-content: flex-end; }
+  .logo { position: absolute; left: 50%; transform: translateX(-50%); }
   .nav-center { display: none; }
   .nav-hamburger { display: flex; }
   .account-pill { display: none; }
