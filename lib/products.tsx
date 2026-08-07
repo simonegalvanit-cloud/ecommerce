@@ -429,13 +429,24 @@ export const PRODUCTS: Product[] = [
     ],
     printOptions: ['Senza Stampa', 'Stampa a Caldo'],
     qtyPresets: [50, 100, 250, 500],
+    image: '/products/scatola-segreto-cordini.jpg',
     svg: (
       <svg viewBox="0 0 110 110" fill="none" style={{ width: 108 }}>
-        <rect x="18" y="30" width="74" height="62" rx="3" fill="#ede9e2" stroke="#b8924a" strokeWidth="1.5"/>
-        <path d="M18 48 Q55 40 92 48" stroke="#b8924a" strokeWidth="1.2" fill="none"/>
-        <rect x="18" y="30" width="74" height="18" rx="3" fill="#e4ddd2" stroke="#b8924a" strokeWidth="1.2"/>
-        <line x1="30" y1="30" x2="22" y2="16" stroke="#b8924a" strokeWidth="1.5" strokeLinecap="round"/>
-        <line x1="80" y1="30" x2="88" y2="16" stroke="#b8924a" strokeWidth="1.5" strokeLinecap="round"/>
+        {/* Box body */}
+        <rect x="16" y="36" width="78" height="58" rx="2" fill="#e8ddd0" stroke="#a87a4a" strokeWidth="1.5"/>
+        {/* Lid */}
+        <rect x="16" y="24" width="78" height="16" rx="2" fill="#d9cfc2" stroke="#a87a4a" strokeWidth="1.3"/>
+        {/* Lid wave/notch front */}
+        <path d="M34 36 Q55 30 76 36" stroke="#a87a4a" strokeWidth="1.1" fill="none"/>
+        {/* Left cord */}
+        <path d="M16 40 C6 36 4 22 12 18" stroke="#8b6035" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
+        <path d="M16 50 C4 48 2 32 10 26" stroke="#8b6035" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
+        {/* Right cord */}
+        <path d="M94 40 C104 36 106 22 98 18" stroke="#8b6035" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
+        <path d="M94 50 C106 48 108 32 100 26" stroke="#8b6035" strokeWidth="1.8" fill="none" strokeLinecap="round"/>
+        {/* Subtle texture lines */}
+        <line x1="16" y1="60" x2="94" y2="60" stroke="#a87a4a" strokeWidth="0.5" opacity="0.4"/>
+        <line x1="16" y1="76" x2="94" y2="76" stroke="#a87a4a" strokeWidth="0.5" opacity="0.4"/>
       </svg>
     ),
   },
@@ -454,12 +465,20 @@ export const PRODUCTS: Product[] = [
     ],
     printOptions: ['Senza Stampa', 'Stampa a Caldo'],
     qtyPresets: [50, 100, 250, 500],
+    image: '/products/portapanettone.jpg',
     svg: (
       <svg viewBox="0 0 110 110" fill="none" style={{ width: 108 }}>
-        <rect x="22" y="34" width="66" height="68" rx="3" fill="#ede9e2" stroke="#b8924a" strokeWidth="1.5"/>
-        <rect x="36" y="20" width="38" height="16" rx="2" fill="#e4ddd2" stroke="#b8924a" strokeWidth="1.3"/>
-        <rect x="48" y="20" width="14" height="16" rx="2" fill="none" stroke="#b8924a" strokeWidth="1"/>
-        <line x1="22" y1="34" x2="88" y2="34" stroke="#b8924a" strokeWidth="0.8"/>
+        {/* Box body - tall */}
+        <rect x="24" y="38" width="62" height="64" rx="2" fill="#e8ddd0" stroke="#a87a4a" strokeWidth="1.5"/>
+        {/* Integrated handle flap at top */}
+        <path d="M24 38 L24 18 Q24 14 34 14 L76 14 Q86 14 86 18 L86 38" fill="#d9cfc2" stroke="#a87a4a" strokeWidth="1.3"/>
+        {/* Handle cutout hole */}
+        <rect x="43" y="18" width="24" height="12" rx="6" fill="white" stroke="#a87a4a" strokeWidth="1.2"/>
+        {/* Crease line where handle meets box */}
+        <line x1="24" y1="38" x2="86" y2="38" stroke="#a87a4a" strokeWidth="0.8"/>
+        {/* Subtle body lines */}
+        <line x1="24" y1="62" x2="86" y2="62" stroke="#a87a4a" strokeWidth="0.4" opacity="0.4"/>
+        <line x1="24" y1="82" x2="86" y2="82" stroke="#a87a4a" strokeWidth="0.4" opacity="0.4"/>
       </svg>
     ),
   },
@@ -479,12 +498,20 @@ export const PRODUCTS: Product[] = [
     ],
     printOptions: ['Senza Stampa', 'Stampa a Caldo'],
     qtyPresets: [50, 100, 250, 500],
+    image: '/products/scatola-segreto.jpg',
     svg: (
       <svg viewBox="0 0 110 110" fill="none" style={{ width: 108 }}>
-        <rect x="14" y="38" width="82" height="58" rx="3" fill="#ede9e2" stroke="#b8924a" strokeWidth="1.5"/>
-        <rect x="14" y="38" width="82" height="16" rx="3" fill="#e4ddd2" stroke="#b8924a" strokeWidth="1.2"/>
-        <line x1="14" y1="54" x2="96" y2="54" stroke="#b8924a" strokeWidth="0.8"/>
-        <path d="M40 54 Q55 48 70 54" stroke="#b8924a" strokeWidth="1" fill="none" strokeLinecap="round"/>
+        {/* Box body */}
+        <rect x="12" y="42" width="86" height="56" rx="2" fill="#e8ddd0" stroke="#a87a4a" strokeWidth="1.5"/>
+        {/* Lid - slightly wider overlap */}
+        <rect x="10" y="28" width="90" height="18" rx="2" fill="#d9cfc2" stroke="#a87a4a" strokeWidth="1.3"/>
+        {/* Lid wave/scalloped front flap */}
+        <path d="M10 46 Q30 40 55 44 Q75 48 100 46" stroke="#a87a4a" strokeWidth="1" fill="none"/>
+        {/* Front face subtle shadow */}
+        <rect x="12" y="42" width="86" height="6" fill="#c9bfb0" opacity="0.4" rx="0"/>
+        {/* Texture lines */}
+        <line x1="12" y1="65" x2="98" y2="65" stroke="#a87a4a" strokeWidth="0.4" opacity="0.35"/>
+        <line x1="12" y1="80" x2="98" y2="80" stroke="#a87a4a" strokeWidth="0.4" opacity="0.35"/>
       </svg>
     ),
   },
@@ -505,12 +532,25 @@ export const PRODUCTS: Product[] = [
     ],
     printOptions: ['Senza Stampa', 'Stampa a Caldo'],
     qtyPresets: [50, 100, 250, 500],
+    image: '/products/cesto-incastro.jpg',
     svg: (
       <svg viewBox="0 0 110 110" fill="none" style={{ width: 108 }}>
-        <path d="M14 50 L14 92 Q14 95 17 95 L93 95 Q96 95 96 92 L96 50 Q96 47 93 47 L17 47 Q14 47 14 50Z" fill="#ede9e2" stroke="#b8924a" strokeWidth="1.5"/>
-        <path d="M14 50 Q14 38 55 38 Q96 38 96 50" stroke="#b8924a" strokeWidth="1.3" fill="none"/>
-        <rect x="32" y="30" width="18" height="18" rx="4" fill="none" stroke="#b8924a" strokeWidth="1.3"/>
-        <rect x="60" y="30" width="18" height="18" rx="4" fill="none" stroke="#b8924a" strokeWidth="1.3"/>
+        {/* Tray body - low and wide */}
+        <path d="M8 55 L18 88 Q18 92 22 92 L88 92 Q92 92 92 88 L102 55 Q102 51 98 51 L12 51 Q8 51 8 55Z" fill="#e0d4c0" stroke="#a87a4a" strokeWidth="1.5"/>
+        {/* Ribbed texture lines across front */}
+        <line x1="8" y1="58" x2="102" y2="58" stroke="#a87a4a" strokeWidth="0.6" opacity="0.5"/>
+        <line x1="10" y1="64" x2="100" y2="64" stroke="#a87a4a" strokeWidth="0.5" opacity="0.4"/>
+        <line x1="12" y1="70" x2="98" y2="70" stroke="#a87a4a" strokeWidth="0.5" opacity="0.4"/>
+        <line x1="14" y1="76" x2="96" y2="76" stroke="#a87a4a" strokeWidth="0.5" opacity="0.4"/>
+        <line x1="15" y1="82" x2="95" y2="82" stroke="#a87a4a" strokeWidth="0.5" opacity="0.4"/>
+        {/* Left handle oval */}
+        <ellipse cx="18" cy="51" rx="7" ry="4" fill="#e0d4c0" stroke="#a87a4a" strokeWidth="1.3"/>
+        <ellipse cx="18" cy="51" rx="4" ry="2" fill="white" stroke="#a87a4a" strokeWidth="1"/>
+        {/* Right handle oval */}
+        <ellipse cx="92" cy="51" rx="7" ry="4" fill="#e0d4c0" stroke="#a87a4a" strokeWidth="1.3"/>
+        <ellipse cx="92" cy="51" rx="4" ry="2" fill="white" stroke="#a87a4a" strokeWidth="1"/>
+        {/* Bottom inner */}
+        <ellipse cx="55" cy="90" rx="32" ry="3" fill="#c9bfb0" opacity="0.3"/>
       </svg>
     ),
   },
@@ -530,17 +570,29 @@ export const PRODUCTS: Product[] = [
     ],
     printOptions: ['Senza Stampa', 'Stampa a Caldo'],
     qtyPresets: [30, 50, 100, 250],
+    image: '/products/cassetta-legno.jpg',
     svg: (
       <svg viewBox="0 0 110 110" fill="none" style={{ width: 108 }}>
-        <rect x="12" y="44" width="86" height="54" rx="3" fill="#c8a87a" stroke="#8b6a3a" strokeWidth="1.5"/>
-        <line x1="12" y1="56" x2="98" y2="56" stroke="#8b6a3a" strokeWidth="0.8"/>
-        <line x1="12" y1="68" x2="98" y2="68" stroke="#8b6a3a" strokeWidth="0.8"/>
-        <line x1="12" y1="80" x2="98" y2="80" stroke="#8b6a3a" strokeWidth="0.8"/>
-        <line x1="36" y1="44" x2="36" y2="98" stroke="#8b6a3a" strokeWidth="0.7"/>
-        <line x1="60" y1="44" x2="60" y2="98" stroke="#8b6a3a" strokeWidth="0.7"/>
-        <line x1="84" y1="44" x2="84" y2="98" stroke="#8b6a3a" strokeWidth="0.7"/>
-        <rect x="20" y="34" width="18" height="12" rx="3" fill="none" stroke="#8b6a3a" strokeWidth="1.3"/>
-        <rect x="72" y="34" width="18" height="12" rx="3" fill="none" stroke="#8b6a3a" strokeWidth="1.3"/>
+        {/* Crate body */}
+        <rect x="10" y="46" width="90" height="50" rx="3" fill="#9c7a50" stroke="#6b4e2a" strokeWidth="1.5"/>
+        {/* Wood plank lines horizontal */}
+        <line x1="10" y1="54" x2="100" y2="54" stroke="#6b4e2a" strokeWidth="1" opacity="0.6"/>
+        <line x1="10" y1="62" x2="100" y2="62" stroke="#6b4e2a" strokeWidth="1" opacity="0.5"/>
+        <line x1="10" y1="70" x2="100" y2="70" stroke="#6b4e2a" strokeWidth="1" opacity="0.6"/>
+        <line x1="10" y1="78" x2="100" y2="78" stroke="#6b4e2a" strokeWidth="1" opacity="0.5"/>
+        <line x1="10" y1="86" x2="100" y2="86" stroke="#6b4e2a" strokeWidth="1" opacity="0.6"/>
+        {/* Wood plank lines vertical (board breaks) */}
+        <line x1="28" y1="46" x2="28" y2="96" stroke="#6b4e2a" strokeWidth="0.8" opacity="0.4"/>
+        <line x1="55" y1="46" x2="55" y2="96" stroke="#6b4e2a" strokeWidth="0.8" opacity="0.5"/>
+        <line x1="80" y1="46" x2="80" y2="96" stroke="#6b4e2a" strokeWidth="0.8" opacity="0.4"/>
+        {/* Inner base - lighter */}
+        <rect x="14" y="88" width="82" height="6" rx="1" fill="#c8a87a" opacity="0.4"/>
+        {/* Left raised handle end */}
+        <rect x="6" y="36" width="14" height="34" rx="3" fill="#8b6035" stroke="#6b4e2a" strokeWidth="1.3"/>
+        <ellipse cx="13" cy="53" rx="5" ry="3" fill="none" stroke="#6b4e2a" strokeWidth="1.2"/>
+        {/* Right raised handle end */}
+        <rect x="90" y="36" width="14" height="34" rx="3" fill="#8b6035" stroke="#6b4e2a" strokeWidth="1.3"/>
+        <ellipse cx="97" cy="53" rx="5" ry="3" fill="none" stroke="#6b4e2a" strokeWidth="1.2"/>
       </svg>
     ),
   },
