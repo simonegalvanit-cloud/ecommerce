@@ -1,5 +1,5 @@
 'use client'
-import { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import NavWrapper from '@/components/NavWrapper'
 import CartDrawer from '@/components/CartDrawer'
@@ -178,6 +178,7 @@ function ProductCard({ product: p, catColor, hovered, onHover, onClick }: {
   onClick: () => void
 }) {
   const colorSwatches = p.colors?.slice(0, 5) ?? []
+  const [imgError, setImgError] = React.useState(false)
 
   return (
     <div
@@ -203,8 +204,8 @@ function ProductCard({ product: p, catColor, hovered, onHover, onClick }: {
         )}
 
         <div className="cat-card-img-inner" style={{ transform: hovered ? 'scale(1.08)' : 'scale(1)' }}>
-          {p.image ? (
-            <img src={p.image} alt={p.name} className="cat-card-photo" />
+          {p.image && !imgError ? (
+            <img src={p.image} alt={p.name} className="cat-card-photo" onError={() => setImgError(true)} />
           ) : p.svg ?? (
             <svg viewBox="0 0 80 80" fill="none" style={{ width: 60, opacity: 0.2 }}>
               <rect x="10" y="24" width="60" height="46" rx="3" stroke="#888" strokeWidth="1.5"/>
