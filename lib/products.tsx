@@ -429,7 +429,7 @@ export const PRODUCTS: Product[] = [
     ],
     printOptions: ['Senza Stampa', 'Stampa a Caldo'],
     qtyPresets: [50, 100, 250, 500],
-    image: '/products/scatola-segreto-cordini.jpg',
+    image: '/products/scatola-segreto-cordini.png',
     svg: (
       <svg viewBox="0 0 110 110" fill="none" style={{ width: 108 }}>
         {/* Box body */}
@@ -465,7 +465,7 @@ export const PRODUCTS: Product[] = [
     ],
     printOptions: ['Senza Stampa', 'Stampa a Caldo'],
     qtyPresets: [50, 100, 250, 500],
-    image: '/products/portapanettone.jpg',
+    image: '/products/portapanettone.png',
     svg: (
       <svg viewBox="0 0 110 110" fill="none" style={{ width: 108 }}>
         {/* Box body - tall */}
@@ -498,7 +498,7 @@ export const PRODUCTS: Product[] = [
     ],
     printOptions: ['Senza Stampa', 'Stampa a Caldo'],
     qtyPresets: [50, 100, 250, 500],
-    image: '/products/scatola-segreto.jpg',
+    image: '/products/scatola-segreto.png',
     svg: (
       <svg viewBox="0 0 110 110" fill="none" style={{ width: 108 }}>
         {/* Box body */}
@@ -532,7 +532,7 @@ export const PRODUCTS: Product[] = [
     ],
     printOptions: ['Senza Stampa', 'Stampa a Caldo'],
     qtyPresets: [50, 100, 250, 500],
-    image: '/products/cesto-incastro.jpg',
+    image: '/products/cesto-incastro.png',
     svg: (
       <svg viewBox="0 0 110 110" fill="none" style={{ width: 108 }}>
         {/* Tray body - low and wide */}
@@ -570,7 +570,7 @@ export const PRODUCTS: Product[] = [
     ],
     printOptions: ['Senza Stampa', 'Stampa a Caldo'],
     qtyPresets: [30, 50, 100, 250],
-    image: '/products/cassetta-legno.jpg',
+    image: '/products/cassetta-legno.png',
     svg: (
       <svg viewBox="0 0 110 110" fill="none" style={{ width: 108 }}>
         {/* Crate body */}
