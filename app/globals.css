@@ -2155,9 +2155,9 @@ tbody tr:hover td { background: var(--surface); }
 
 /* ── Page transition ────────────────────────────────────────────────────────── */
 @keyframes pageFadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 .page-transition {
-  animation: pageFadeIn 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: pageFadeIn 0.18s ease both;
 }
