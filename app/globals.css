@@ -2152,3 +2152,12 @@ tbody tr:hover td { background: var(--surface); }
 .cat-card-img-inner { transition: transform .38s cubic-bezier(0.22,1,0.36,1); }
 .cat-card-photo { width: 120px; height: 120px; object-fit: contain; display: block; transition: filter .38s ease; }
 .cat-card:hover .cat-card-photo, .cat-card.hovered .cat-card-photo { filter: drop-shadow(0 6px 14px rgba(0,0,0,0.14)); }
+
+/* ── Page transition ────────────────────────────────────────────────────────── */
+@keyframes pageFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.page-transition {
+  animation: pageFadeIn 0.18s ease both;
+}

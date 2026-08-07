@@ -3,6 +3,7 @@ import './globals.css'
 import { CartProvider } from '@/lib/cart-context'
 import CookieBanner from '@/components/CookieBanner'
 import ScrollToTop from '@/components/ScrollToTop'
+import PageTransition from '@/components/PageTransition'
 
 export const metadata: Metadata = {
   title: 'Briopack — Packaging su Misura',
@@ -26,7 +27,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="it">
       <body>
         <CartProvider>
-          {children}
+          <PageTransition>
+            {children}
+          </PageTransition>
           <CookieBanner />
           <ScrollToTop />
         </CartProvider>
