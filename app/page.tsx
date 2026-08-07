@@ -25,11 +25,45 @@ export default function StorefrontPage() {
   const [activeCat, setActiveCat] = useState('all')
   const [search, setSearch]   = useState('')
   const [heroSearch, setHeroSearch] = useState('')
+  const [heroFocused, setHeroFocused] = useState(false)
   const [suggestionsOpen, setSuggestionsOpen] = useState(false)
   const [acPos, setAcPos] = useState({ top: 0, left: 0, width: 0 })
+  const [typedPlaceholder, setTypedPlaceholder] = useState('')
   const searchWrapRef = useRef<HTMLDivElement>(null)
   const searchBarRef = useRef<HTMLFormElement>(null)
   const autocompleteRef = useRef<HTMLDivElement>(null)
+
+  // Typewriter cycling placeholder
+  useEffect(() => {
+    const terms = ['Shopper kraft avana…', 'Portabottiglia vino…', 'Scatola regalo…', 'Busta e-commerce…', 'Cassetta effetto legno…', 'Shopper lusso bianco…']
+    let termIdx = 0, charIdx = 0, erasing = false
+    let raf: ReturnType<typeof setTimeout>
+    function tick() {
+      const word = terms[termIdx]
+      if (!erasing) {
+        charIdx++
+        setTypedPlaceholder(word.slice(0, charIdx))
+        if (charIdx === word.length) {
+          erasing = true
+          raf = setTimeout(tick, 1800)
+        } else {
+          raf = setTimeout(tick, 72)
+        }
+      } else {
+        charIdx--
+        setTypedPlaceholder(word.slice(0, charIdx))
+        if (charIdx === 0) {
+          erasing = false
+          termIdx = (termIdx + 1) % terms.length
+          raf = setTimeout(tick, 380)
+        } else {
+          raf = setTimeout(tick, 38)
+        }
+      }
+    }
+    raf = setTimeout(tick, 900)
+    return () => clearTimeout(raf)
+  }, [])
 
   const heroSuggestions = heroSearch.trim().length > 1
     ? PRODUCTS.filter(p => {
@@ -137,10 +171,11 @@ export default function StorefrontPage() {
               </svg>
               <input
                 type="text"
-                placeholder="Cerca shopper, portabottiglie, buste…"
+                placeholder={heroFocused || heroSearch ? 'Cerca prodotti…' : typedPlaceholder}
                 value={heroSearch}
                 onChange={e => { setHeroSearch(e.target.value); setSuggestionsOpen(true) }}
-                onFocus={() => setSuggestionsOpen(true)}
+                onFocus={() => { setHeroFocused(true); setSuggestionsOpen(true) }}
+                onBlur={() => setHeroFocused(false)}
                 onKeyDown={e => e.key === 'Escape' && setSuggestionsOpen(false)}
                 className="hero-search-input"
               />
