@@ -144,6 +144,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  const [toast, setToast] = useState<{ name: string; color?: string } | null>(null)
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
   const addItem = useCallback((item: CartItem) => {
     setCart(prev => {
       const idx = prev.findIndex(i => i.id === item.id)
@@ -154,7 +157,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
       return [...prev, item]
     })
-    setCartOpen(true)
+    if (toastTimer.current) clearTimeout(toastTimer.current)
+    setToast({ name: item.name, color: item.color })
+    toastTimer.current = setTimeout(() => setToast(null), 3500)
   }, [])
 
   const removeItem = useCallback((id: string) => setCart(prev => prev.filter(i => i.id !== id)), [])
@@ -177,6 +182,25 @@ export function CartProvider({ children }: { children: ReactNode }) {
   return (
     <CartContext.Provider value={{ cart, cartOpen, setCartOpen, addItem, removeItem, updateQty, clearCart, cartCount, cartTotal }}>
       {children}
+      {toast && (
+        <div className={`cart-toast${toast ? ' cart-toast-in' : ''}`} role="status">
+          <div className="cart-toast-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+          <div className="cart-toast-body">
+            <div className="cart-toast-title">Aggiunto al carrello</div>
+            <div className="cart-toast-name">{toast.name}{toast.color ? ` · ${toast.color}` : ''}</div>
+          </div>
+          <button className="cart-toast-view" onClick={() => { setCartOpen(true); setToast(null) }}>
+            Vedi
+          </button>
+          <button className="cart-toast-close" onClick={() => setToast(null)} aria-label="Chiudi">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+      )}
     </CartContext.Provider>
   )
 }
