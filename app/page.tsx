@@ -8,6 +8,14 @@ import { PRODUCTS, CATEGORIES } from '@/lib/products'
 
 function fmt(n: number) { return n.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
 
+function PCardImage({ p }: { p: typeof PRODUCTS[0] }) {
+  const [err, setErr] = useState(false)
+  if (p.image && !err) {
+    return <img src={p.image} alt={p.name} style={{ width: 120, height: 120, objectFit: 'contain', display: 'block' }} onError={() => setErr(true)} />
+  }
+  return <>{p.svg}</>
+}
+
 const scrollRevealCSS = `.scroll-reveal{opacity:0;transform:translateY(22px);transition:opacity .55s ease,transform .55s ease}.scroll-reveal.revealed{opacity:1;transform:translateY(0)}`
 
 // ── Main Page ────────────────────────────────────────────────────────────────
@@ -267,7 +275,7 @@ export default function StorefrontPage() {
                 {p.badge && <div className={`pcard-badge ${p.badge.type}`}>{p.badge.label}</div>}
                 <div className="pcard-img" style={p.catKey === 'eco' ? { background: '#edf3ee' } : undefined}>
                   <div style={{ transition: 'transform .3s var(--ease-out)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} className="pcard-svg-wrap">
-                    {p.svg}
+                    <PCardImage p={p} />
                   </div>
                   <div className="pcard-img-overlay">
                     <button className="overlay-btn">Personalizza</button>
