@@ -251,9 +251,9 @@ function LoginForm() {
 
               <p style={{ textAlign: 'center', fontSize: 12, color: 'var(--ink-5)', marginTop: 18, lineHeight: 1.6 }}>
                 Creando un account accetti i{' '}
-                <a href="#" style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 600 }}>Termini di servizio</a>
+                <a href="/termini" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 600 }}>Termini di servizio</a>
                 {' '}e la{' '}
-                <a href="#" style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 600 }}>Privacy Policy</a>.
+                <a href="/privacy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 600 }}>Privacy Policy</a>.
               </p>
             </form>
           )}
