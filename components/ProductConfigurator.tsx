@@ -79,6 +79,15 @@ export default function ProductConfigurator({ product }: { product: Product }) {
   }
   const [selPrints,  setSelPrints]  = useState<Set<string>>(new Set([printOptions[0] ?? 'Senza Stampa']))
   const [qty,        setQty]        = useState(product.moq)
+  // Separate string state so user can clear the field while typing without it snapping back
+  const [qtyStr,     setQtyStr]     = useState(String(product.moq))
+
+  const setQtyBoth = (n: number) => { setQty(n); setQtyStr(String(n)) }
+  const commitQtyStr = (s: string) => {
+    const v = parseInt(s)
+    const final = isNaN(v) || v < 1 ? qty : v
+    setQty(final); setQtyStr(String(final))
+  }
 
   const [customL,    setCustomL]    = useState('')
   const [customW,    setCustomW]    = useState('')
@@ -332,16 +341,23 @@ export default function ProductConfigurator({ product }: { product: Product }) {
           <div className="qty-wrap">
             <div className="qty-presets">
               {qtyPresets.map(q => (
-                <button key={q} className={`qty-preset${qty === q ? ' sel' : ''}`} onClick={() => setQty(q)}>
+                <button key={q} className={`qty-preset${qty === q ? ' sel' : ''}`} onClick={() => setQtyBoth(q)}>
                   {q.toLocaleString('it-IT')}
                 </button>
               ))}
             </div>
             <div className="qty-stepper">
-              <button className="qty-btn" onClick={() => setQty(q => Math.max(1, q - 50))}>−</button>
-              <input className="qty-input" type="number" value={qty} min={1} step={50}
-                onChange={e => setQty(Math.max(1, parseInt(e.target.value) || 1))} />
-              <button className="qty-btn" onClick={() => setQty(q => q + 50)}>+</button>
+              <button className="qty-btn" onClick={() => setQtyBoth(Math.max(1, qty - 50))}>−</button>
+              <input
+                className="qty-input"
+                type="number"
+                value={qtyStr}
+                min={1}
+                step={50}
+                onChange={e => setQtyStr(e.target.value)}
+                onBlur={e => commitQtyStr(e.target.value)}
+              />
+              <button className="qty-btn" onClick={() => setQtyBoth(qty + 50)}>+</button>
             </div>
           </div>
           <div className="disc-tiers">
