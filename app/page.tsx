@@ -8,10 +8,10 @@ import { PRODUCTS, CATEGORIES } from '@/lib/products'
 
 function fmt(n: number) { return n.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
 
-function PCardImage({ p }: { p: typeof PRODUCTS[0] }) {
+function PCardImage({ p, size = 120 }: { p: typeof PRODUCTS[0]; size?: number }) {
   const [err, setErr] = useState(false)
   if (p.image && !err) {
-    return <img src={p.image} alt={p.name} style={{ width: 120, height: 120, objectFit: 'contain', display: 'block' }} onError={() => setErr(true)} />
+    return <img src={p.image} alt={p.name} style={{ width: size, height: size, objectFit: 'contain', display: 'block' }} onError={() => setErr(true)} />
   }
   return <>{p.svg}</>
 }
@@ -464,9 +464,13 @@ export default function StorefrontPage() {
             <div key={p.key} className="hero-ac-item"
               onMouseDown={e => { e.preventDefault(); setSuggestionsOpen(false); router.push(`/products/${p.key}`) }}>
               <div className="hero-ac-thumb">
-                <div style={{ transform: 'scale(0.35)', transformOrigin: 'center', width: 108, height: 108, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  {p.svg}
-                </div>
+                {p.image ? (
+                  <PCardImage p={p} size={40} />
+                ) : (
+                  <div style={{ transform: 'scale(0.35)', transformOrigin: 'center', width: 108, height: 108, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {p.svg}
+                  </div>
+                )}
               </div>
               <div className="hero-ac-info">
                 <div className="hero-ac-name">{p.name}</div>
