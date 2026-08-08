@@ -403,6 +403,12 @@ nav.site-nav.scrolled {
   opacity: 0.8; transition: opacity .15s;
 }
 .hero-ac-item:hover .hero-ac-price { opacity: 1; }
+.hero-ac-empty {
+  display: flex; align-items: center; gap: 14px;
+  padding: 18px 20px; color: var(--ink-4);
+}
+.hero-ac-empty-title { font-size: 13.5px; font-weight: 600; color: var(--ink-2); margin-bottom: 3px; }
+.hero-ac-empty-sub   { font-size: 12px; color: var(--ink-4); }
 .hero-search-input {
   flex: 1; border: none; outline: none;
   font-size: 15px; font-weight: 500; color: #1a1a1a; background: transparent;

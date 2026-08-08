@@ -454,13 +454,13 @@ export default function StorefrontPage() {
       </button>
 
       {/* ── HERO AUTOCOMPLETE — fixed positioning escapes every stacking context ── */}
-      {suggestionsOpen && heroSuggestions.length > 0 && (
+      {suggestionsOpen && heroSearch.trim().length > 1 && (
         <div
           ref={autocompleteRef}
           className="hero-autocomplete"
           style={{ position: 'fixed', top: acPos.top, left: acPos.left, width: acPos.width, zIndex: 9999 }}
         >
-          {heroSuggestions.map(p => (
+          {heroSuggestions.length > 0 ? heroSuggestions.map(p => (
             <div key={p.key} className="hero-ac-item"
               onMouseDown={e => { e.preventDefault(); setSuggestionsOpen(false); router.push(`/products/${p.key}`) }}>
               <div className="hero-ac-thumb">
@@ -474,7 +474,15 @@ export default function StorefrontPage() {
               </div>
               <div className="hero-ac-price">€{fmt(p.price)}/pz</div>
             </div>
-          ))}
+          )) : (
+            <div className="hero-ac-empty">
+              <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              <div>
+                <div className="hero-ac-empty-title">Nessun risultato per &ldquo;{heroSearch}&rdquo;</div>
+                <div className="hero-ac-empty-sub">Prova con shopper, scatola, busta…</div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
