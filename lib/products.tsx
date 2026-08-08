@@ -554,6 +554,92 @@ export const PRODUCTS: Product[] = [
       </svg>
     ),
   },
+  // ── NASTRI ADESIVI ──────────────────────────────────────────────────────────
+  {
+    key: 'nastro-adesivo', name: 'Nastro Adesivo Neutro',
+    cat: 'Nastri Adesivi', catKey: 'nastri', price: 0.45, moq: 72,
+    desc: 'Polipropilene acrilico, hot melt, solvente, PVC, masking e strapping. Trasparente, avana e bianco. MOQ 72 rotoli.',
+    seoDesc: 'Nastro adesivo neutro in polipropilene acrilico, hot melt o solvente. Anche PVC, masking tape e strapping. Trasparente, avana, bianco. MOQ 72 rotoli. Briopack.',
+    sizes: [
+      { label: 'PP Acrilico 50mm×66m',  dim: 'Trasparente / Avana / Bianco', price: null },
+      { label: 'PP Hot Melt 50mm×66m',  dim: 'Trasparente / Avana',          price: null },
+      { label: 'PP Solvente 50mm×66m',  dim: 'Trasparente',                  price: null },
+      { label: 'PVC 50mm×66m',          dim: 'Trasparente',                  price: null },
+      { label: 'Masking 50mm×50m',      dim: 'Avana',                        price: null },
+      { label: 'Strapping 12mm×1000m',  dim: 'Bianco',                       price: null },
+    ],
+    colors: [
+      { label: 'Trasparente', hex: '#d6eaf8', border: true },
+      { label: 'Avana',       hex: '#c4a060' },
+      { label: 'Bianco',      hex: '#f5f4f2', border: true },
+    ],
+    printOptions: ['Senza Stampa'],
+    qtyPresets: [72, 144, 288, 576],
+    image: '/products/nastro-adesivo-neutro.png',
+    svg: (
+      <svg viewBox="0 0 110 110" fill="none" style={{ width: 108 }}>
+        {/* Tape roll - outer ring */}
+        <circle cx="55" cy="58" r="36" fill="#c4a060" stroke="#a07840" strokeWidth="1.5"/>
+        {/* Inner ring (tape core) */}
+        <circle cx="55" cy="58" r="18" fill="#e8ddd0" stroke="#a07840" strokeWidth="1.2"/>
+        {/* Core shadow */}
+        <circle cx="55" cy="58" r="12" fill="#d4c8b0" stroke="#a07840" strokeWidth="0.8"/>
+        {/* Hole */}
+        <circle cx="55" cy="58" r="7" fill="white" stroke="#a07840" strokeWidth="0.8"/>
+        {/* Tape edge highlight top */}
+        <path d="M30 30 Q55 22 80 30" stroke="rgba(255,255,255,0.35)" strokeWidth="2" fill="none" strokeLinecap="round"/>
+        {/* Tail of tape */}
+        <path d="M91 58 L104 52 L104 48" stroke="#c4a060" strokeWidth="4" strokeLinecap="round"/>
+        <path d="M104 48 L100 44" stroke="#a07840" strokeWidth="1.2" fill="none"/>
+      </svg>
+    ),
+  },
+  {
+    key: 'nastro-adesivo-personalizzato', name: 'Nastro Adesivo Personalizzato',
+    cat: 'Nastri Adesivi', catKey: 'nastri', price: 0.65, moq: 72,
+    badge: { label: 'Personalizzabile', type: 'top' },
+    desc: 'Stampa fino a 8 colori su nastro adesivo acrilico o hot melt. Il tuo logo su ogni rotolo. MOQ 72 rotoli.',
+    seoDesc: 'Nastro adesivo personalizzato stampa fino a 8 colori, tecnologia acrilica e hot melt. Logo e grafica aziendale su ogni rotolo. MOQ 72 pz. Briopack.',
+    sizes: [
+      { label: 'PP Acrilico 50mm×66m',  dim: 'Stampa 1–8 colori', price: null },
+      { label: 'PP Hot Melt 50mm×66m',  dim: 'Stampa 1–8 colori', price: null },
+      { label: 'PP Acrilico 75mm×66m',  dim: 'Stampa 1–8 colori', price: null },
+    ],
+    colors: [
+      { label: 'Giallo',  hex: '#f5d840' },
+      { label: 'Arancio', hex: '#e8721a' },
+      { label: 'Rosso',   hex: '#c0281e' },
+      { label: 'Verde',   hex: '#10b981' },
+      { label: 'Blu',     hex: '#2040b0' },
+      { label: 'Bianco',  hex: '#f5f4f2', border: true },
+      { label: 'Nero',    hex: '#1a1a1a' },
+    ],
+    printOptions: [
+      'Stampa 1 colore', 'Stampa 2 colori', 'Stampa 4 colori', 'Stampa fino a 8 colori',
+    ],
+    qtyPresets: [72, 144, 288, 576],
+    image: '/products/nastro-adesivo-personalizzato.png',
+    svg: (
+      <svg viewBox="0 0 110 110" fill="none" style={{ width: 108 }}>
+        {/* Multiple colorful rolls arranged in a fan */}
+        {/* Back roll - yellow */}
+        <circle cx="40" cy="65" r="28" fill="#f5d840" stroke="#c8a800" strokeWidth="1.2"/>
+        <circle cx="40" cy="65" r="14" fill="#f0f0e8" stroke="#c8a800" strokeWidth="1"/>
+        <circle cx="40" cy="65" r="7" fill="white" stroke="#c8a800" strokeWidth="0.7"/>
+        {/* Mid roll - red */}
+        <circle cx="58" cy="60" r="28" fill="#c0281e" stroke="#8a1a10" strokeWidth="1.2"/>
+        <circle cx="58" cy="60" r="14" fill="#f0e8e8" stroke="#8a1a10" strokeWidth="1"/>
+        <circle cx="58" cy="60" r="7" fill="white" stroke="#8a1a10" strokeWidth="0.7"/>
+        {/* Front roll - blue */}
+        <circle cx="74" cy="66" r="28" fill="#2040b0" stroke="#102060" strokeWidth="1.2"/>
+        <circle cx="74" cy="66" r="14" fill="#e8eaf0" stroke="#102060" strokeWidth="1"/>
+        <circle cx="74" cy="66" r="7" fill="white" stroke="#102060" strokeWidth="0.7"/>
+        {/* Logo badge overlay */}
+        <circle cx="74" cy="66" r="8" fill="#1a1a1a" opacity="0.18"/>
+        <text x="74" y="70" textAnchor="middle" fontSize="7" fill="white" fontWeight="bold" opacity="0.7">LOGO</text>
+      </svg>
+    ),
+  },
   {
     key: 'cassetta-legno', name: 'Cassetta Effetto Legno',
     cat: 'Cesti & Scatole Regalo', catKey: 'regalo', price: 1.80, moq: 30,
@@ -605,6 +691,7 @@ export const CATEGORIES = [
   { key: 'wine',    label: 'Wine' },
   { key: 'ecom',    label: 'E-commerce' },
   { key: 'regalo',  label: 'Cesti & Regalo' },
+  { key: 'nastri',  label: 'Nastri Adesivi' },
 ]
 
 export const SIZES = [
