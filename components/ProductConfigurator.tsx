@@ -59,6 +59,24 @@ export default function ProductConfigurator({ product }: { product: Product }) {
   const [selSizeIdx, setSelSizeIdx] = useState(0)
   const [basePrice,  setBasePrice]  = useState(product.price)
   const [selColor,   setSelColor]   = useState(0)
+
+  // Derive visible color subset for the selected size (if product defines sizeColors)
+  const selSizeLabel = sizes[selSizeIdx]?.label
+  const colorSubset  = product.sizeColors?.[selSizeLabel]
+  const visibleColors = colorSubset ? colors.filter(c => colorSubset.includes(c.label)) : colors
+
+  const handleSizeSelect = (i: number) => {
+    setSelSizeIdx(i)
+    const s = sizes[i]
+    if (s?.price) setBasePrice(s.price)
+    if (product.sizeColors) {
+      const sub = product.sizeColors[s?.label ?? '']
+      if (sub && !sub.includes(colors[selColor]?.label)) {
+        const firstIdx = colors.findIndex(c => sub.includes(c.label))
+        setSelColor(firstIdx >= 0 ? firstIdx : 0)
+      }
+    }
+  }
   const [selPrints,  setSelPrints]  = useState<Set<string>>(new Set([printOptions[0] ?? 'Senza Stampa']))
   const [qty,        setQty]        = useState(product.moq)
 
@@ -249,7 +267,7 @@ export default function ProductConfigurator({ product }: { product: Product }) {
           <div className="size-grid">
             {sizes.map((s, i) => (
               <button key={s.label} className={`size-btn${selSizeIdx === i ? ' sel' : ''}`}
-                onClick={() => { setSelSizeIdx(i); if (s.price) setBasePrice(s.price) }}>
+                onClick={() => handleSizeSelect(i)}>
                 <div className="size-btn-name">{s.label}</div>
                 <div className="size-btn-dim">{s.dim}</div>
               </button>
@@ -279,15 +297,18 @@ export default function ProductConfigurator({ product }: { product: Product }) {
         </div>
 
         {/* Color */}
-        {colors.length > 0 && (
+        {visibleColors.length > 0 && (
           <div className="cfg-section">
             <div className="cfg-label">Colore</div>
             <div className="color-row">
-              {colors.map((c, i) => (
-                <div key={c.label} className={`color-swatch${selColor === i ? ' sel' : ''}`}
-                  style={{ background: c.hex, border: c.border ? '1px solid #ddd' : undefined }}
-                  title={c.label} onClick={() => setSelColor(i)} />
-              ))}
+              {colors.map((c, i) => {
+                if (colorSubset && !colorSubset.includes(c.label)) return null
+                return (
+                  <div key={c.label} className={`color-swatch${selColor === i ? ' sel' : ''}`}
+                    style={{ background: c.hex, border: c.border ? '1px solid #ddd' : undefined }}
+                    title={c.label} onClick={() => setSelColor(i)} />
+                )
+              })}
             </div>
             <div className="color-selected-label">Colore selezionato: <strong>{colors[selColor]?.label}</strong></div>
           </div>
@@ -317,9 +338,9 @@ export default function ProductConfigurator({ product }: { product: Product }) {
               ))}
             </div>
             <div className="qty-stepper">
-              <button className="qty-btn" onClick={() => setQty(q => Math.max(product.moq, q - 50))}>−</button>
-              <input className="qty-input" type="number" value={qty} min={product.moq} step={50}
-                onChange={e => setQty(Math.max(product.moq, parseInt(e.target.value) || product.moq))} />
+              <button className="qty-btn" onClick={() => setQty(q => Math.max(1, q - 50))}>−</button>
+              <input className="qty-input" type="number" value={qty} min={1} step={50}
+                onChange={e => setQty(Math.max(1, parseInt(e.target.value) || 1))} />
               <button className="qty-btn" onClick={() => setQty(q => q + 50)}>+</button>
             </div>
           </div>
