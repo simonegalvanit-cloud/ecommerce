@@ -412,24 +412,29 @@ export default function StorefrontPage() {
             <div className="footer-col-title">Prodotti</div>
             <ul className="footer-links">
               {[
-                { label: 'Shopper & Cartotecnica', href: '/catalogo' },
-                { label: 'Wine Packaging',          href: '/catalogo' },
-                { label: 'Food Delivery',           href: '/catalogo' },
-                { label: 'E-commerce',              href: '/catalogo' },
-                { label: 'Imballaggi Industriali',  href: '#' },
-                { label: 'BrioGreenPack',           href: '#' },
+                { label: 'Shopper & Cartotecnica', href: '/catalogo?cat=shopper' },
+                { label: 'Wine Packaging',          href: '/catalogo?cat=wine' },
+                { label: 'Food Delivery',           href: '/catalogo?cat=food' },
+                { label: 'E-commerce',              href: '/catalogo?cat=ecom' },
+                { label: 'Cesti & Scatole Regalo',  href: '/catalogo?cat=regalo' },
+                { label: 'Nastri Adesivi',          href: '/catalogo?cat=nastri' },
               ].map(l => <li key={l.label}><a href={l.href}>{l.label}</a></li>)}
             </ul>
           </div>
           <div className="scroll-reveal" style={{ transitionDelay: '0.18s' }}>
             <div className="footer-col-title">Azienda</div>
             <ul className="footer-links">
-              {[
-                { label: 'Chi Siamo',           href: '#' },
-                { label: 'Contatti',            href: '/contatti' },
-                { label: 'Richiedi Preventivo', href: '/contatti' },
-                { label: 'Area Amministrativa', href: '/admin' },
-              ].map(l => <li key={l.label}><a href={l.href}>{l.label}</a></li>)}
+              <li><a href="#">Chi Siamo</a></li>
+              <li><a href="/contatti">Contatti</a></li>
+              <li>
+                <button
+                  onClick={() => window.dispatchEvent(new CustomEvent('open-preventivo'))}
+                  style={{ background: 'none', border: 'none', padding: 0, fontFamily: 'inherit', fontSize: 'inherit', color: 'inherit', cursor: 'pointer', textAlign: 'left' }}
+                >
+                  Richiedi Preventivo
+                </button>
+              </li>
+              <li><a href="/admin">Area Amministrativa</a></li>
             </ul>
           </div>
         </div>
