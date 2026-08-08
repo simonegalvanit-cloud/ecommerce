@@ -20,6 +20,7 @@ export interface Product {
   // Optional per-product config — falls back to global constants when absent
   sizes?: ProductSize[]
   colors?: ProductColor[]
+  sizeColors?: Record<string, string[]>  // size label → allowed color labels
   printOptions?: string[]
   qtyPresets?: number[]
   discTiers?: ProductDiscTier[]
@@ -573,6 +574,14 @@ export const PRODUCTS: Product[] = [
       { label: 'Avana',       hex: '#c4a060' },
       { label: 'Bianco',      hex: '#f5f4f2', border: true },
     ],
+    sizeColors: {
+      'PP Acrilico 50mm×66m':  ['Trasparente', 'Avana', 'Bianco'],
+      'PP Hot Melt 50mm×66m':  ['Trasparente', 'Avana'],
+      'PP Solvente 50mm×66m':  ['Trasparente'],
+      'PVC 50mm×66m':          ['Trasparente'],
+      'Masking 50mm×50m':      ['Avana'],
+      'Strapping 12mm×1000m':  ['Bianco'],
+    },
     printOptions: ['Senza Stampa'],
     qtyPresets: [72, 144, 288, 576],
     image: '/products/nastro-adesivo-neutro.png',
