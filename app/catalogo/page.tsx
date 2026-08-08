@@ -17,6 +17,7 @@ const CAT_COLOR: Record<string, string> = {
   eco:        '#10b981',
   ecom:       '#0ea5e9',
   regalo:     '#d97706',
+  nastri:     '#ef4444',
 }
 
 const CAT_ICONS: Record<string, React.ReactNode> = {
@@ -28,6 +29,7 @@ const CAT_ICONS: Record<string, React.ReactNode> = {
   eco:        <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.9" viewBox="0 0 24 24" strokeLinecap="round"><path d="M2 22a10 10 0 0118-6M6 18a6 6 0 0112-4"/><path d="M22 2s-5 1-8 4c-4 4-4 9-4 9"/></svg>,
   ecom:       <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.9" viewBox="0 0 24 24" strokeLinecap="round"><path d="M5 12H3l9-9 9 9h-2M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>,
   regalo:     <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.9" viewBox="0 0 24 24" strokeLinecap="round"><path d="M20 12v10H4V12M22 7H2v5h20V7zM12 22V7M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>,
+  nastri:     <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.9" viewBox="0 0 24 24" strokeLinecap="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/></svg>,
 }
 
 export default function CatalogoPage() {
