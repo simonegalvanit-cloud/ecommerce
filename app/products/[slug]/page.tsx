@@ -20,11 +20,9 @@ type Props = { params: Promise<{ slug: string }> }
 
 // cache() deduplicates calls within the same render (metadata + page share one fetch)
 const getProduct = cache(async (slug: string): Promise<Product | null> => {
-  // Hardcoded products resolve instantly — no network round-trip
   const local = PRODUCTS.find(p => p.key === slug)
-  if (local) return local
 
-  // Only hit Supabase for admin-added products not in the local catalog
+  // Try DB first — picks up admin edits to price/desc/badges etc.
   try {
     const sb = await createClient()
     const { data } = await sb
@@ -44,16 +42,22 @@ const getProduct = cache(async (slug: string): Promise<Product | null> => {
         badge: data.badge_label ? { label: data.badge_label, type: data.badge_type } : undefined,
         desc: data.description,
         seoDesc: data.seo_desc,
-        sizes:        data.sizes?.length        ? data.sizes        : SIZES,
-        colors:       data.colors?.length       ? data.colors       : COLORS,
-        printOptions: data.print_options?.length ? data.print_options : PRINT_OPTIONS,
-        qtyPresets:   data.qty_presets?.length  ? data.qty_presets  : QTY_PRESETS,
-        discTiers:    data.disc_tiers?.length   ? data.disc_tiers   : DISC_TIERS,
+        sizes:        data.sizes?.length        ? data.sizes        : (local?.sizes  ?? SIZES),
+        colors:       data.colors?.length       ? data.colors       : (local?.colors ?? COLORS),
+        printOptions: data.print_options?.length ? data.print_options : (local?.printOptions ?? PRINT_OPTIONS),
+        qtyPresets:   data.qty_presets?.length  ? data.qty_presets  : (local?.qtyPresets ?? QTY_PRESETS),
+        discTiers:    data.disc_tiers?.length   ? data.disc_tiers   : (local?.discTiers ?? DISC_TIERS),
+        // Visual fields always come from local code (not stored in DB)
+        image:      local?.image,
+        images:     local?.images,
+        svg:        local?.svg,
+        sizeColors: local?.sizeColors,
       }
     }
   } catch { /* products table may not exist yet */ }
 
-  return null
+  // Fall back to local hardcoded product
+  return local ?? null
 })
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

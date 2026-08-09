@@ -17,11 +17,32 @@ interface Profile {
   country: string | null
 }
 
+interface CartItem {
+  name: string
+  qty: number
+  unitPrice: number
+  setupCost: number
+  size?: string
+  color?: string
+  print?: string
+  cat?: string
+}
+
 interface Order {
   id: string
   created_at: string
   total_eur: number | null
   status: string
+  customer_name: string | null
+  customer_phone: string | null
+  address: string | null
+  city: string | null
+  zip: string | null
+  province: string | null
+  notes: string | null
+  tracking: string | null
+  cart_json: CartItem[] | null
+  stripe_payment_intent_id: string | null
 }
 
 const STATUS_LABEL: Record<string, string> = {
@@ -63,6 +84,7 @@ export default function AccountPage() {
   const [profile, setProfile] = useState<Profile>({ full_name: null, company: null, phone: null, address: null, city: null, postal_code: null, country: 'Italia' })
   const [orders, setOrders] = useState<Order[]>([])
   const [loadingOrders, setLoadingOrders] = useState(false)
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   // Profile form state
@@ -393,9 +415,13 @@ export default function AccountPage() {
                   )}
                 </div>
                 <div className="card-body" style={{ padding: orders.length === 0 ? 0 : undefined }}>
-                  <OrderList orders={orders.slice(0, 5)} />
+                  <OrderList orders={orders.slice(0, 5)} onSelect={setSelectedOrder} />
                 </div>
               </div>
+
+              {selectedOrder && (
+                <OrderDetailModal order={selectedOrder} onClose={() => setSelectedOrder(null)} />
+              )}
             </div>
           )}
 
@@ -426,22 +452,32 @@ export default function AccountPage() {
                         <th>Data</th>
                         <th>Totale</th>
                         <th>Stato</th>
+                        <th></th>
                       </tr>
                     </thead>
                     <tbody>
                       {orders.map(o => (
-                        <tr key={o.id}>
+                        <tr key={o.id} onClick={() => setSelectedOrder(o)} style={{ cursor: 'pointer', transition: 'background .15s' }}
+                          onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'var(--surface)'}
+                          onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'transparent'}
+                        >
                           <td>
                             <span className="td-mono">#{o.id.slice(0, 8).toUpperCase()}</span>
                           </td>
                           <td style={{ color: 'var(--ink-3)', fontSize: 13 }}>{formatDate(o.created_at)}</td>
                           <td style={{ fontWeight: 700, color: 'var(--ink)' }}>€{(o.total_eur || 0).toFixed(2)}</td>
                           <td><StatusBadge status={o.status} /></td>
+                          <td style={{ color: 'var(--ink-4)', fontSize: 12 }}>Dettagli →</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
+              )}
+
+              {/* Order detail modal */}
+              {selectedOrder && (
+                <OrderDetailModal order={selectedOrder} onClose={() => setSelectedOrder(null)} />
               )}
             </div>
           )}
@@ -728,7 +764,7 @@ function EmptyOrders() {
   )
 }
 
-function OrderList({ orders }: { orders: Order[] }) {
+function OrderList({ orders, onSelect }: { orders: Order[]; onSelect?: (o: Order) => void }) {
   if (orders.length === 0) {
     return (
       <div style={{ textAlign: 'center', padding: '40px 24px' }}>
@@ -749,10 +785,12 @@ function OrderList({ orders }: { orders: Order[] }) {
       {orders.map(o => (
         <div
           key={o.id}
+          onClick={() => onSelect?.(o)}
           style={{
             border: '1px solid var(--border)', borderRadius: 'var(--r-lg)',
             padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 16,
             background: 'var(--surface)', transition: 'box-shadow .2s, border-color .2s',
+            cursor: onSelect ? 'pointer' : 'default',
           }}
           onMouseEnter={e => {
             (e.currentTarget as HTMLElement).style.boxShadow = 'var(--shadow-sm)'
@@ -767,9 +805,115 @@ function OrderList({ orders }: { orders: Order[] }) {
           <span style={{ fontSize: 12.5, color: 'var(--ink-4)', flex: 1 }}>{formatDate(o.created_at)}</span>
           <span style={{ fontSize: 15, fontWeight: 800, color: 'var(--ink)' }}>€{(o.total_eur || 0).toFixed(2)}</span>
           <StatusBadge status={o.status} />
+          {onSelect && <span style={{ fontSize: 11.5, color: 'var(--ink-4)' }}>→</span>}
         </div>
       ))}
     </div>
+  )
+}
+
+function OrderDetailModal({ order, onClose }: { order: Order; onClose: () => void }) {
+  const items: CartItem[] = order.cart_json || []
+  const fmt = (n: number) => n.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+
+  return (
+    <>
+      <div
+        onClick={onClose}
+        style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', zIndex: 1200, backdropFilter: 'blur(2px)' }}
+      />
+      <div style={{
+        position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
+        zIndex: 1201, background: '#fff', borderRadius: 18, width: 'min(640px, 94vw)',
+        maxHeight: '88vh', display: 'flex', flexDirection: 'column',
+        boxShadow: '0 24px 80px rgba(0,0,0,0.2)', overflow: 'hidden',
+      }}>
+        {/* Header */}
+        <div style={{ padding: '20px 28px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
+          <div>
+            <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--ink)', letterSpacing: '-0.3px' }}>
+              Ordine #{order.id.slice(0, 8).toUpperCase()}
+            </div>
+            <div style={{ fontSize: 12, color: 'var(--ink-4)', marginTop: 2 }}>{formatDate(order.created_at)}</div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <StatusBadge status={order.status} />
+            <button onClick={onClose} style={{ width: 32, height: 32, border: '1.5px solid var(--border-2)', borderRadius: 8, background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--ink-4)' }}>
+              <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
+        </div>
+
+        {/* Body */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '24px 28px' }}>
+
+          {/* Tracking */}
+          {order.tracking && (
+            <div style={{ background: 'var(--accent-bg)', border: '1px solid rgba(232,114,26,0.15)', borderRadius: 12, padding: '12px 16px', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 10 }}>
+              <svg width="16" height="16" fill="none" stroke="var(--accent)" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 4v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+              <div>
+                <div style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--accent)', letterSpacing: '.5px', textTransform: 'uppercase' }}>Tracking spedizione</div>
+                <div style={{ fontSize: 13.5, color: 'var(--ink)', fontWeight: 600, marginTop: 1 }}>{order.tracking}</div>
+              </div>
+            </div>
+          )}
+
+          {/* Products */}
+          {items.length > 0 && (
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.6px', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: 10 }}>Prodotti ordinati</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {items.map((item, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 14px', background: 'var(--surface)', borderRadius: 10, border: '1px solid var(--border)' }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>{item.name}</div>
+                      <div style={{ fontSize: 12, color: 'var(--ink-4)', marginTop: 2 }}>
+                        {[item.size, item.color, item.print].filter(Boolean).join(' · ')}
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right', flexShrink: 0, marginLeft: 16 }}>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>€{fmt(item.unitPrice * item.qty + item.setupCost)}</div>
+                      <div style={{ fontSize: 12, color: 'var(--ink-4)' }}>{item.qty.toLocaleString('it-IT')} pz</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Shipping address */}
+          {(order.address || order.city) && (
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.6px', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: 10 }}>Indirizzo di spedizione</div>
+              <div style={{ padding: '12px 14px', background: 'var(--surface)', borderRadius: 10, border: '1px solid var(--border)', fontSize: 13.5, color: 'var(--ink-3)', lineHeight: 1.7 }}>
+                {order.customer_name && <div style={{ fontWeight: 600, color: 'var(--ink)' }}>{order.customer_name}</div>}
+                {order.address && <div>{order.address}</div>}
+                {(order.zip || order.city || order.province) && (
+                  <div>{[order.zip, order.city, order.province].filter(Boolean).join(', ')}</div>
+                )}
+                {order.customer_phone && <div style={{ marginTop: 4 }}>{order.customer_phone}</div>}
+              </div>
+            </div>
+          )}
+
+          {/* Notes */}
+          {order.notes && (
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '.6px', textTransform: 'uppercase', color: 'var(--ink-4)', marginBottom: 10 }}>Note ordine</div>
+              <div style={{ padding: '12px 14px', background: 'var(--surface)', borderRadius: 10, border: '1px solid var(--border)', fontSize: 13.5, color: 'var(--ink-3)', lineHeight: 1.6 }}>
+                {order.notes}
+              </div>
+            </div>
+          )}
+
+          {/* Total */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px', background: 'var(--ink)', borderRadius: 12 }}>
+            <span style={{ fontSize: 14, fontWeight: 600, color: 'rgba(255,255,255,0.7)' }}>Totale ordine (IVA inclusa)</span>
+            <span style={{ fontSize: 20, fontWeight: 900, color: '#fff', letterSpacing: '-0.5px' }}>€{fmt(order.total_eur || 0)}</span>
+          </div>
+        </div>
+      </div>
+    </>
   )
 }
 
