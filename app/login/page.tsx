@@ -1,5 +1,5 @@
 'use client'
-import { useState, FormEvent, Suspense } from 'react'
+import { useState, useEffect, FormEvent, Suspense } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -22,6 +22,7 @@ function LoginForm() {
   const sb           = createClient()
 
   const [tab, setTab]         = useState<Tab>('login')
+  const [mode, setMode]       = useState<'tabs' | 'reset'>('tabs')
   const [alert, setAlert]     = useState<{ msg: string; type: 'error' | 'success' } | null>(null)
   const [loading, setLoading] = useState(false)
 
@@ -35,6 +36,20 @@ function LoginForm() {
   const [regEmail, setRegEmail]     = useState('')
   const [regPwd, setRegPwd]         = useState('')
   const [showRegPwd, setShowRegPwd] = useState(false)
+
+  const [resetPwd, setResetPwd]       = useState('')
+  const [showResetPwd, setShowResetPwd] = useState(false)
+
+  // Detect Supabase PASSWORD_RECOVERY event (fired when user clicks the reset link)
+  useEffect(() => {
+    const { data: { subscription } } = sb.auth.onAuthStateChange((event) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        setMode('reset')
+        setAlert(null)
+      }
+    })
+    return () => subscription.unsubscribe()
+  }, [])
 
   async function redirectAfterLogin(userId: string) {
     const { data: profile } = await sb.from('profiles').select('role').eq('id', userId).single()
@@ -75,6 +90,20 @@ function LoginForm() {
     setAlert({ msg: 'Email di recupero inviata. Controlla la tua casella.', type: 'success' })
   }
 
+  async function handleResetPassword(e: FormEvent) {
+    e.preventDefault()
+    if (resetPwd.length < 6) { setAlert({ msg: 'La password deve essere di almeno 6 caratteri.', type: 'error' }); return }
+    setLoading(true); setAlert(null)
+    const { error } = await sb.auth.updateUser({ password: resetPwd })
+    if (error) {
+      setAlert({ msg: error.message, type: 'error' })
+    } else {
+      setAlert({ msg: 'Password aggiornata con successo! Puoi ora accedere.', type: 'success' })
+      setMode('tabs'); setResetPwd('')
+    }
+    setLoading(false)
+  }
+
   return (
     <div style={{
       minHeight: '100vh',
@@ -106,156 +135,202 @@ function LoginForm() {
         <div style={{ height: 4, background: 'linear-gradient(90deg, #d4611a, #f08a3a)' }} />
 
         <div style={{ padding: '36px 40px 40px' }}>
-          {/* Heading */}
-          <div style={{ marginBottom: 28 }}>
-            <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--ink)', letterSpacing: '-0.5px', marginBottom: 5 }}>
-              {tab === 'login' ? 'Bentornato' : 'Crea un account'}
-            </div>
-            <div style={{ fontSize: 13.5, color: 'var(--ink-4)', lineHeight: 1.5 }}>
-              {tab === 'login'
-                ? 'Accedi per gestire i tuoi ordini Briopack.'
-                : 'Registrati gratuitamente e inizia a ordinare.'}
-            </div>
-          </div>
 
-          {/* Tab switcher */}
-          <div style={{
-            display: 'flex',
-            background: 'var(--surface-2)',
-            border: '1.5px solid var(--border-2)',
-            borderRadius: 'var(--r-xl)',
-            padding: 4,
-            marginBottom: 28,
-          }}>
-            {(['login', 'register'] as Tab[]).map(t => (
-              <button
-                key={t}
-                onClick={() => { setTab(t); setAlert(null) }}
-                style={{
-                  flex: 1, padding: '9px 0',
-                  fontFamily: 'var(--f)', fontSize: 13, fontWeight: 600,
-                  color: tab === t ? 'var(--ink)' : 'var(--ink-4)',
-                  background: tab === t ? '#fff' : 'transparent',
-                  border: 'none', borderRadius: 'var(--r-lg)', cursor: 'pointer',
-                  boxShadow: tab === t ? '0 1px 6px rgba(0,0,0,0.10), 0 0 0 1px var(--border)' : 'none',
-                  transition: 'all .2s var(--ease-out)',
-                }}
-              >
-                {t === 'login' ? 'Accedi' : 'Registrati'}
-              </button>
-            ))}
-          </div>
-
-          {/* Alert */}
-          {alert && (
-            <div className={`alert ${alert.type === 'error' ? 'error' : 'success'}`} style={{ marginBottom: 20 }}>
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 9 }}>
-                <span style={{ fontSize: 15, flexShrink: 0, marginTop: 1 }}>
-                  {alert.type === 'error' ? '⚠' : '✓'}
-                </span>
-                {alert.msg}
-              </div>
-            </div>
-          )}
-
-          {/* LOGIN */}
-          {tab === 'login' && (
-            <form onSubmit={handleLogin}>
-              <FormField label="Indirizzo email">
-                <input
-                  type="email"
-                  value={loginEmail}
-                  onChange={e => setLoginEmail(e.target.value)}
-                  placeholder="tua@email.it"
-                  required
-                  autoComplete="email"
-                />
-              </FormField>
-
-              <FormField label="Password">
-                <div style={{ position: 'relative' }}>
-                  <input
-                    type={showLoginPwd ? 'text' : 'password'}
-                    value={loginPassword}
-                    onChange={e => setLoginPassword(e.target.value)}
-                    placeholder="••••••••"
-                    required
-                    autoComplete="current-password"
-                    style={{ paddingRight: 46 }}
-                  />
-                  <EyeBtn show={showLoginPwd} onToggle={() => setShowLoginPwd(v => !v)} />
+          {mode === 'reset' ? (
+            /* ── PASSWORD RESET ── */
+            <>
+              <div style={{ marginBottom: 28 }}>
+                <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--ink)', letterSpacing: '-0.5px', marginBottom: 5 }}>
+                  Nuova password
                 </div>
-              </FormField>
-
-              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: -8, marginBottom: 20 }}>
-                <button
-                  type="button"
-                  onClick={handleForgot}
-                  style={{
-                    background: 'none', border: 'none', fontSize: 13, color: 'var(--accent)',
-                    cursor: 'pointer', fontFamily: 'var(--f)', fontWeight: 500, padding: 0,
-                    textDecoration: 'underline', textDecorationColor: 'transparent',
-                    transition: 'text-decoration-color .15s',
-                  }}
-                  onMouseEnter={e => (e.currentTarget.style.textDecorationColor = 'var(--accent)')}
-                  onMouseLeave={e => (e.currentTarget.style.textDecorationColor = 'transparent')}
-                >
-                  Password dimenticata?
-                </button>
-              </div>
-
-              <SubmitBtn loading={loading}>Accedi al tuo account</SubmitBtn>
-
-              <p style={{ textAlign: 'center', fontSize: 12, color: 'var(--ink-5)', marginTop: 18, lineHeight: 1.6 }}>
-                Amministratore? Accedi normalmente — verrai reindirizzato.
-              </p>
-            </form>
-          )}
-
-          {/* REGISTER */}
-          {tab === 'register' && (
-            <form onSubmit={handleRegister}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-                <FormField label="Nome">
-                  <input type="text" value={regFirst} onChange={e => setRegFirst(e.target.value)} placeholder="Mario" required />
-                </FormField>
-                <FormField label="Cognome">
-                  <input type="text" value={regLast} onChange={e => setRegLast(e.target.value)} placeholder="Rossi" required />
-                </FormField>
-              </div>
-
-              <FormField label="Azienda (opzionale)">
-                <input type="text" value={regCompany} onChange={e => setRegCompany(e.target.value)} placeholder="Nome azienda" />
-              </FormField>
-
-              <FormField label="Indirizzo email">
-                <input type="email" value={regEmail} onChange={e => setRegEmail(e.target.value)} placeholder="tua@email.it" required autoComplete="email" />
-              </FormField>
-
-              <FormField label="Password">
-                <div style={{ position: 'relative' }}>
-                  <input
-                    type={showRegPwd ? 'text' : 'password'}
-                    value={regPwd}
-                    onChange={e => setRegPwd(e.target.value)}
-                    placeholder="Minimo 6 caratteri"
-                    required minLength={6}
-                    autoComplete="new-password"
-                    style={{ paddingRight: 46 }}
-                  />
-                  <EyeBtn show={showRegPwd} onToggle={() => setShowRegPwd(v => !v)} />
+                <div style={{ fontSize: 13.5, color: 'var(--ink-4)', lineHeight: 1.5 }}>
+                  Scegli una nuova password per il tuo account.
                 </div>
-              </FormField>
+              </div>
 
-              <SubmitBtn loading={loading}>Crea account gratuitamente</SubmitBtn>
+              {alert && (
+                <div className={`alert ${alert.type === 'error' ? 'error' : 'success'}`} style={{ marginBottom: 20 }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 9 }}>
+                    <span style={{ fontSize: 15, flexShrink: 0, marginTop: 1 }}>{alert.type === 'error' ? '⚠' : '✓'}</span>
+                    {alert.msg}
+                  </div>
+                </div>
+              )}
 
-              <p style={{ textAlign: 'center', fontSize: 12, color: 'var(--ink-5)', marginTop: 18, lineHeight: 1.6 }}>
-                Creando un account accetti i{' '}
-                <a href="/termini" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 600 }}>Termini di servizio</a>
-                {' '}e la{' '}
-                <a href="/privacy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 600 }}>Privacy Policy</a>.
-              </p>
-            </form>
+              <form onSubmit={handleResetPassword}>
+                <FormField label="Nuova password">
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      type={showResetPwd ? 'text' : 'password'}
+                      value={resetPwd}
+                      onChange={e => setResetPwd(e.target.value)}
+                      placeholder="Minimo 6 caratteri"
+                      required minLength={6}
+                      autoComplete="new-password"
+                      autoFocus
+                      style={{ paddingRight: 46 }}
+                    />
+                    <EyeBtn show={showResetPwd} onToggle={() => setShowResetPwd(v => !v)} />
+                  </div>
+                </FormField>
+                <SubmitBtn loading={loading}>Salva nuova password</SubmitBtn>
+              </form>
+            </>
+          ) : (
+            /* ── LOGIN / REGISTER TABS ── */
+            <>
+              {/* Heading */}
+              <div style={{ marginBottom: 28 }}>
+                <div style={{ fontSize: 22, fontWeight: 800, color: 'var(--ink)', letterSpacing: '-0.5px', marginBottom: 5 }}>
+                  {tab === 'login' ? 'Bentornato' : 'Crea un account'}
+                </div>
+                <div style={{ fontSize: 13.5, color: 'var(--ink-4)', lineHeight: 1.5 }}>
+                  {tab === 'login'
+                    ? 'Accedi per gestire i tuoi ordini Briopack.'
+                    : 'Registrati gratuitamente e inizia a ordinare.'}
+                </div>
+              </div>
+
+              {/* Tab switcher */}
+              <div style={{
+                display: 'flex',
+                background: 'var(--surface-2)',
+                border: '1.5px solid var(--border-2)',
+                borderRadius: 'var(--r-xl)',
+                padding: 4,
+                marginBottom: 28,
+              }}>
+                {(['login', 'register'] as Tab[]).map(t => (
+                  <button
+                    key={t}
+                    onClick={() => { setTab(t); setAlert(null) }}
+                    style={{
+                      flex: 1, padding: '9px 0',
+                      fontFamily: 'var(--f)', fontSize: 13, fontWeight: 600,
+                      color: tab === t ? 'var(--ink)' : 'var(--ink-4)',
+                      background: tab === t ? '#fff' : 'transparent',
+                      border: 'none', borderRadius: 'var(--r-lg)', cursor: 'pointer',
+                      boxShadow: tab === t ? '0 1px 6px rgba(0,0,0,0.10), 0 0 0 1px var(--border)' : 'none',
+                      transition: 'all .2s var(--ease-out)',
+                    }}
+                  >
+                    {t === 'login' ? 'Accedi' : 'Registrati'}
+                  </button>
+                ))}
+              </div>
+
+              {/* Alert */}
+              {alert && (
+                <div className={`alert ${alert.type === 'error' ? 'error' : 'success'}`} style={{ marginBottom: 20 }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 9 }}>
+                    <span style={{ fontSize: 15, flexShrink: 0, marginTop: 1 }}>
+                      {alert.type === 'error' ? '⚠' : '✓'}
+                    </span>
+                    {alert.msg}
+                  </div>
+                </div>
+              )}
+
+              {/* LOGIN */}
+              {tab === 'login' && (
+                <form onSubmit={handleLogin}>
+                  <FormField label="Indirizzo email">
+                    <input
+                      type="email"
+                      value={loginEmail}
+                      onChange={e => setLoginEmail(e.target.value)}
+                      placeholder="tua@email.it"
+                      required
+                      autoComplete="email"
+                    />
+                  </FormField>
+
+                  <FormField label="Password">
+                    <div style={{ position: 'relative' }}>
+                      <input
+                        type={showLoginPwd ? 'text' : 'password'}
+                        value={loginPassword}
+                        onChange={e => setLoginPassword(e.target.value)}
+                        placeholder="••••••••"
+                        required
+                        autoComplete="current-password"
+                        style={{ paddingRight: 46 }}
+                      />
+                      <EyeBtn show={showLoginPwd} onToggle={() => setShowLoginPwd(v => !v)} />
+                    </div>
+                  </FormField>
+
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: -8, marginBottom: 20 }}>
+                    <button
+                      type="button"
+                      onClick={handleForgot}
+                      style={{
+                        background: 'none', border: 'none', fontSize: 13, color: 'var(--accent)',
+                        cursor: 'pointer', fontFamily: 'var(--f)', fontWeight: 500, padding: 0,
+                        textDecoration: 'underline', textDecorationColor: 'transparent',
+                        transition: 'text-decoration-color .15s',
+                      }}
+                      onMouseEnter={e => (e.currentTarget.style.textDecorationColor = 'var(--accent)')}
+                      onMouseLeave={e => (e.currentTarget.style.textDecorationColor = 'transparent')}
+                    >
+                      Password dimenticata?
+                    </button>
+                  </div>
+
+                  <SubmitBtn loading={loading}>Accedi al tuo account</SubmitBtn>
+
+                  <p style={{ textAlign: 'center', fontSize: 12, color: 'var(--ink-5)', marginTop: 18, lineHeight: 1.6 }}>
+                    Amministratore? Accedi normalmente — verrai reindirizzato.
+                  </p>
+                </form>
+              )}
+
+              {/* REGISTER */}
+              {tab === 'register' && (
+                <form onSubmit={handleRegister}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+                    <FormField label="Nome">
+                      <input type="text" value={regFirst} onChange={e => setRegFirst(e.target.value)} placeholder="Mario" required />
+                    </FormField>
+                    <FormField label="Cognome">
+                      <input type="text" value={regLast} onChange={e => setRegLast(e.target.value)} placeholder="Rossi" required />
+                    </FormField>
+                  </div>
+
+                  <FormField label="Azienda (opzionale)">
+                    <input type="text" value={regCompany} onChange={e => setRegCompany(e.target.value)} placeholder="Nome azienda" />
+                  </FormField>
+
+                  <FormField label="Indirizzo email">
+                    <input type="email" value={regEmail} onChange={e => setRegEmail(e.target.value)} placeholder="tua@email.it" required autoComplete="email" />
+                  </FormField>
+
+                  <FormField label="Password">
+                    <div style={{ position: 'relative' }}>
+                      <input
+                        type={showRegPwd ? 'text' : 'password'}
+                        value={regPwd}
+                        onChange={e => setRegPwd(e.target.value)}
+                        placeholder="Minimo 6 caratteri"
+                        required minLength={6}
+                        autoComplete="new-password"
+                        style={{ paddingRight: 46 }}
+                      />
+                      <EyeBtn show={showRegPwd} onToggle={() => setShowRegPwd(v => !v)} />
+                    </div>
+                  </FormField>
+
+                  <SubmitBtn loading={loading}>Crea account gratuitamente</SubmitBtn>
+
+                  <p style={{ textAlign: 'center', fontSize: 12, color: 'var(--ink-5)', marginTop: 18, lineHeight: 1.6 }}>
+                    Creando un account accetti i{' '}
+                    <a href="/termini" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 600 }}>Termini di servizio</a>
+                    {' '}e la{' '}
+                    <a href="/privacy" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 600 }}>Privacy Policy</a>.
+                  </p>
+                </form>
+              )}
+            </>
           )}
         </div>
       </div>
