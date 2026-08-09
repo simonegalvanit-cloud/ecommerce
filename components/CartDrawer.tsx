@@ -56,9 +56,21 @@ export default function CartDrawer() {
                   </div>
                   <div className="cart-item-right">
                     <div className="cart-item-qty">
-                      <button onClick={() => updateQty(item.id, -50)} aria-label="Diminuisci">−</button>
-                      <span>{item.qty.toLocaleString('it-IT')}</span>
-                      <button onClick={() => updateQty(item.id, 50)} aria-label="Aumenta">+</button>
+                      <button onClick={() => updateQty(item.id, -1)} aria-label="Diminuisci">−</button>
+                      <input
+                        key={item.qty}
+                        type="number"
+                        defaultValue={item.qty}
+                        min={1}
+                        style={{ width: 52, textAlign: 'center', border: '1px solid var(--border-2)', borderRadius: 6, padding: '3px 6px', fontFamily: 'var(--f)', fontSize: 13, fontWeight: 600, background: 'var(--surface)', color: 'var(--ink)', outline: 'none' }}
+                        onBlur={e => {
+                          const v = Math.max(1, parseInt(e.target.value) || item.qty)
+                          const delta = v - item.qty
+                          if (delta !== 0) updateQty(item.id, delta)
+                        }}
+                        onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur() }}
+                      />
+                      <button onClick={() => updateQty(item.id, 1)} aria-label="Aumenta">+</button>
                     </div>
                     <div className="cart-item-price">€{fmt(item.unitPrice * item.qty + item.setupCost)}</div>
                     <button className="cart-item-remove" onClick={() => removeItem(item.id)} aria-label="Rimuovi">

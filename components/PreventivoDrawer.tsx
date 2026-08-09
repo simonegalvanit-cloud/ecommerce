@@ -28,9 +28,20 @@ export default function PreventivoDrawer() {
   const [error,   setError]   = useState('')
 
   useEffect(() => {
-    const open = () => setOpen(true)
-    window.addEventListener('open-preventivo', open)
-    return () => window.removeEventListener('open-preventivo', open)
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail as { productCat?: string; productName?: string } | undefined
+      if (detail?.productCat) {
+        const match = PRODUCT_TYPES.find(p => p === detail.productCat)
+        setForm(f => ({
+          ...f,
+          product: match ?? PRODUCT_TYPES[0],
+          notes: detail.productName ? `Prodotto di interesse: ${detail.productName}\n` : f.notes,
+        }))
+      }
+      setOpen(true)
+    }
+    window.addEventListener('open-preventivo', handler)
+    return () => window.removeEventListener('open-preventivo', handler)
   }, [])
 
   // Lock body scroll when open

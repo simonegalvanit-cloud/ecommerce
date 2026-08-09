@@ -64,6 +64,7 @@ export default function ProductsPage() {
   const [editId, setEditId]     = useState<string | null>(null)
   const [saving, setSaving]     = useState(false)
   const [alert, setAlert]       = useState<{ msg: string; type: 'ok' | 'err' } | null>(null)
+  const [syncing, setSyncing]   = useState(false)
 
   /* Form state */
   const [fKey,   setFKey]   = useState('')
@@ -149,6 +150,20 @@ export default function ProductsPage() {
     setSaving(false)
   }
 
+  async function syncProducts() {
+    setSyncing(true)
+    try {
+      const res = await fetch('/api/admin/sync-products', { method: 'POST' })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Sync failed')
+      setAlert({ msg: `Sync completato: ${data.inserted ?? 0} nuovi prodotti aggiunti al DB.`, type: 'ok' })
+      await loadDbProds()
+    } catch (err: any) {
+      setAlert({ msg: err.message, type: 'err' })
+    }
+    setSyncing(false)
+  }
+
   async function deleteProduct(id: string, name: string) {
     if (!confirm(`Eliminare "${name}"?`)) return
     await sb.from('products').delete().eq('id', id)
@@ -183,11 +198,32 @@ export default function ProductsPage() {
           <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--ink)', letterSpacing: '-0.4px' }}>Prodotti</div>
           <div style={{ fontSize: 13, color: 'var(--ink-4)', marginTop: 2 }}>Gestisci e aggiungi prodotti al catalogo</div>
         </div>
-        <button onClick={openNew} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'var(--accent)', color: '#fff', border: 'none', padding: '9px 18px', fontFamily: 'var(--f)', fontSize: 13.5, fontWeight: 600, borderRadius: 8, cursor: 'pointer' }}>
-          <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 16 16"><line x1="8" y1="2" x2="8" y2="14"/><line x1="2" y1="8" x2="14" y2="8"/></svg>
-          Nuovo prodotto
-        </button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button
+            onClick={syncProducts}
+            disabled={syncing}
+            title="Importa tutti i prodotti del catalogo integrato nel DB per permettere la modifica"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'transparent', color: 'var(--ink-3)', border: '1.5px solid var(--border-2)', padding: '9px 16px', fontFamily: 'var(--f)', fontSize: 13, fontWeight: 600, borderRadius: 8, cursor: syncing ? 'not-allowed' : 'pointer', opacity: syncing ? 0.6 : 1 }}
+          >
+            {syncing ? <span className="spinner" style={{ width: 13, height: 13 }} /> : (
+              <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 16 16" strokeLinecap="round"><path d="M14 8A6 6 0 112 8"/><polyline points="14 4 14 8 10 8"/></svg>
+            )}
+            Sincronizza catalogo
+          </button>
+          <button onClick={openNew} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'var(--accent)', color: '#fff', border: 'none', padding: '9px 18px', fontFamily: 'var(--f)', fontSize: 13.5, fontWeight: 600, borderRadius: 8, cursor: 'pointer' }}>
+            <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 16 16"><line x1="8" y1="2" x2="8" y2="14"/><line x1="2" y1="8" x2="14" y2="8"/></svg>
+            Nuovo prodotto
+          </button>
+        </div>
       </div>
+
+      {/* Sync alert */}
+      {alert && !drawerOpen && (
+        <div style={{ padding: '10px 14px', borderRadius: 8, fontSize: 13, fontWeight: 500, marginBottom: 16, background: alert.type === 'ok' ? 'var(--green-bg)' : 'var(--red-bg)', color: alert.type === 'ok' ? 'var(--green)' : 'var(--red)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          {alert.msg}
+          <button onClick={() => setAlert(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', fontSize: 16, lineHeight: 1, padding: '0 4px' }}>×</button>
+        </div>
+      )}
 
       {/* Hardcoded products */}
       <div style={{ background: 'var(--white)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', overflow: 'hidden', marginBottom: 20 }}>
