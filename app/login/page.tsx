@@ -19,11 +19,16 @@ function LoginForm() {
   const router       = useRouter()
   const searchParams = useSearchParams()
   const next         = searchParams.get('next') || '/account'
+  const urlError     = searchParams.get('error')
   const sb           = createClient()
 
   const [tab, setTab]         = useState<Tab>('login')
   const [mode, setMode]       = useState<'tabs' | 'reset'>('tabs')
-  const [alert, setAlert]     = useState<{ msg: string; type: 'error' | 'success' } | null>(null)
+  const [alert, setAlert]     = useState<{ msg: string; type: 'error' | 'success' } | null>(
+    urlError === 'verification_failed'
+      ? { msg: 'Il link di verifica non è valido o è scaduto. Riprova a registrarti.', type: 'error' }
+      : null
+  )
   const [loading, setLoading] = useState(false)
 
   const [loginEmail, setLoginEmail]       = useState('')
@@ -69,7 +74,10 @@ function LoginForm() {
     setAlert(null); setLoading(true)
     const { data, error } = await sb.auth.signUp({
       email: regEmail, password: regPwd,
-      options: { data: { full_name: `${regFirst} ${regLast}`, company: regCompany } }
+      options: {
+        data: { full_name: `${regFirst} ${regLast}`, company: regCompany },
+        emailRedirectTo: window.location.origin + '/auth/callback?next=/account',
+      }
     })
     if (error) { setAlert({ msg: error.message, type: 'error' }); setLoading(false); return }
     if (regCompany && data.user) {
@@ -85,7 +93,7 @@ function LoginForm() {
 
   async function handleForgot() {
     if (!loginEmail) { setAlert({ msg: 'Inserisci la tua email prima di procedere.', type: 'error' }); return }
-    const { error } = await sb.auth.resetPasswordForEmail(loginEmail, { redirectTo: window.location.origin + '/login' })
+    const { error } = await sb.auth.resetPasswordForEmail(loginEmail, { redirectTo: window.location.origin + '/auth/callback?next=/login' })
     if (error) { setAlert({ msg: error.message, type: 'error' }); return }
     setAlert({ msg: 'Email di recupero inviata. Controlla la tua casella.', type: 'success' })
   }
