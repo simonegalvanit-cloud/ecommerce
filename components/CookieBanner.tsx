@@ -33,8 +33,8 @@ export default function CookieBanner() {
           to   { opacity: 0; transform: translateY(24px); }
         }
         .cookie-banner {
-          position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-          z-index: 9999; width: calc(100% - 32px); max-width: 680px;
+          position: fixed; bottom: 24px; left: 16px; right: 16px; margin: 0 auto;
+          z-index: 9999; width: auto; max-width: 680px;
           background: #fff; border: 1px solid rgba(0,0,0,0.1);
           border-radius: 16px; box-shadow: 0 8px 40px rgba(0,0,0,0.14), 0 2px 12px rgba(0,0,0,0.08);
           padding: 20px 24px; display: flex; align-items: center; gap: 20; flex-wrap: wrap;
@@ -42,7 +42,7 @@ export default function CookieBanner() {
         }
         .cookie-banner.out { animation: cookieSlideDown .38s ease forwards; }
         @media (max-width: 560px) {
-          .cookie-banner { padding: 18px 16px; bottom: 16px; }
+          .cookie-banner { padding: 18px 16px; bottom: 16px; left: 12px; right: 12px; }
         }
       `}</style>
       <div className={`cookie-banner${animOut ? ' out' : ''}`} role="dialog" aria-label="Cookie consent">
