@@ -316,7 +316,7 @@ export default function AccountPage() {
           </nav>
 
           {/* Bottom: go to shop + logout */}
-          <div style={{ padding: '16px 10px 0', borderTop: '1px solid var(--border)', marginTop: 12, display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <div className="sidebar-bottom" style={{ padding: '16px 10px 0', borderTop: '1px solid var(--border)', marginTop: 12, display: 'flex', flexDirection: 'column', gap: 4 }}>
             <Link href="/" className="sidebar-item" style={{ display: 'flex', textDecoration: 'none' }}>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M1 1h2.5l1.5 8h7l1.5-5H4"/>
