@@ -120,7 +120,7 @@ function PaymentForm({ siteUrl, onBack }: { siteUrl: string; onBack: () => void 
           style={{ flex: 1 }}>
           {paying ? <span className="checkout-spinner" /> : (
             <>
-              Paga ora
+              Ordina con obbligo di pagamento
               <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 16 16" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="3" y1="8" x2="13" y2="8"/><polyline points="9 4 13 8 9 12"/>
               </svg>
@@ -134,6 +134,11 @@ function PaymentForm({ siteUrl, onBack }: { siteUrl: string; onBack: () => void 
           <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>
         </svg>
         Pagamento sicuro gestito da <strong>Stripe</strong>. Non conserviamo i dati della carta.
+      </div>
+      <div style={{ fontSize: 11.5, color: 'var(--ink-5)', lineHeight: 1.6, textAlign: 'center', marginTop: 8 }}>
+        Cliccando &ldquo;Ordina con obbligo di pagamento&rdquo; confermi l&apos;acquisto e accetti i{' '}
+        <a href="/termini" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', textDecoration: 'underline' }}>Termini di Vendita</a>.
+        Il totale indicato è comprensivo di IVA e spese di spedizione.
       </div>
     </form>
   )

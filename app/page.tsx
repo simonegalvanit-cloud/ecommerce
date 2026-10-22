@@ -373,7 +373,7 @@ export default function StorefrontPage() {
               <span style={{ fontSize: 18, fontWeight: 800, color: 'rgba(255,255,255,0.7)', letterSpacing: '1.5px', textTransform: 'uppercase' }}>BRIOPACK</span>
             </div>
             <div className="footer-tagline">Lo stato dell&apos;arte nel packaging. Progettiamo e produciamo imballaggi su misura per aziende di ogni settore, in tutta Italia.</div>
-            <div className="footer-contact">C.da Sodera, 38 — 66030 Poggiofiorito (CH)<br /><a href="tel:+390871869378" style={{ color: 'inherit', textDecoration: 'none' }}>0871 869378</a><br />info@briopack.com</div>
+            <div className="footer-contact">C.da Sodera, 38 — 66030 Poggiofiorito (CH)<br /><a href="tel:+390871869378" style={{ color: 'inherit', textDecoration: 'none' }}>0871 869378</a><br />info@briopack.com<br />PEC: briopack@pec.it</div>
             <div className="footer-social">
               <a href="https://www.facebook.com/Briopack/" target="_blank" rel="noopener noreferrer" className="footer-social-link" aria-label="Facebook">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
@@ -414,8 +414,12 @@ export default function StorefrontPage() {
           </div>
         </div>
         <div className="footer-bottom">
-          <div className="footer-legal">© 2025 Briopack Srl — P.IVA 02540090699 — REA 186673 Chieti</div>
-          <div className="footer-legal"><a href="/privacy" style={{ color: 'inherit', textDecoration: 'none' }} onMouseOver={e => (e.currentTarget as HTMLElement).style.color='#e8721a'} onMouseOut={e => (e.currentTarget as HTMLElement).style.color=''}>Privacy & Cookie Policy</a></div>
+          <div className="footer-legal">© 2025 Briopack Srl — P.IVA 02540090699 — REA CH-186673</div>
+          <div className="footer-legal" style={{ display: 'flex', gap: 20, flexWrap: 'wrap', justifyContent: 'center' }}>
+            <a href="/privacy" style={{ color: 'inherit', textDecoration: 'none' }} onMouseOver={e => (e.currentTarget as HTMLElement).style.color='#e8721a'} onMouseOut={e => (e.currentTarget as HTMLElement).style.color=''}>Privacy & Cookie Policy</a>
+            <a href="/termini" style={{ color: 'inherit', textDecoration: 'none' }} onMouseOver={e => (e.currentTarget as HTMLElement).style.color='#e8721a'} onMouseOut={e => (e.currentTarget as HTMLElement).style.color=''}>Termini di Vendita</a>
+            <button onClick={() => { try { localStorage.removeItem('bp_cookie_consent') } catch {} window.location.reload() }} style={{ background: 'none', border: 'none', padding: 0, fontFamily: 'inherit', fontSize: 'inherit', color: 'inherit', cursor: 'pointer', textDecoration: 'none' }} onMouseOver={e => (e.currentTarget as HTMLElement).style.color='#e8721a'} onMouseOut={e => (e.currentTarget as HTMLElement).style.color=''}>Gestisci preferenze cookie</button>
+          </div>
         </div>
       </footer>
 
