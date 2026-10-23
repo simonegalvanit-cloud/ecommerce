@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { PRODUCTS } from '@/lib/products'
+import { CATALOG_ITEMS } from '@/lib/products'
 
 interface Order {
   id: string
@@ -89,7 +89,7 @@ export default function AdminDashboardPage() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 16, marginBottom: 24 }}>
         <StatCard
           bg="var(--accent-bg)"
-          value={PRODUCTS.length}
+          value={CATALOG_ITEMS.length}
           label="Prodotti catalogo"
           icon={<svg width="18" height="18" fill="none" stroke="var(--accent)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 20 20"><path d="M17 6L10 2 3 6v8l7 4 7-4V6z"/><path d="M10 2v10M3 6l7 4 7-4"/></svg>}
         />
@@ -156,21 +156,19 @@ export default function AdminDashboardPage() {
           </div>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead><tr>
-              {['Prodotto', 'Categoria', 'Da', 'MOQ'].map(h => <th key={h} style={thStyle}>{h}</th>)}
+              {['Prodotto', 'Categoria', 'Sezione'].map(h => <th key={h} style={thStyle}>{h}</th>)}
             </tr></thead>
             <tbody>
-              {PRODUCTS.map(p => (
+              {CATALOG_ITEMS.map(p => (
                 <tr key={p.key}
                   onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'var(--surface)'}
                   onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'transparent'}
                   style={{ transition: 'background .15s' }}>
                   <td style={{ ...tdStyle, fontWeight: 600 }}>
                     <Link href={`/products/${p.key}`} target="_blank" style={{ color: 'inherit', textDecoration: 'none' }}>{p.name}</Link>
-                    {p.badge && <span style={{ marginLeft: 6, fontSize: 10, fontWeight: 700, padding: '1px 6px', borderRadius: 4, background: p.badge.type === 'eco' ? 'var(--green-bg)' : 'var(--accent-bg)', color: p.badge.type === 'eco' ? 'var(--green)' : 'var(--accent)' }}>{p.badge.label}</span>}
                   </td>
-                  <td style={{ ...tdStyle, fontSize: 12.5 }}><span style={{ background: 'var(--surface-2)', padding: '2px 8px', borderRadius: 4, color: 'var(--ink-3)', fontSize: 11.5 }}>{p.cat}</span></td>
-                  <td style={{ ...tdStyle, fontWeight: 500 }}>€{p.price.toFixed(2)}</td>
-                  <td style={{ ...tdStyle, color: 'var(--ink-3)' }}>{p.moq}</td>
+                  <td style={{ ...tdStyle, fontSize: 12.5 }}><span style={{ background: 'var(--surface-2)', padding: '2px 8px', borderRadius: 4, color: 'var(--ink-3)', fontSize: 11.5 }}>{p.mainCat}</span></td>
+                  <td style={{ ...tdStyle, color: 'var(--ink-3)' }}>{p.subCat}</td>
                 </tr>
               ))}
             </tbody>

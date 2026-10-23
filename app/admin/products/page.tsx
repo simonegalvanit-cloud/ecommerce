@@ -2,7 +2,7 @@
 import { useState, useEffect, FormEvent } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { PRODUCTS, SIZES, COLORS, PRINT_OPTIONS, QTY_PRESETS, DISC_TIERS } from '@/lib/products'
+import { CATALOG_ITEMS } from '@/lib/products'
 
 /* ── Types ── */
 interface DbProduct {
@@ -18,11 +18,11 @@ type ColorRow = { label: string; hex: string; border: boolean }
 type DiscRow  = { min: number; max: number | null; label: string; disc: string | null }
 
 /* ── Defaults for new products ── */
-const DEF_SIZES: SizeRow[]  = SIZES.map(s => ({ label: s.label, dim: s.dim, price: s.price }))
-const DEF_COLORS: ColorRow[] = COLORS.map(c => ({ label: c.label, hex: c.hex, border: c.border ?? false }))
-const DEF_PRINTS: string[]  = [...PRINT_OPTIONS]
-const DEF_QTY: number[]     = [...QTY_PRESETS]
-const DEF_DISC: DiscRow[]   = DISC_TIERS.map(t => ({ min: t.min, max: t.max === Infinity ? null : (t.max as number), label: t.label, disc: t.disc ?? null }))
+const DEF_SIZES: SizeRow[]  = []
+const DEF_COLORS: ColorRow[] = []
+const DEF_PRINTS: string[]  = []
+const DEF_QTY: number[]     = []
+const DEF_DISC: DiscRow[]   = []
 
 /* ── Style helpers ── */
 const th: React.CSSProperties = { fontSize: 11, fontWeight: 600, letterSpacing: '0.4px', textTransform: 'uppercase', color: 'var(--ink-4)', padding: '9px 16px', textAlign: 'left', borderBottom: '1px solid var(--border)', background: 'var(--surface)', whiteSpace: 'nowrap' }
@@ -228,22 +228,20 @@ export default function ProductsPage() {
       {/* Hardcoded products */}
       <div style={{ background: 'var(--white)', border: '1px solid var(--border)', borderRadius: 'var(--r-lg)', overflow: 'hidden', marginBottom: 20 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px', borderBottom: '1px solid var(--border)' }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>Catalogo integrato ({PRODUCTS.length})</div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)' }}>Catalogo integrato ({CATALOG_ITEMS.length})</div>
           <span style={{ fontSize: 11.5, color: 'var(--ink-4)', background: 'var(--surface-2)', padding: '3px 10px', borderRadius: 20, fontWeight: 500 }}>Gestiti nel codice · sola lettura</span>
         </div>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead><tr>{['Nome', 'Categoria', 'Prezzo base', 'MOQ', 'Badge', 'Pagina'].map(h => <th key={h} style={th}>{h}</th>)}</tr></thead>
+          <thead><tr>{['Nome', 'Categoria', 'Sezione', 'Pagina'].map(h => <th key={h} style={th}>{h}</th>)}</tr></thead>
           <tbody>
-            {PRODUCTS.map(p => (
+            {CATALOG_ITEMS.map(p => (
               <tr key={p.key} onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = 'var(--surface)'} onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = 'transparent'} style={{ transition: 'background .15s' }}>
                 <td style={{ ...td, fontWeight: 600 }}>
                   {p.name}
                   <div style={{ fontSize: 11.5, color: 'var(--ink-4)', fontFamily: 'monospace', marginTop: 1 }}>{p.key}</div>
                 </td>
-                <td style={td}><span style={{ background: 'var(--surface-2)', padding: '3px 8px', borderRadius: 4, color: 'var(--ink-3)', fontSize: 12 }}>{p.cat}</span></td>
-                <td style={{ ...td, fontWeight: 600 }}>€{p.price.toFixed(2)}<span style={{ color: 'var(--ink-4)', fontSize: 11, fontWeight: 400 }}>/pz</span></td>
-                <td style={{ ...td, color: 'var(--ink-3)' }}>{p.moq}</td>
-                <td style={td}>{p.badge ? <span style={{ fontSize: 11, fontWeight: 600, padding: '3px 8px', borderRadius: 20, background: p.badge.type === 'eco' ? 'var(--green-bg)' : 'var(--accent-bg)', color: p.badge.type === 'eco' ? 'var(--green)' : 'var(--accent)' }}>{p.badge.label}</span> : <span style={{ color: 'var(--ink-5)', fontSize: 12 }}>—</span>}</td>
+                <td style={td}><span style={{ background: 'var(--surface-2)', padding: '3px 8px', borderRadius: 4, color: 'var(--ink-3)', fontSize: 12 }}>{p.mainCat}</span></td>
+                <td style={{ ...td, color: 'var(--ink-3)' }}>{p.subCat}</td>
                 <td style={td}><Link href={`/products/${p.key}`} target="_blank" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '4px 10px', fontSize: 12, fontWeight: 600, color: 'var(--ink-3)', border: '1px solid var(--border-2)', borderRadius: 6, textDecoration: 'none' }}>↗ Vai</Link></td>
               </tr>
             ))}

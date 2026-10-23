@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PRODUCTS, SIZES, COLORS, PRINT_OPTIONS, QTY_PRESETS, DISC_TIERS } from '@/lib/products'
+import { CATALOG_ITEMS } from '@/lib/products'
 import { createClient } from '@/lib/supabase/server'
 
 async function isAdmin(req: NextRequest): Promise<boolean> {
@@ -21,28 +21,12 @@ export async function POST(req: NextRequest) {
 
   const sb = await createClient()
 
-  const rows = PRODUCTS.map(p => ({
+  const rows = CATALOG_ITEMS.map(p => ({
     key: p.key,
     name: p.name,
-    cat: p.cat,
-    cat_key: p.catKey,
-    price: p.price,
-    moq: p.moq,
-    badge_label: p.badge?.label ?? null,
-    badge_type: p.badge?.type ?? null,
-    description: p.desc,
-    seo_desc: p.seoDesc,
+    cat: p.mainCat,
+    cat_key: p.subCat,
     active: true,
-    sizes:        p.sizes        ?? SIZES.map(s => ({ label: s.label, dim: s.dim, price: s.price })),
-    colors:       p.colors       ?? COLORS.map(c => ({ label: c.label, hex: c.hex, border: c.border ?? false })),
-    print_options: p.printOptions ?? PRINT_OPTIONS,
-    qty_presets:  p.qtyPresets   ?? QTY_PRESETS,
-    disc_tiers:   (p.discTiers ?? DISC_TIERS).map(t => ({
-      min: t.min,
-      max: t.max === Infinity ? null : t.max,
-      label: t.label,
-      disc: t.disc ?? null,
-    })),
   }))
 
   const { error, count } = await sb

@@ -4,18 +4,7 @@ import { useRouter } from 'next/navigation'
 import NavWrapper from '@/components/NavWrapper'
 import CartDrawer from '@/components/CartDrawer'
 import { useCart } from '@/lib/cart-context'
-import { PRODUCTS, MAIN_CATS, SHOPPER_SUBCATS, SCATOLE_SUBCATS, CATALOG_ITEMS, PRODUCT_SPECS } from '@/lib/products'
-import { ProductConfigurator } from '@/components/ProductConfigurator'
-
-function fmt(n: number) { return n.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
-
-function PCardImage({ p, size = 120 }: { p: typeof PRODUCTS[0]; size?: number }) {
-  const [err, setErr] = useState(false)
-  if (p.image && !err) {
-    return <img src={p.image} alt={p.name} style={{ width: size, height: size, objectFit: 'contain', display: 'block' }} onError={() => setErr(true)} />
-  }
-  return <>{p.svg}</>
-}
+import { MAIN_CATS, SHOPPER_SUBCATS, SCATOLE_SUBCATS, CATALOG_ITEMS, PRODUCT_SPECS } from '@/lib/products'
 
 const scrollRevealCSS = `.scroll-reveal{opacity:0;transform:translateY(22px);transition:opacity .55s ease,transform .55s ease}.scroll-reveal.revealed{opacity:1;transform:translateY(0)}`
 
@@ -25,7 +14,6 @@ export default function StorefrontPage() {
   const router = useRouter()
   const [activeMain, setActiveMain]         = useState<string | null>(null)
   const [activeSub,  setActiveSub]          = useState<string | null>(null)
-  const [configuratorKey, setConfiguratorKey] = useState<string | null>(null)
   const [heroSearch, setHeroSearch] = useState('')
   const [heroFocused, setHeroFocused] = useState(false)
   const [suggestionsOpen, setSuggestionsOpen] = useState(false)
@@ -68,10 +56,7 @@ export default function StorefrontPage() {
   }, [])
 
   const heroSuggestions = heroSearch.trim().length > 1
-    ? PRODUCTS.filter(p => {
-        const q = heroSearch.toLowerCase()
-        return p.name.toLowerCase().includes(q) || p.cat.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q)
-      }).slice(0, 6)
+    ? CATALOG_ITEMS.filter(p => p.name.toLowerCase().includes(heroSearch.toLowerCase())).slice(0, 6)
     : []
 
   // Recompute fixed position whenever suggestions open or search changes
@@ -384,7 +369,7 @@ export default function StorefrontPage() {
                                     <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.4 }}>{p.name}</div>
                                     <button
                                       onClick={() => hasSpec
-                                        ? setConfiguratorKey(p.key)
+                                        ? router.push(`/configure/${p.key}`)
                                         : window.dispatchEvent(new CustomEvent('open-preventivo'))
                                       }
                                       style={{
@@ -566,25 +551,18 @@ export default function StorefrontPage() {
           className="hero-autocomplete"
           style={{ position: 'fixed', top: acPos.top, left: acPos.left, width: acPos.width, zIndex: 9999 }}
         >
-          {heroSuggestions.length > 0 ? heroSuggestions.map(p => (
+          {heroSuggestions.length > 0 ? heroSuggestions.map(p => {
+            const allSubs = [...SHOPPER_SUBCATS, ...SCATOLE_SUBCATS]
+            const subLabel = allSubs.find(s => s.key === p.subCat)?.label ?? p.subCat
+            return (
             <div key={p.key} className="hero-ac-item"
-              onMouseDown={e => { e.preventDefault(); setSuggestionsOpen(false); router.push(`/products/${p.key}`) }}>
-              <div className="hero-ac-thumb">
-                {p.image ? (
-                  <PCardImage p={p} size={40} />
-                ) : (
-                  <div style={{ transform: 'scale(0.35)', transformOrigin: 'center', width: 108, height: 108, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    {p.svg}
-                  </div>
-                )}
-              </div>
+              onMouseDown={e => { e.preventDefault(); setSuggestionsOpen(false); router.push(`/#catalogo`) }}>
               <div className="hero-ac-info">
                 <div className="hero-ac-name">{p.name}</div>
-                <div className="hero-ac-cat">{p.cat}</div>
+                <div className="hero-ac-cat">{subLabel}</div>
               </div>
-              <div className="hero-ac-price">€{fmt(p.price)}/pz</div>
             </div>
-          )) : (
+          )}) : (
             <div className="hero-ac-empty">
               <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
               <div>
@@ -599,13 +577,6 @@ export default function StorefrontPage() {
       {/* ── CART DRAWER ── */}
       <CartDrawer />
 
-      {/* ── PRODUCT CONFIGURATOR ── */}
-      {configuratorKey && (
-        <ProductConfigurator
-          productKey={configuratorKey}
-          onClose={() => setConfiguratorKey(null)}
-        />
-      )}
 
     </>
   )
