@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import NavWrapper from '@/components/NavWrapper'
 import CartDrawer from '@/components/CartDrawer'
 import { useCart } from '@/lib/cart-context'
-import { PRODUCTS, MAIN_CATS, SHOPPER_SUBCATS, CATALOG_ITEMS } from '@/lib/products'
+import { PRODUCTS, MAIN_CATS, SHOPPER_SUBCATS, SCATOLE_SUBCATS, CATALOG_ITEMS } from '@/lib/products'
 
 function fmt(n: number) { return n.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
 
@@ -240,7 +240,7 @@ export default function StorefrontPage() {
                         <path d="M16 10a4 4 0 01-8 0"/>
                       </svg>
                     ) : (
-                      <svg width="26" height="26" fill="none" stroke="var(--ink-4)" strokeWidth="1.7" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                      <svg width="26" height="26" fill="none" stroke={isActive ? '#e8721a' : 'var(--ink-4)'} strokeWidth="1.7" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
                         <polyline points="21 8 21 21 3 21 3 8"/>
                         <rect x="1" y="3" width="22" height="5"/>
                         <line x1="10" y1="12" x2="14" y2="12"/>
@@ -272,73 +272,57 @@ export default function StorefrontPage() {
           })}
         </div>
 
-        {/* ─ Subcategory pills (SHOPPER) ─ */}
-        {activeMain === 'shopper' && (
-          <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, padding: '18px 20px', marginBottom: 28 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-5)', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 12 }}>Linee</div>
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-              {SHOPPER_SUBCATS.map(s => {
-                const count = CATALOG_ITEMS.filter(p => p.subCat === s.key).length
-                const isOn = activeSub === s.key
-                return (
-                  <button
-                    key={s.key}
-                    onClick={() => setActiveSub(isOn ? null : s.key)}
-                    style={{
-                      padding: '7px 14px', borderRadius: 100, fontSize: 13, fontWeight: 600,
-                      fontFamily: 'var(--f)', cursor: 'pointer', transition: 'all .15s',
-                      border: isOn ? '2px solid var(--accent)' : '1.5px solid var(--border-2)',
-                      background: isOn ? 'var(--accent)' : 'var(--card)',
-                      color: isOn ? '#fff' : 'var(--ink-3)',
-                      display: 'inline-flex', alignItems: 'center', gap: 6,
-                    }}
-                  >
-                    {s.label}
-                    <span style={{
-                      fontSize: 11, lineHeight: 1,
-                      background: isOn ? 'rgba(255,255,255,0.22)' : 'var(--surface)',
-                      color: isOn ? '#fff' : 'var(--ink-4)',
-                      padding: '2px 6px', borderRadius: 100,
-                    }}>{count}</span>
-                  </button>
-                )
-              })}
+        {/* ─ Subcategory pills (any active main cat) ─ */}
+        {activeMain && (() => {
+          const subcats = activeMain === 'shopper' ? SHOPPER_SUBCATS : SCATOLE_SUBCATS
+          return (
+            <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, padding: '18px 20px', marginBottom: 28 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-5)', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 12 }}>
+                {activeMain === 'shopper' ? 'Linee' : 'Tipologie'}
+              </div>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                {subcats.map(s => {
+                  const count = CATALOG_ITEMS.filter(p => p.subCat === s.key).length
+                  const isOn = activeSub === s.key
+                  return (
+                    <button
+                      key={s.key}
+                      onClick={() => setActiveSub(isOn ? null : s.key)}
+                      style={{
+                        padding: '7px 14px', borderRadius: 100, fontSize: 13, fontWeight: 600,
+                        fontFamily: 'var(--f)', cursor: 'pointer', transition: 'all .15s',
+                        border: isOn ? '2px solid var(--accent)' : '1.5px solid var(--border-2)',
+                        background: isOn ? 'var(--accent)' : 'var(--card)',
+                        color: isOn ? '#fff' : 'var(--ink-3)',
+                        display: 'inline-flex', alignItems: 'center', gap: 6,
+                      }}
+                    >
+                      {s.label}
+                      <span style={{
+                        fontSize: 11, lineHeight: 1,
+                        background: isOn ? 'rgba(255,255,255,0.22)' : 'var(--surface)',
+                        color: isOn ? '#fff' : 'var(--ink-4)',
+                        padding: '2px 6px', borderRadius: 100,
+                      }}>{count}</span>
+                    </button>
+                  )
+                })}
+              </div>
             </div>
-          </div>
-        )}
-
-        {/* ─ SCATOLE coming soon ─ */}
-        {activeMain === 'scatole' && (
-          <div style={{ textAlign: 'center', padding: '52px 24px', background: 'var(--surface)', borderRadius: 16, border: '1.5px dashed var(--border-2)', marginBottom: 28 }}>
-            <svg width="48" height="48" fill="none" stroke="var(--ink-4)" strokeWidth="1.4" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: 16 }}>
-              <polyline points="21 8 21 21 3 21 3 8"/>
-              <rect x="1" y="3" width="22" height="5"/>
-              <line x1="10" y1="12" x2="14" y2="12"/>
-            </svg>
-            <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--ink)', marginBottom: 8, letterSpacing: '-0.3px' }}>Scatole — In arrivo</div>
-            <div style={{ fontSize: 14, color: 'var(--ink-4)', maxWidth: 400, margin: '0 auto', lineHeight: 1.7 }}>
-              Stiamo preparando il catalogo completo di scatole, fustellati e packaging rigido.<br/>
-              Nel frattempo contattaci per un preventivo su misura.
-            </div>
-            <button
-              onClick={() => window.dispatchEvent(new CustomEvent('open-preventivo'))}
-              style={{ marginTop: 24, padding: '12px 28px', background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 700, fontFamily: 'var(--f)', cursor: 'pointer', boxShadow: 'var(--shadow-accent)' }}
-            >
-              Richiedi preventivo →
-            </button>
-          </div>
-        )}
+          )
+        })()}
 
         {/* ─ Prompt to pick subcategory ─ */}
-        {activeMain === 'shopper' && !activeSub && (
+        {activeMain && !activeSub && (
           <div style={{ textAlign: 'center', padding: '28px 24px', color: 'var(--ink-4)', fontSize: 13.5 }}>
-            Scegli una linea per vedere i prodotti disponibili
+            Scegli una tipologia per vedere i prodotti disponibili
           </div>
         )}
 
         {/* ─ Product cards ─ */}
-        {activeMain === 'shopper' && activeSub && (() => {
+        {activeMain && activeSub && (() => {
           const items = CATALOG_ITEMS.filter(p => p.subCat === activeSub)
+          const isBox = activeMain === 'scatole'
           return (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(200px,1fr))', gap: 14 }}>
               {items.map((p, i) => (
@@ -364,11 +348,19 @@ export default function StorefrontPage() {
                   }}
                 >
                   <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(232,114,26,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <svg width="20" height="20" fill="none" stroke="#e8721a" strokeWidth="1.8" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
-                      <line x1="3" y1="6" x2="21" y2="6"/>
-                      <path d="M16 10a4 4 0 01-8 0"/>
-                    </svg>
+                    {isBox ? (
+                      <svg width="20" height="20" fill="none" stroke="#e8721a" strokeWidth="1.8" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="21 8 21 21 3 21 3 8"/>
+                        <rect x="1" y="3" width="22" height="5"/>
+                        <line x1="10" y1="12" x2="14" y2="12"/>
+                      </svg>
+                    ) : (
+                      <svg width="20" height="20" fill="none" stroke="#e8721a" strokeWidth="1.8" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <path d="M16 10a4 4 0 01-8 0"/>
+                      </svg>
+                    )}
                   </div>
                   <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.35, flex: 1 }}>{p.name}</div>
                   <button
