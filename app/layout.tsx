@@ -7,6 +7,7 @@ import PageTransition from '@/components/PageTransition'
 import Screensaver from '@/components/Screensaver'
 import PreventivoDrawer from '@/components/PreventivoDrawer'
 import { SnowEffect } from '@/components/SnowEffect'
+import { OrbChat } from '@/components/OrbChat'
 
 export const metadata: Metadata = {
   title: 'Briopack — Packaging su Misura',
@@ -39,6 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Screensaver />
           <PreventivoDrawer />
           <SnowEffect />
+          <OrbChat />
         </CartProvider>
       </body>
     </html>

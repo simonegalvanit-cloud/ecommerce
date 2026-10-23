@@ -166,6 +166,7 @@ export default function ConfigurePage() {
   const [qtyInput, setQtyInput]         = useState('')
   const [infoModal, setInfoModal]       = useState<'digital' | 'hot-foil' | null>(null)
   const [addedFlash, setAddedFlash]     = useState(false)
+  const [snapToast, setSnapToast]       = useState<{ from: number; to: number } | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
 
   const selectedSize  = spec && sizeIdx !== null ? spec.sizes[sizeIdx] : null
@@ -517,6 +518,19 @@ export default function ConfigurePage() {
                   <input type="checkbox" checked={artworkLater} onChange={e => { setArtworkLater(e.target.checked); if (e.target.checked) setFileName(null) }} style={{ display: 'none' }} />
                   Invierò l&apos;artwork in un secondo momento
                 </label>
+                {artworkLater && (
+                  <div style={{
+                    marginTop: 11, padding: '13px 15px', borderRadius: 11,
+                    background: 'rgba(232,114,26,0.05)', border: '1px solid rgba(232,114,26,0.18)',
+                  }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)', marginBottom: 7 }}>Come funziona</div>
+                    <div style={{ fontSize: 12.5, color: 'var(--ink-3)', lineHeight: 1.72, display: 'flex', flexDirection: 'column', gap: 5 }}>
+                      <div>📧 Dopo la conferma dell&apos;ordine il team ti invierà via email le istruzioni per caricare il file.</div>
+                      <div>📐 Formati accettati: <strong>PDF vettoriale, AI, EPS, SVG</strong> oppure PNG/JPG a min. 300 dpi.</div>
+                      <div>✅ La produzione inizia solo dopo l&apos;approvazione della bozza grafica da parte tua.</div>
+                    </div>
+                  </div>
+                )}
               </>
             )}
 
@@ -548,6 +562,11 @@ export default function ConfigurePage() {
                       onBlur={() => {
                         const raw = parseInt(qtyInput) || moq
                         const snapped = Math.max(moq, Math.round(raw / moq) * moq)
+                        if (snapped !== raw && raw > 0) {
+                          setSnapToast({ from: raw, to: snapped })
+                          clearTimeout((window as unknown as Record<string, ReturnType<typeof setTimeout>>).__snapTimer)
+                          ;(window as unknown as Record<string, ReturnType<typeof setTimeout>>).__snapTimer = setTimeout(() => setSnapToast(null), 4500)
+                        }
                         setQty(snapped)
                         setQtyInput(String(snapped))
                       }}
@@ -571,6 +590,22 @@ export default function ConfigurePage() {
                 <div style={{ fontSize: 12, color: 'var(--ink-5)' }}>
                   Minimo {moq.toLocaleString('it-IT')} pz · multipli di {moq.toLocaleString('it-IT')} pz · digita una quantità o usa i tasti
                 </div>
+                {snapToast && (
+                  <div style={{
+                    marginTop: 10, padding: '9px 14px', borderRadius: 10,
+                    background: 'rgba(232,114,26,0.08)', border: '1px solid rgba(232,114,26,0.25)',
+                    fontSize: 12.5, color: 'var(--ink-3)', lineHeight: 1.5,
+                    display: 'flex', alignItems: 'flex-start', gap: 8,
+                    animation: 'snap-in .18s ease',
+                  }}>
+                    <span style={{ color: 'var(--accent)', fontSize: 14, flexShrink: 0, marginTop: 1 }}>↕</span>
+                    <span>
+                      Quantità arrotondata da <strong>{snapToast.from.toLocaleString('it-IT')}</strong> a{' '}
+                      <strong style={{ color: 'var(--accent)' }}>{snapToast.to.toLocaleString('it-IT')} pz</strong>
+                      {' '}— deve essere un multiplo di {moq.toLocaleString('it-IT')} pz
+                    </span>
+                  </div>
+                )}
               </>
             )}
 
@@ -687,6 +722,10 @@ export default function ConfigurePage() {
       <style>{`
         @media (max-width: 760px) {
           .cfg-two-col { grid-template-columns: 1fr !important; }
+        }
+        @keyframes snap-in {
+          from { opacity: 0; transform: translateY(-4px); }
+          to   { opacity: 1; transform: translateY(0); }
         }
       `}</style>
     </>

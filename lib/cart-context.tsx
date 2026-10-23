@@ -166,7 +166,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const removeItem = useCallback((id: string) => setCart(prev => prev.filter(i => i.id !== id)), [])
 
   const updateQty = useCallback((id: string, delta: number) =>
-    setCart(prev => prev.map(i => i.id === id ? { ...i, qty: Math.max(1, i.qty + delta) } : i)), [])
+    setCart(prev => prev.map(i => i.id === id ? { ...i, qty: Math.max(i.moq || 1, i.qty + delta) } : i)), [])
 
   const clearCart = useCallback(() => {
     setCart([])

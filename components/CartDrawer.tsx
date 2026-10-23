@@ -1,9 +1,41 @@
 'use client'
-import { useCart } from '@/lib/cart-context'
+import { useState, useEffect } from 'react'
+import { useCart, CartItem } from '@/lib/cart-context'
 import { useRouter } from 'next/navigation'
 
 function fmt(n: number) {
   return n.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
+
+function QtyInput({ item, updateQty }: { item: CartItem; updateQty: (id: string, delta: number) => void }) {
+  const moq = item.moq || 1
+  const [val, setVal] = useState(String(item.qty))
+
+  useEffect(() => { setVal(String(item.qty)) }, [item.qty])
+
+  return (
+    <input
+      type="text"
+      inputMode="numeric"
+      value={val}
+      onChange={e => setVal(e.target.value.replace(/[^0-9]/g, ''))}
+      onBlur={() => {
+        const raw = parseInt(val) || moq
+        const snapped = Math.max(moq, Math.round(raw / moq) * moq)
+        setVal(String(snapped))
+        const delta = snapped - item.qty
+        if (delta !== 0) updateQty(item.id, delta)
+      }}
+      onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur() }}
+      style={{
+        width: 56, textAlign: 'center',
+        border: '1px solid var(--border-2)', borderRadius: 6,
+        padding: '3px 6px', fontFamily: 'var(--f)',
+        fontSize: 13, fontWeight: 600,
+        background: 'var(--surface)', color: 'var(--ink)', outline: 'none',
+      }}
+    />
+  )
 }
 
 export default function CartDrawer() {
@@ -65,21 +97,7 @@ export default function CartDrawer() {
                         aria-label="Diminuisci"
                         style={{ opacity: item.qty <= item.moq ? 0.35 : 1 }}
                       >−</button>
-                      <input
-                        key={item.qty}
-                        type="text"
-                        inputMode="numeric"
-                        defaultValue={item.qty}
-                        style={{ width: 56, textAlign: 'center', border: '1px solid var(--border-2)', borderRadius: 6, padding: '3px 6px', fontFamily: 'var(--f)', fontSize: 13, fontWeight: 600, background: 'var(--surface)', color: 'var(--ink)', outline: 'none' }}
-                        onBlur={e => {
-                          const raw = parseInt(e.target.value) || item.qty
-                          const snapped = Math.max(item.moq, Math.round(raw / item.moq) * item.moq)
-                          const delta = snapped - item.qty
-                          if (delta !== 0) updateQty(item.id, delta)
-                          e.target.value = String(snapped)
-                        }}
-                        onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur() }}
-                      />
+                      <QtyInput item={item} updateQty={updateQty} />
                       <button onClick={() => updateQty(item.id, item.moq)} aria-label="Aumenta">+</button>
                     </div>
                     <div className="cart-item-price">€{fmt(item.unitPrice * item.qty + item.setupCost)}</div>
