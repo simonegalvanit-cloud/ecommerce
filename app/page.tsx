@@ -5,6 +5,7 @@ import NavWrapper from '@/components/NavWrapper'
 import CartDrawer from '@/components/CartDrawer'
 import { useCart } from '@/lib/cart-context'
 import { MAIN_CATS, SHOPPER_SUBCATS, SCATOLE_SUBCATS, CATALOG_ITEMS, PRODUCT_SPECS } from '@/lib/products'
+import { InstagramFeed } from '@/components/InstagramFeed'
 
 const scrollRevealCSS = `.scroll-reveal{opacity:0;transform:translateY(22px);transition:opacity .55s ease,transform .55s ease}.scroll-reveal.revealed{opacity:1;transform:translateY(0)}`
 
@@ -12,7 +13,7 @@ const scrollRevealCSS = `.scroll-reveal{opacity:0;transform:translateY(22px);tra
 export default function StorefrontPage() {
   const { setCartOpen, cartCount } = useCart()
   const router = useRouter()
-  const [activeMain, setActiveMain]         = useState<string | null>(null)
+  const [activeMain, setActiveMain]         = useState<string>('shopper')
   const [activeSub,  setActiveSub]          = useState<string | null>(null)
   const [heroSearch, setHeroSearch] = useState('')
   const [heroFocused, setHeroFocused] = useState(false)
@@ -182,241 +183,199 @@ export default function StorefrontPage() {
       </section>
 
       {/* ── CATALOG ── */}
-      <section className="section" id="catalogo">
-        <div className="section-head scroll-reveal">
-          <div>
-            <div className="section-title"><span className="section-title-gradient">Catalogo Prodotti</span></div>
-          </div>
+      <section className="section" id="catalogo" style={{ paddingBottom: 72 }}>
+        {/* Header */}
+        <div className="section-head scroll-reveal" style={{ marginBottom: 32 }}>
+          <div className="section-title"><span className="section-title-gradient">Catalogo Prodotti</span></div>
         </div>
 
-        {/* ─ Main category accordion ─ */}
-        <div className="scroll-reveal" style={{ transitionDelay: '0.08s' }}>
-          {MAIN_CATS.map((mc, i) => {
-            const isActive = activeMain === mc.key
-            const subcatCount = mc.key === 'shopper' ? SHOPPER_SUBCATS.length : SCATOLE_SUBCATS.length
+        {/* ── Category selector: two image cards ── */}
+        <div className="scroll-reveal" style={{
+          display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 36,
+        }}>
+          {MAIN_CATS.map(mc => {
+            const isOn = activeMain === mc.key
             const itemCount = CATALOG_ITEMS.filter(p => p.mainCat === mc.key).length
             return (
-              <div key={mc.key}>
-                <button
-                  onClick={() => { setActiveMain(isActive ? null : mc.key); setActiveSub(null) }}
-                  style={{
-                    width: '100%', display: 'flex', alignItems: 'center', gap: 24,
-                    padding: '0', background: 'transparent', border: 'none',
-                    borderTop: i === 0 ? '1px solid var(--border)' : 'none',
-                    cursor: 'pointer', textAlign: 'left',
-                    position: 'relative', overflow: 'hidden', minHeight: 100,
-                  }}
-                >
-                  {/* Background photo (right side) */}
+              <button
+                key={mc.key}
+                onClick={() => { setActiveMain(mc.key); setActiveSub(null) }}
+                style={{
+                  position: 'relative', height: 180, borderRadius: 18, overflow: 'hidden',
+                  border: isOn ? '2.5px solid var(--accent)' : '1.5px solid var(--border)',
+                  cursor: 'pointer', padding: 0, background: 'none',
+                  transition: 'border-color .2s, box-shadow .2s',
+                  boxShadow: isOn ? '0 0 0 4px rgba(232,114,26,0.12)' : 'none',
+                }}
+              >
+                {/* Hero photo */}
+                <div style={{
+                  position: 'absolute', inset: 0,
+                  backgroundImage: `url('/hero-${mc.key}.jpg')`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: mc.key === 'shopper' ? '50% 35%' : '50% 30%',
+                  transition: 'transform .4s',
+                }} />
+                {/* Dark gradient overlay */}
+                <div style={{
+                  position: 'absolute', inset: 0,
+                  background: 'linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.18) 55%, transparent 100%)',
+                }} />
+                {/* Text */}
+                <div style={{ position: 'absolute', bottom: 18, left: 20, textAlign: 'left' }}>
+                  <div style={{ fontSize: 22, fontWeight: 900, color: '#fff', letterSpacing: '-0.5px', lineHeight: 1 }}>
+                    {mc.label}
+                  </div>
+                  <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', marginTop: 4, fontWeight: 400 }}>
+                    {itemCount} prodotti
+                  </div>
+                </div>
+                {/* Active badge */}
+                {isOn && (
                   <div style={{
-                    position: 'absolute', top: 0, right: 0, bottom: 0, width: '42%',
-                    backgroundImage: `url('/hero-${mc.key}.jpg')`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: mc.key === 'shopper' ? '50% 35%' : '50% 30%',
-                    opacity: isActive ? 1 : 0.55,
-                    transition: 'opacity .35s',
-                  }} />
-                  {/* Gradient fade: photo → background */}
-                  <div style={{
-                    position: 'absolute', top: 0, bottom: 0,
-                    right: '32%', width: '22%',
-                    background: 'linear-gradient(to right, var(--bg, #fff) 0%, transparent 100%)',
-                    pointerEvents: 'none',
-                  }} />
-
-                  {/* Content layer */}
-                  <div style={{ position: 'relative', zIndex: 2, display: 'flex', alignItems: 'center', gap: 24, width: '100%', padding: '26px 0' }}>
-                    {/* Accent line */}
-                    <div style={{
-                      width: 3, height: 44, borderRadius: 2, flexShrink: 0,
-                      background: isActive ? 'var(--accent)' : 'var(--border-2)',
-                      transition: 'background .25s',
-                    }} />
-                    {/* Label */}
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{
-                        fontSize: 'clamp(26px,3.5vw,40px)', fontWeight: 900,
-                        color: isActive ? 'var(--accent)' : 'var(--ink)',
-                        letterSpacing: '-1.2px', lineHeight: 1, transition: 'color .2s',
-                      }}>{mc.label.toUpperCase()}</div>
-                      <div style={{ fontSize: 13, color: 'var(--ink-4)', marginTop: 6, fontWeight: 400, maxWidth: 480 }}>
-                        {mc.desc}
-                      </div>
-                      <div style={{ fontSize: 12, color: isActive ? 'var(--accent)' : 'var(--ink-5)', marginTop: 8, fontWeight: 500 }}>
-                        {subcatCount} {mc.key === 'shopper' ? 'linee' : 'tipologie'} · {itemCount} prodotti
-                      </div>
-                    </div>
-                    {/* Chevron */}
-                    <svg width="20" height="20" fill="none"
-                      stroke={isActive ? 'var(--accent)' : 'var(--ink-4)'}
-                      strokeWidth="2.2" viewBox="0 0 24 24"
-                      style={{ flexShrink: 0, marginRight: 4, transform: isActive ? 'rotate(180deg)' : 'none', transition: 'transform .28s, stroke .2s' }}>
-                      <polyline points="6 9 12 15 18 9"/>
+                    position: 'absolute', top: 14, right: 14,
+                    width: 24, height: 24, borderRadius: '50%',
+                    background: 'var(--accent)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: '0 2px 8px rgba(232,114,26,0.45)',
+                  }}>
+                    <svg width="11" height="11" viewBox="0 0 10 10" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round">
+                      <path d="M2 5l2.2 2.2L8 2.5" />
                     </svg>
                   </div>
-                </button>
-
-                {/* ── Expanded panel ── */}
-                {isActive && (
-                  <div style={{ paddingBottom: 48 }}>
-                    {/* Subcategory tab bar */}
-                    <div style={{
-                      display: 'flex', overflowX: 'auto', gap: 0,
-                      borderBottom: '1px solid var(--border)', marginBottom: 32,
-                      scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch',
-                    }}>
-                      {(mc.key === 'shopper' ? SHOPPER_SUBCATS : SCATOLE_SUBCATS).map(s => {
-                        const cnt = CATALOG_ITEMS.filter(p => p.subCat === s.key).length
-                        const isOn = activeSub === s.key
-                        return (
-                          <button
-                            key={s.key}
-                            onClick={() => setActiveSub(isOn ? null : s.key)}
-                            style={{
-                              flexShrink: 0, padding: '11px 18px 13px',
-                              background: 'none', border: 'none',
-                              borderBottom: isOn ? '2.5px solid var(--accent)' : '2.5px solid transparent',
-                              marginBottom: -1,
-                              fontFamily: 'var(--f)', fontSize: 13, cursor: 'pointer',
-                              fontWeight: isOn ? 700 : 400,
-                              color: isOn ? 'var(--accent)' : 'var(--ink-3)',
-                              transition: 'color .15s, border-color .15s',
-                              whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 7,
-                            }}
-                          >
-                            {s.label}
-                            <span style={{
-                              fontSize: 10, fontWeight: 600, lineHeight: 1,
-                              padding: '2px 5px', borderRadius: 4,
-                              background: isOn ? 'rgba(232,114,26,0.12)' : 'var(--surface)',
-                              color: isOn ? 'var(--accent)' : 'var(--ink-5)',
-                              transition: 'all .15s',
-                            }}>{cnt}</span>
-                          </button>
-                        )
-                      })}
-                    </div>
-
-                    {/* Prompt */}
-                    {!activeSub && (
-                      <div style={{ textAlign: 'center', padding: '48px 0', color: 'var(--ink-5)', fontSize: 13 }}>
-                        Seleziona una {mc.key === 'shopper' ? 'linea' : 'tipologia'} qui sopra per esplorare i prodotti
-                      </div>
-                    )}
-
-                    {/* Product grid */}
-                    {activeSub && (() => {
-                      const items = CATALOG_ITEMS.filter(p => p.subCat === activeSub)
-                      const isBox = mc.key === 'scatole'
-                      const placeholderBg = isBox
-                        ? 'linear-gradient(140deg,#e4e9f0 0%,#d4dce8 100%)'
-                        : 'linear-gradient(140deg,#f7ede0 0%,#ecdcc6 100%)'
-                      const watermarkColor = isBox ? 'rgba(90,110,145,0.14)' : 'rgba(165,100,35,0.14)'
-                      return (
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(210px,1fr))', gap: 16 }}>
-                          {items.map((p, pi) => (
-                            <div
-                              key={p.key}
-                              className="scroll-reveal"
-                              style={{
-                                transitionDelay: `${pi * 0.032}s`,
-                                background: 'var(--card)', borderRadius: 16,
-                                border: '1px solid var(--border)',
-                                overflow: 'hidden',
-                                transition: 'box-shadow .22s, transform .22s',
-                              }}
-                              onMouseEnter={e => {
-                                const el = e.currentTarget as HTMLElement
-                                el.style.boxShadow = '0 10px 36px rgba(0,0,0,0.11)'
-                                el.style.transform = 'translateY(-4px)'
-                              }}
-                              onMouseLeave={e => {
-                                const el = e.currentTarget as HTMLElement
-                                el.style.boxShadow = ''
-                                el.style.transform = ''
-                              }}
-                            >
-                              {/* Placeholder image area */}
-                              <div style={{
-                                height: 164, background: placeholderBg,
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                position: 'relative',
-                              }}>
-                                <svg width="80" height="80" fill="none" stroke={watermarkColor}
-                                  strokeWidth="1" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
-                                  {isBox ? (
-                                    <><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></>
-                                  ) : (
-                                    <><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></>
-                                  )}
-                                </svg>
-                                {/* Index badge */}
-                                <div style={{
-                                  position: 'absolute', top: 12, left: 14,
-                                  fontSize: 10, fontWeight: 700, letterSpacing: '0.4px',
-                                  color: isBox ? 'rgba(70,90,125,0.45)' : 'rgba(140,80,20,0.4)',
-                                  textTransform: 'uppercase',
-                                }}>
-                                  {String(pi + 1).padStart(2, '0')}
-                                </div>
-                              </div>
-
-                              {/* Body */}
-                              {(() => {
-                                const hasSpec = PRODUCT_SPECS.some(s => s.productKey === p.key)
-                                return (
-                                  <div style={{ padding: '14px 16px 18px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-                                    <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.4 }}>{p.name}</div>
-                                    <button
-                                      onClick={() => hasSpec
-                                        ? router.push(`/configure/${p.key}`)
-                                        : window.dispatchEvent(new CustomEvent('open-preventivo'))
-                                      }
-                                      style={{
-                                        alignSelf: 'flex-start',
-                                        padding: '7px 13px', borderRadius: 8,
-                                        border: '1.5px solid rgba(232,114,26,0.45)',
-                                        background: 'transparent',
-                                        color: 'var(--accent)',
-                                        fontFamily: 'var(--f)', fontSize: 12, fontWeight: 700,
-                                        cursor: 'pointer', transition: 'all .15s',
-                                        display: 'inline-flex', alignItems: 'center', gap: 5,
-                                      }}
-                                      onMouseEnter={e => {
-                                        const el = e.currentTarget as HTMLElement
-                                        el.style.background = 'var(--accent)'
-                                        el.style.color = '#fff'
-                                        el.style.borderColor = 'var(--accent)'
-                                      }}
-                                      onMouseLeave={e => {
-                                        const el = e.currentTarget as HTMLElement
-                                        el.style.background = 'transparent'
-                                        el.style.color = 'var(--accent)'
-                                        el.style.borderColor = 'rgba(232,114,26,0.45)'
-                                      }}
-                                    >
-                                      {hasSpec ? 'Configura' : 'Richiedi preventivo'}
-                                      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.2" width="10" height="10">
-                                        <path d="M3 8h10M9 4l4 4-4 4" />
-                                      </svg>
-                                    </button>
-                                  </div>
-                                )
-                              })()}
-                            </div>
-                          ))}
-                        </div>
-                      )
-                    })()}
-                  </div>
                 )}
-
-                {/* Bottom divider */}
-                <div style={{ borderBottom: '1px solid var(--border)' }} />
-              </div>
+              </button>
             )
           })}
         </div>
+
+        {/* ── Subcategory chip strip ── */}
+        {(() => {
+          const subcats = activeMain === 'shopper' ? SHOPPER_SUBCATS : SCATOLE_SUBCATS
+          return (
+            <div style={{
+              display: 'flex', overflowX: 'auto', gap: 8, paddingBottom: 4,
+              marginBottom: 32, scrollbarWidth: 'none',
+            }}>
+              <button
+                onClick={() => setActiveSub(null)}
+                style={{
+                  flexShrink: 0, padding: '7px 14px', borderRadius: 30,
+                  border: activeSub === null ? '1.5px solid var(--accent)' : '1.5px solid var(--border)',
+                  background: activeSub === null ? 'rgba(232,114,26,0.08)' : 'var(--white)',
+                  fontFamily: 'var(--f)', fontSize: 12.5, fontWeight: activeSub === null ? 700 : 400,
+                  color: activeSub === null ? 'var(--accent)' : 'var(--ink-3)',
+                  cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all .15s',
+                }}
+              >
+                Tutti
+              </button>
+              {subcats.map(s => {
+                const cnt = CATALOG_ITEMS.filter(p => p.subCat === s.key).length
+                const isOn = activeSub === s.key
+                return (
+                  <button
+                    key={s.key}
+                    onClick={() => setActiveSub(isOn ? null : s.key)}
+                    style={{
+                      flexShrink: 0, padding: '7px 14px', borderRadius: 30,
+                      border: isOn ? '1.5px solid var(--accent)' : '1.5px solid var(--border)',
+                      background: isOn ? 'rgba(232,114,26,0.08)' : 'var(--white)',
+                      fontFamily: 'var(--f)', fontSize: 12.5, fontWeight: isOn ? 700 : 400,
+                      color: isOn ? 'var(--accent)' : 'var(--ink-3)',
+                      cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all .15s',
+                      display: 'flex', alignItems: 'center', gap: 6,
+                    }}
+                  >
+                    {s.label}
+                    <span style={{
+                      fontSize: 10, fontWeight: 600, padding: '1px 5px', borderRadius: 4,
+                      background: isOn ? 'rgba(232,114,26,0.15)' : 'var(--surface)',
+                      color: isOn ? 'var(--accent)' : 'var(--ink-5)', lineHeight: 1.4,
+                    }}>{cnt}</span>
+                  </button>
+                )
+              })}
+            </div>
+          )
+        })()}
+
+        {/* ── Product grid ── */}
+        {(() => {
+          const isBox = activeMain === 'scatole'
+          const items = CATALOG_ITEMS.filter(p =>
+            p.mainCat === activeMain && (activeSub === null || p.subCat === activeSub)
+          )
+          const placeholderBg = isBox
+            ? 'linear-gradient(140deg,#e8eef5 0%,#d8e2ed 100%)'
+            : 'linear-gradient(140deg,#faf0e6 0%,#f0e0cc 100%)'
+          const iconColor = isBox ? 'rgba(80,105,145,0.18)' : 'rgba(160,95,30,0.18)'
+          return (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(240px,1fr))', gap: 18 }}>
+              {items.map((p, pi) => {
+                const hasSpec = PRODUCT_SPECS.some(s => s.productKey === p.key)
+                const subLabel = (activeMain === 'shopper' ? SHOPPER_SUBCATS : SCATOLE_SUBCATS)
+                  .find(s => s.key === p.subCat)?.label ?? ''
+                return (
+                  <div
+                    key={p.key}
+                    className="scroll-reveal"
+                    style={{
+                      transitionDelay: `${pi * 0.028}s`,
+                      background: 'var(--white)', borderRadius: 16,
+                      border: '1px solid var(--border)', overflow: 'hidden',
+                      display: 'flex', flexDirection: 'column',
+                      transition: 'box-shadow .2s, transform .2s',
+                    }}
+                    onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.boxShadow = '0 8px 32px rgba(0,0,0,0.10)'; el.style.transform = 'translateY(-3px)' }}
+                    onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.boxShadow = ''; el.style.transform = '' }}
+                  >
+                    {/* Image / placeholder */}
+                    <div style={{ height: 196, background: placeholderBg, position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <svg width="72" height="72" fill="none" stroke={iconColor} strokeWidth="1" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                        {isBox ? (
+                          <><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></>
+                        ) : (
+                          <><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></>
+                        )}
+                      </svg>
+                      {/* Subcategory chip on image */}
+                      {activeSub === null && (
+                        <div style={{
+                          position: 'absolute', bottom: 12, left: 12,
+                          fontSize: 10, fontWeight: 600, padding: '3px 8px', borderRadius: 20,
+                          background: 'rgba(255,255,255,0.82)', color: 'var(--ink-3)',
+                          backdropFilter: 'blur(4px)', letterSpacing: '0.2px',
+                        }}>{subLabel}</div>
+                      )}
+                    </div>
+                    {/* Body */}
+                    <div style={{ padding: '14px 16px 16px', display: 'flex', flexDirection: 'column', flex: 1, gap: 12 }}>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.4, flex: 1 }}>{p.name}</div>
+                      <button
+                        onClick={() => hasSpec
+                          ? router.push(`/configure/${p.key}`)
+                          : window.dispatchEvent(new CustomEvent('open-preventivo'))
+                        }
+                        style={{
+                          width: '100%', padding: '9px 0', borderRadius: 9,
+                          border: '1.5px solid rgba(232,114,26,0.4)',
+                          background: 'transparent', color: 'var(--accent)',
+                          fontFamily: 'var(--f)', fontSize: 12.5, fontWeight: 700,
+                          cursor: 'pointer', transition: 'all .15s',
+                        }}
+                        onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.background = 'var(--accent)'; el.style.color = '#fff'; el.style.borderColor = 'var(--accent)' }}
+                        onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.background = 'transparent'; el.style.color = 'var(--accent)'; el.style.borderColor = 'rgba(232,114,26,0.4)' }}
+                      >
+                        {hasSpec ? 'Configura' : 'Richiedi preventivo'}
+                      </button>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )
+        })()}
       </section>
 
       {/* ── ECO BAND ── */}
@@ -470,6 +429,11 @@ export default function StorefrontPage() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* ── INSTAGRAM ── */}
+      <div className="section" style={{ paddingTop: 0 }}>
+        <InstagramFeed />
       </div>
 
       {/* ── FOOTER ── */}
