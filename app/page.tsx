@@ -201,23 +201,6 @@ export default function StorefrontPage() {
 
       {/* ── CATALOG ZONE ── */}
       <div className="catalog-zone">
-        <div className="catalog-searchbar">
-          <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-          <input
-            type="text"
-            placeholder="Cerca prodotti, es. shopper kraft, scatola pizza…"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
-          {search && (
-            <button className="catalog-clear" onClick={() => setSearch('')} aria-label="Cancella ricerca">
-              <svg width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
-            </button>
-          )}
-          <button className="catalog-search-btn" aria-label="Cerca">
-            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-          </button>
-        </div>
         <div className="catalog-cats">
           {CATEGORIES.map(c => {
             const count = c.key === 'all' ? PRODUCTS.length : PRODUCTS.filter(p => p.catKey === c.key).length
