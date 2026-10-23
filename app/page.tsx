@@ -214,42 +214,56 @@ export default function StorefrontPage() {
                   onClick={() => { setActiveMain(isActive ? null : mc.key); setActiveSub(null) }}
                   style={{
                     width: '100%', display: 'flex', alignItems: 'center', gap: 24,
-                    padding: '26px 0', background: 'transparent', border: 'none',
+                    padding: '0', background: 'transparent', border: 'none',
                     borderTop: i === 0 ? '1px solid var(--border)' : 'none',
                     cursor: 'pointer', textAlign: 'left',
+                    position: 'relative', overflow: 'hidden', minHeight: 100,
                   }}
                 >
-                  {/* Accent line */}
+                  {/* Background photo (right side) */}
                   <div style={{
-                    width: 3, height: 40, borderRadius: 2, flexShrink: 0,
-                    background: isActive ? 'var(--accent)' : 'var(--border-2)',
-                    transition: 'background .25s',
+                    position: 'absolute', top: 0, right: 0, bottom: 0, width: '42%',
+                    backgroundImage: `url('/hero-${mc.key}.jpg')`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: mc.key === 'shopper' ? '50% 35%' : '50% 30%',
+                    opacity: isActive ? 1 : 0.55,
+                    transition: 'opacity .35s',
                   }} />
-                  {/* Label */}
-                  <div style={{ flex: 1 }}>
+                  {/* Gradient fade: photo → background */}
+                  <div style={{
+                    position: 'absolute', top: 0, bottom: 0,
+                    right: '32%', width: '22%',
+                    background: 'linear-gradient(to right, var(--bg, #fff) 0%, transparent 100%)',
+                    pointerEvents: 'none',
+                  }} />
+
+                  {/* Content layer */}
+                  <div style={{ position: 'relative', zIndex: 2, display: 'flex', alignItems: 'center', gap: 24, width: '100%', padding: '26px 0' }}>
+                    {/* Accent line */}
                     <div style={{
-                      fontSize: 'clamp(26px,3.5vw,40px)', fontWeight: 900,
-                      color: isActive ? 'var(--accent)' : 'var(--ink)',
-                      letterSpacing: '-1.2px', lineHeight: 1, transition: 'color .2s',
-                    }}>{mc.label.toUpperCase()}</div>
-                    <div style={{ fontSize: 13, color: 'var(--ink-4)', marginTop: 6, fontWeight: 400 }}>
-                      {mc.desc}
-                    </div>
-                  </div>
-                  {/* Stats + chevron */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 28, flexShrink: 0 }}>
-                    <div style={{ textAlign: 'right', display: 'none' }} className="cat-stats-desktop">
-                      <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--ink-5)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                        {subcatCount} {mc.key === 'shopper' ? 'linee' : 'tipologie'}
+                      width: 3, height: 44, borderRadius: 2, flexShrink: 0,
+                      background: isActive ? 'var(--accent)' : 'var(--border-2)',
+                      transition: 'background .25s',
+                    }} />
+                    {/* Label */}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{
+                        fontSize: 'clamp(26px,3.5vw,40px)', fontWeight: 900,
+                        color: isActive ? 'var(--accent)' : 'var(--ink)',
+                        letterSpacing: '-1.2px', lineHeight: 1, transition: 'color .2s',
+                      }}>{mc.label.toUpperCase()}</div>
+                      <div style={{ fontSize: 13, color: 'var(--ink-4)', marginTop: 6, fontWeight: 400, maxWidth: 480 }}>
+                        {mc.desc}
                       </div>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: isActive ? 'var(--accent)' : 'var(--ink-3)', marginTop: 2 }}>
-                        {itemCount} prodotti
+                      <div style={{ fontSize: 12, color: isActive ? 'var(--accent)' : 'var(--ink-5)', marginTop: 8, fontWeight: 500 }}>
+                        {subcatCount} {mc.key === 'shopper' ? 'linee' : 'tipologie'} · {itemCount} prodotti
                       </div>
                     </div>
+                    {/* Chevron */}
                     <svg width="20" height="20" fill="none"
                       stroke={isActive ? 'var(--accent)' : 'var(--ink-4)'}
                       strokeWidth="2.2" viewBox="0 0 24 24"
-                      style={{ transform: isActive ? 'rotate(180deg)' : 'none', transition: 'transform .28s, stroke .2s' }}>
+                      style={{ flexShrink: 0, marginRight: 4, transform: isActive ? 'rotate(180deg)' : 'none', transition: 'transform .28s, stroke .2s' }}>
                       <polyline points="6 9 12 15 18 9"/>
                     </svg>
                   </div>
