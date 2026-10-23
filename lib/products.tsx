@@ -852,3 +852,68 @@ export const SCATOLE_SUBCATS: SubCat[] = [
   { key: 'portabottiglia-goffrate', label: 'Portabottiglia Goffrate', mainCat: 'scatole' },
   { key: 'cesti-regalo',            label: 'Scatole e Cesti Regalo',  mainCat: 'scatole' },
 ]
+
+// ── PRODUCT SPECS (configurable products) ───────────────────────────────────
+
+export interface SpecSize {
+  format: string   // e.g. "18+8×24"
+  weightGr: number
+  moq: number
+}
+
+export interface SpecColor {
+  key: string
+  label: string
+  hex: string
+  ref?: string
+}
+
+export interface FoilColor {
+  key: string
+  label: string
+  hex: string
+}
+
+export interface ProductSpec {
+  productKey: string
+  name: string
+  subtitle: string
+  sizes: SpecSize[]
+  colors: SpecColor[]
+  foilColors: FoilColor[]
+}
+
+export const PRODUCT_SPECS: ProductSpec[] = [
+  {
+    productKey: 'neutro-maniglia-piatta',
+    name: 'Shopper Maniglia Piatta',
+    subtitle: 'Carta avana, bianca e sealing avana',
+    sizes: [
+      { format: '18+8×24',  weightGr: 80,  moq: 250 },
+      { format: '22+10×29', weightGr: 80,  moq: 250 },
+      { format: '27+12×37', weightGr: 90,  moq: 350 },
+      { format: '32+13×41', weightGr: 90,  moq: 300 },
+      { format: '32+17×45', weightGr: 90,  moq: 250 },
+      { format: '45+15×49', weightGr: 110, moq: 200 },
+    ],
+    colors: [
+      { key: 'avana',        label: 'Avana',        hex: '#C4956A', ref: '29' },
+      { key: 'bianca',       label: 'Bianca',       hex: '#FFFFFF', ref: '30' },
+      { key: 'sealing-avana',label: 'Sealing Avana',hex: '#D4AA82', ref: '31' },
+    ],
+    foilColors: [
+      { key: 'oro',     label: 'Oro',     hex: '#C9A227' },
+      { key: 'argento', label: 'Argento', hex: '#A8A9AD' },
+      { key: 'rame',    label: 'Rame',    hex: '#B87333' },
+      { key: 'bianco',  label: 'Bianco',  hex: '#F2F2F2' },
+      { key: 'nero',    label: 'Nero',    hex: '#1C1C1C' },
+      { key: 'rosso',   label: 'Rosso',   hex: '#C0392B' },
+      { key: 'bordo',   label: 'Bordò',   hex: '#722F37' },
+      { key: 'verde',   label: 'Verde',   hex: '#2E7D32' },
+    ],
+  },
+]
+
+export function getProductSpec(productKey: string): ProductSpec | undefined {
+  return PRODUCT_SPECS.find(s => s.productKey === productKey)
+}
