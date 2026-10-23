@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next'
-import { PRODUCTS } from '@/lib/products'
+import { CATALOG_ITEMS } from '@/lib/products'
 
 const BASE = 'https://briopack.com'
 
@@ -15,7 +15,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/privacy`,     lastModified: now, changeFrequency: 'yearly',  priority: 0.2 },
   ]
 
-  const productPages: MetadataRoute.Sitemap = PRODUCTS.map(p => ({
+  const productPages: MetadataRoute.Sitemap = CATALOG_ITEMS.map(p => ({
     url: `${BASE}/products/${p.key}`,
     lastModified: now,
     changeFrequency: 'monthly',
