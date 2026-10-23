@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import NavWrapper from '@/components/NavWrapper'
 import CartDrawer from '@/components/CartDrawer'
 import { useCart } from '@/lib/cart-context'
-import { PRODUCTS, MAIN_CATS, SHOPPER_SUBCATS, CATALOG_ITEMS } from '@/lib/products'
+import { PRODUCTS, MAIN_CATS, SHOPPER_SUBCATS, SCATOLE_SUBCATS, CATALOG_ITEMS } from '@/lib/products'
 
 function fmt(n: number) { return n.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
 
@@ -199,198 +199,202 @@ export default function StorefrontPage() {
         <div className="section-head scroll-reveal">
           <div>
             <div className="section-title"><span className="section-title-gradient">Catalogo Prodotti</span></div>
-            <div className="section-sub">Seleziona una categoria per esplorare i prodotti disponibili</div>
           </div>
         </div>
 
-        {/* ─ Main category cards ─ */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: 16, marginBottom: 28 }}>
+        {/* ─ Main category accordion ─ */}
+        <div className="scroll-reveal" style={{ transitionDelay: '0.08s' }}>
           {MAIN_CATS.map((mc, i) => {
             const isActive = activeMain === mc.key
+            const subcatCount = mc.key === 'shopper' ? SHOPPER_SUBCATS.length : SCATOLE_SUBCATS.length
+            const itemCount = CATALOG_ITEMS.filter(p => p.mainCat === mc.key).length
             return (
-              <button
-                key={mc.key}
-                className="scroll-reveal"
-                style={{ transitionDelay: `${i * 0.08}s` }}
-                onClick={() => {
-                  if (mc.comingSoon) return
-                  setActiveMain(isActive ? null : mc.key)
-                  setActiveSub(null)
-                }}
-                disabled={mc.comingSoon}
-              >
-                <div style={{
-                  border: isActive ? '2.5px solid var(--accent)' : '1.5px solid var(--border-2)',
-                  background: isActive ? 'rgba(232,114,26,0.04)' : 'var(--card)',
-                  borderRadius: 16, padding: '24px 28px', textAlign: 'left', transition: 'all .2s',
-                  display: 'flex', alignItems: 'center', gap: 20,
-                  boxShadow: isActive ? '0 0 0 4px rgba(232,114,26,0.08)' : 'var(--shadow-sm)',
-                  opacity: mc.comingSoon ? 0.6 : 1, cursor: mc.comingSoon ? 'default' : 'pointer',
-                }}>
+              <div key={mc.key}>
+                <button
+                  onClick={() => { setActiveMain(isActive ? null : mc.key); setActiveSub(null) }}
+                  style={{
+                    width: '100%', display: 'flex', alignItems: 'center', gap: 24,
+                    padding: '26px 0', background: 'transparent', border: 'none',
+                    borderTop: i === 0 ? '1px solid var(--border)' : 'none',
+                    cursor: 'pointer', textAlign: 'left',
+                  }}
+                >
+                  {/* Accent line */}
                   <div style={{
-                    width: 52, height: 52, borderRadius: 13, flexShrink: 0,
-                    background: isActive ? 'rgba(232,114,26,0.1)' : 'var(--surface)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    border: `1.5px solid ${isActive ? 'rgba(232,114,26,0.3)' : 'var(--border)'}`,
-                  }}>
-                    {mc.key === 'shopper' ? (
-                      <svg width="26" height="26" fill="none" stroke={isActive ? '#e8721a' : 'var(--ink-3)'} strokeWidth="1.7" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
-                        <line x1="3" y1="6" x2="21" y2="6"/>
-                        <path d="M16 10a4 4 0 01-8 0"/>
-                      </svg>
-                    ) : (
-                      <svg width="26" height="26" fill="none" stroke="var(--ink-4)" strokeWidth="1.7" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="21 8 21 21 3 21 3 8"/>
-                        <rect x="1" y="3" width="22" height="5"/>
-                        <line x1="10" y1="12" x2="14" y2="12"/>
-                      </svg>
-                    )}
-                  </div>
+                    width: 3, height: 40, borderRadius: 2, flexShrink: 0,
+                    background: isActive ? 'var(--accent)' : 'var(--border-2)',
+                    transition: 'background .25s',
+                  }} />
+                  {/* Label */}
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 19, fontWeight: 800, color: isActive ? 'var(--accent)' : 'var(--ink)', letterSpacing: '-0.3px', marginBottom: 4 }}>
-                      {mc.label}
+                    <div style={{
+                      fontSize: 'clamp(26px,3.5vw,40px)', fontWeight: 900,
+                      color: isActive ? 'var(--accent)' : 'var(--ink)',
+                      letterSpacing: '-1.2px', lineHeight: 1, transition: 'color .2s',
+                    }}>{mc.label.toUpperCase()}</div>
+                    <div style={{ fontSize: 13, color: 'var(--ink-4)', marginTop: 6, fontWeight: 400 }}>
+                      {mc.desc}
                     </div>
-                    <div style={{ fontSize: 12.5, color: 'var(--ink-4)', lineHeight: 1.55 }}>{mc.desc}</div>
-                    {mc.comingSoon ? (
-                      <div style={{ marginTop: 8, fontSize: 10.5, fontWeight: 700, color: 'var(--ink-4)', letterSpacing: '0.8px', textTransform: 'uppercase' }}>Prossimamente</div>
-                    ) : (
-                      <div style={{ marginTop: 8, fontSize: 12, color: isActive ? 'var(--accent)' : 'var(--ink-5)', fontWeight: 500 }}>
-                        {CATALOG_ITEMS.filter(p => p.mainCat === mc.key).length} prodotti disponibili
-                      </div>
-                    )}
                   </div>
-                  {!mc.comingSoon && (
-                    <svg width="18" height="18" fill="none" stroke={isActive ? 'var(--accent)' : 'var(--ink-4)'} strokeWidth="2.2" viewBox="0 0 24 24"
-                      style={{ flexShrink: 0, transform: isActive ? 'rotate(180deg)' : 'none', transition: 'transform .25s' }}>
+                  {/* Stats + chevron */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 28, flexShrink: 0 }}>
+                    <div style={{ textAlign: 'right', display: 'none' }} className="cat-stats-desktop">
+                      <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--ink-5)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                        {subcatCount} {mc.key === 'shopper' ? 'linee' : 'tipologie'}
+                      </div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: isActive ? 'var(--accent)' : 'var(--ink-3)', marginTop: 2 }}>
+                        {itemCount} prodotti
+                      </div>
+                    </div>
+                    <svg width="20" height="20" fill="none"
+                      stroke={isActive ? 'var(--accent)' : 'var(--ink-4)'}
+                      strokeWidth="2.2" viewBox="0 0 24 24"
+                      style={{ transform: isActive ? 'rotate(180deg)' : 'none', transition: 'transform .28s, stroke .2s' }}>
                       <polyline points="6 9 12 15 18 9"/>
                     </svg>
-                  )}
-                </div>
-              </button>
+                  </div>
+                </button>
+
+                {/* ── Expanded panel ── */}
+                {isActive && (
+                  <div style={{ paddingBottom: 48 }}>
+                    {/* Subcategory tab bar */}
+                    <div style={{
+                      display: 'flex', overflowX: 'auto', gap: 0,
+                      borderBottom: '1px solid var(--border)', marginBottom: 32,
+                      scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch',
+                    }}>
+                      {(mc.key === 'shopper' ? SHOPPER_SUBCATS : SCATOLE_SUBCATS).map(s => {
+                        const cnt = CATALOG_ITEMS.filter(p => p.subCat === s.key).length
+                        const isOn = activeSub === s.key
+                        return (
+                          <button
+                            key={s.key}
+                            onClick={() => setActiveSub(isOn ? null : s.key)}
+                            style={{
+                              flexShrink: 0, padding: '11px 18px 13px',
+                              background: 'none', border: 'none',
+                              borderBottom: isOn ? '2.5px solid var(--accent)' : '2.5px solid transparent',
+                              marginBottom: -1,
+                              fontFamily: 'var(--f)', fontSize: 13, cursor: 'pointer',
+                              fontWeight: isOn ? 700 : 400,
+                              color: isOn ? 'var(--accent)' : 'var(--ink-3)',
+                              transition: 'color .15s, border-color .15s',
+                              whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 7,
+                            }}
+                          >
+                            {s.label}
+                            <span style={{
+                              fontSize: 10, fontWeight: 600, lineHeight: 1,
+                              padding: '2px 5px', borderRadius: 4,
+                              background: isOn ? 'rgba(232,114,26,0.12)' : 'var(--surface)',
+                              color: isOn ? 'var(--accent)' : 'var(--ink-5)',
+                              transition: 'all .15s',
+                            }}>{cnt}</span>
+                          </button>
+                        )
+                      })}
+                    </div>
+
+                    {/* Prompt */}
+                    {!activeSub && (
+                      <div style={{ textAlign: 'center', padding: '48px 0', color: 'var(--ink-5)', fontSize: 13 }}>
+                        Seleziona una {mc.key === 'shopper' ? 'linea' : 'tipologia'} qui sopra per esplorare i prodotti
+                      </div>
+                    )}
+
+                    {/* Product grid */}
+                    {activeSub && (() => {
+                      const items = CATALOG_ITEMS.filter(p => p.subCat === activeSub)
+                      const isBox = mc.key === 'scatole'
+                      const placeholderBg = isBox
+                        ? 'linear-gradient(140deg,#e4e9f0 0%,#d4dce8 100%)'
+                        : 'linear-gradient(140deg,#f7ede0 0%,#ecdcc6 100%)'
+                      const watermarkColor = isBox ? 'rgba(90,110,145,0.14)' : 'rgba(165,100,35,0.14)'
+                      return (
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(210px,1fr))', gap: 16 }}>
+                          {items.map((p, pi) => (
+                            <div
+                              key={p.key}
+                              className="scroll-reveal"
+                              style={{
+                                transitionDelay: `${pi * 0.032}s`,
+                                background: 'var(--card)', borderRadius: 16,
+                                border: '1px solid var(--border)',
+                                overflow: 'hidden',
+                                transition: 'box-shadow .22s, transform .22s',
+                              }}
+                              onMouseEnter={e => {
+                                const el = e.currentTarget as HTMLElement
+                                el.style.boxShadow = '0 10px 36px rgba(0,0,0,0.11)'
+                                el.style.transform = 'translateY(-4px)'
+                              }}
+                              onMouseLeave={e => {
+                                const el = e.currentTarget as HTMLElement
+                                el.style.boxShadow = ''
+                                el.style.transform = ''
+                              }}
+                            >
+                              {/* Placeholder image area */}
+                              <div style={{
+                                height: 164, background: placeholderBg,
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                position: 'relative',
+                              }}>
+                                <svg width="80" height="80" fill="none" stroke={watermarkColor}
+                                  strokeWidth="1" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                                  {isBox ? (
+                                    <><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></>
+                                  ) : (
+                                    <><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></>
+                                  )}
+                                </svg>
+                                {/* Index badge */}
+                                <div style={{
+                                  position: 'absolute', top: 12, left: 14,
+                                  fontSize: 10, fontWeight: 700, letterSpacing: '0.4px',
+                                  color: isBox ? 'rgba(70,90,125,0.45)' : 'rgba(140,80,20,0.4)',
+                                  textTransform: 'uppercase',
+                                }}>
+                                  {String(pi + 1).padStart(2, '0')}
+                                </div>
+                              </div>
+
+                              {/* Body */}
+                              <div style={{ padding: '16px 18px 20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+                                <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.4 }}>{p.name}</div>
+                                <button
+                                  onClick={() => window.dispatchEvent(new CustomEvent('open-preventivo'))}
+                                  style={{
+                                    alignSelf: 'flex-start', background: 'none', border: 'none',
+                                    padding: 0, fontFamily: 'var(--f)', fontSize: 12.5,
+                                    fontWeight: 600, color: 'var(--accent)', cursor: 'pointer',
+                                    display: 'inline-flex', alignItems: 'center', gap: 5,
+                                    transition: 'gap .15s',
+                                  }}
+                                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.gap = '9px' }}
+                                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.gap = '5px' }}
+                                >
+                                  Richiedi preventivo
+                                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.2" width="11" height="11">
+                                    <path d="M3 8h10M9 4l4 4-4 4"/>
+                                  </svg>
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )
+                    })()}
+                  </div>
+                )}
+
+                {/* Bottom divider */}
+                <div style={{ borderBottom: '1px solid var(--border)' }} />
+              </div>
             )
           })}
         </div>
-
-        {/* ─ Subcategory pills (SHOPPER) ─ */}
-        {activeMain === 'shopper' && (
-          <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, padding: '18px 20px', marginBottom: 28 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-5)', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 12 }}>Linee</div>
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-              {SHOPPER_SUBCATS.map(s => {
-                const count = CATALOG_ITEMS.filter(p => p.subCat === s.key).length
-                const isOn = activeSub === s.key
-                return (
-                  <button
-                    key={s.key}
-                    onClick={() => setActiveSub(isOn ? null : s.key)}
-                    style={{
-                      padding: '7px 14px', borderRadius: 100, fontSize: 13, fontWeight: 600,
-                      fontFamily: 'var(--f)', cursor: 'pointer', transition: 'all .15s',
-                      border: isOn ? '2px solid var(--accent)' : '1.5px solid var(--border-2)',
-                      background: isOn ? 'var(--accent)' : 'var(--card)',
-                      color: isOn ? '#fff' : 'var(--ink-3)',
-                      display: 'inline-flex', alignItems: 'center', gap: 6,
-                    }}
-                  >
-                    {s.label}
-                    <span style={{
-                      fontSize: 11, lineHeight: 1,
-                      background: isOn ? 'rgba(255,255,255,0.22)' : 'var(--surface)',
-                      color: isOn ? '#fff' : 'var(--ink-4)',
-                      padding: '2px 6px', borderRadius: 100,
-                    }}>{count}</span>
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* ─ SCATOLE coming soon ─ */}
-        {activeMain === 'scatole' && (
-          <div style={{ textAlign: 'center', padding: '52px 24px', background: 'var(--surface)', borderRadius: 16, border: '1.5px dashed var(--border-2)', marginBottom: 28 }}>
-            <svg width="48" height="48" fill="none" stroke="var(--ink-4)" strokeWidth="1.4" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: 16 }}>
-              <polyline points="21 8 21 21 3 21 3 8"/>
-              <rect x="1" y="3" width="22" height="5"/>
-              <line x1="10" y1="12" x2="14" y2="12"/>
-            </svg>
-            <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--ink)', marginBottom: 8, letterSpacing: '-0.3px' }}>Scatole — In arrivo</div>
-            <div style={{ fontSize: 14, color: 'var(--ink-4)', maxWidth: 400, margin: '0 auto', lineHeight: 1.7 }}>
-              Stiamo preparando il catalogo completo di scatole, fustellati e packaging rigido.<br/>
-              Nel frattempo contattaci per un preventivo su misura.
-            </div>
-            <button
-              onClick={() => window.dispatchEvent(new CustomEvent('open-preventivo'))}
-              style={{ marginTop: 24, padding: '12px 28px', background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 700, fontFamily: 'var(--f)', cursor: 'pointer', boxShadow: 'var(--shadow-accent)' }}
-            >
-              Richiedi preventivo →
-            </button>
-          </div>
-        )}
-
-        {/* ─ Prompt to pick subcategory ─ */}
-        {activeMain === 'shopper' && !activeSub && (
-          <div style={{ textAlign: 'center', padding: '28px 24px', color: 'var(--ink-4)', fontSize: 13.5 }}>
-            Scegli una linea per vedere i prodotti disponibili
-          </div>
-        )}
-
-        {/* ─ Product cards ─ */}
-        {activeMain === 'shopper' && activeSub && (() => {
-          const items = CATALOG_ITEMS.filter(p => p.subCat === activeSub)
-          return (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(200px,1fr))', gap: 14 }}>
-              {items.map((p, i) => (
-                <div
-                  key={p.key}
-                  className="scroll-reveal"
-                  style={{
-                    transitionDelay: `${i * 0.04}s`,
-                    background: 'var(--card)', borderRadius: 14,
-                    border: '1.5px solid var(--border)',
-                    padding: '22px 18px', display: 'flex', flexDirection: 'column', gap: 14,
-                    transition: 'box-shadow .2s, border-color .2s',
-                  }}
-                  onMouseEnter={e => {
-                    const el = e.currentTarget as HTMLElement
-                    el.style.boxShadow = '0 4px 20px rgba(0,0,0,0.09)'
-                    el.style.borderColor = 'rgba(232,114,26,0.35)'
-                  }}
-                  onMouseLeave={e => {
-                    const el = e.currentTarget as HTMLElement
-                    el.style.boxShadow = ''
-                    el.style.borderColor = ''
-                  }}
-                >
-                  <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(232,114,26,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <svg width="20" height="20" fill="none" stroke="#e8721a" strokeWidth="1.8" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
-                      <line x1="3" y1="6" x2="21" y2="6"/>
-                      <path d="M16 10a4 4 0 01-8 0"/>
-                    </svg>
-                  </div>
-                  <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.35, flex: 1 }}>{p.name}</div>
-                  <button
-                    onClick={() => window.dispatchEvent(new CustomEvent('open-preventivo'))}
-                    style={{
-                      padding: '8px 14px', background: 'transparent',
-                      border: '1.5px solid rgba(232,114,26,0.5)', color: 'var(--accent)',
-                      borderRadius: 8, fontSize: 12.5, fontWeight: 700,
-                      fontFamily: 'var(--f)', cursor: 'pointer', transition: 'all .15s',
-                      display: 'inline-flex', alignItems: 'center', gap: 6,
-                    }}
-                    onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.background = 'var(--accent)'; el.style.color = '#fff'; el.style.borderColor = 'var(--accent)' }}
-                    onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.background = 'transparent'; el.style.color = 'var(--accent)'; el.style.borderColor = 'rgba(232,114,26,0.5)' }}
-                  >
-                    Richiedi preventivo
-                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.2" width="11" height="11"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
-                  </button>
-                </div>
-              ))}
-            </div>
-          )
-        })()}
       </section>
 
       {/* ── ECO BAND ── */}

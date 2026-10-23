@@ -763,7 +763,7 @@ export interface CatalogItem {
 
 export const MAIN_CATS: MainCat[] = [
   { key: 'shopper', label: 'Shopper', desc: 'Shopper in carta personalizzabili: neutro, fantasia, colorati, lusso, take away, e-commerce e portabottiglie.' },
-  { key: 'scatole', label: 'Scatole', desc: 'Scatole, packaging rigido e fustellati su misura per prodotti, spedizioni e confezioni regalo.', comingSoon: true },
+  { key: 'scatole', label: 'Scatole', desc: 'Scatole portabottiglia in kraft, onda e goffrate, cesti e scatole regalo su misura.' },
 ]
 
 export const SHOPPER_SUBCATS: SubCat[] = [
@@ -809,12 +809,46 @@ export const CATALOG_ITEMS: CatalogItem[] = [
   { key: 'ec-premium-envelopes',name: 'Premium E-Commerce Envelopes', mainCat: 'shopper', subCat: 'ecommerce' },
   { key: 'ec-basic-envelopes',  name: 'Basic E-Commerce Envelopes',   mainCat: 'shopper', subCat: 'ecommerce' },
   // ── PORTABOTTIGLIE ──────────────────────────────────────────────────────
-  { key: 'pb-sealing-120g',    name: 'Buste in Carta Sealing 120g',        mainCat: 'shopper', subCat: 'portabottiglie' },
-  { key: 'pb-finestra-pvc',    name: 'Sacchetti con Finestra in PVC',      mainCat: 'shopper', subCat: 'portabottiglie' },
-  { key: 'pb-sacchetti-lusso', name: 'Sacchetti Lusso',                    mainCat: 'shopper', subCat: 'portabottiglie' },
-  { key: 'pb-sacchetti-lusso-nero', name: 'Sacchetti Lusso Nero',          mainCat: 'shopper', subCat: 'portabottiglie' },
-  { key: 'pb-kraft-liscio',    name: 'Buste in Carta Kraft Liscio',        mainCat: 'shopper', subCat: 'portabottiglie' },
-  { key: 'pb-kraft-lusso',     name: 'Buste Carta Kraft Lusso',            mainCat: 'shopper', subCat: 'portabottiglie' },
-  { key: 'pb-lusso-lucida',    name: 'Buste Lusso Plastificazione Lucida', mainCat: 'shopper', subCat: 'portabottiglie' },
-  { key: 'pb-lusso-opaca',     name: 'Buste Lusso Plastificazione Opaca',  mainCat: 'shopper', subCat: 'portabottiglie' },
+  { key: 'pb-sealing-120g',         name: 'Buste in Carta Sealing 120g',        mainCat: 'shopper', subCat: 'portabottiglie' },
+  { key: 'pb-finestra-pvc',         name: 'Sacchetti con Finestra in PVC',      mainCat: 'shopper', subCat: 'portabottiglie' },
+  { key: 'pb-sacchetti-lusso',      name: 'Sacchetti Lusso',                    mainCat: 'shopper', subCat: 'portabottiglie' },
+  { key: 'pb-sacchetti-lusso-nero', name: 'Sacchetti Lusso Nero',               mainCat: 'shopper', subCat: 'portabottiglie' },
+  { key: 'pb-kraft-liscio',         name: 'Buste in Carta Kraft Liscio',        mainCat: 'shopper', subCat: 'portabottiglie' },
+  { key: 'pb-kraft-lusso',          name: 'Buste Carta Kraft Lusso',            mainCat: 'shopper', subCat: 'portabottiglie' },
+  { key: 'pb-lusso-lucida',         name: 'Buste Lusso Plastificazione Lucida', mainCat: 'shopper', subCat: 'portabottiglie' },
+  { key: 'pb-lusso-opaca',          name: 'Buste Lusso Plastificazione Opaca',  mainCat: 'shopper', subCat: 'portabottiglie' },
+  // ── SCATOLE PORTABOTTIGLIA KRAFT ────────────────────────────────────────
+  { key: 'pbk-1bott',         name: '1 Bott. Kraft Avana Liscio',            mainCat: 'scatole', subCat: 'portabottiglia-kraft' },
+  { key: 'pbk-2bott',         name: '2 Bott. Kraft Avana Liscio',            mainCat: 'scatole', subCat: 'portabottiglia-kraft' },
+  { key: 'pbk-3bott',         name: '3 Bott. Kraft Avana Liscio',            mainCat: 'scatole', subCat: 'portabottiglia-kraft' },
+  { key: 'pbk-champagne',     name: 'Champagne 1 Bott. Kraft Avana Liscio',  mainCat: 'scatole', subCat: 'portabottiglia-kraft' },
+  { key: 'pbk-magnum',        name: 'Magnum 1 Bott. Kraft Avana Liscio',     mainCat: 'scatole', subCat: 'portabottiglia-kraft' },
+  { key: 'pbk-cantinetta',    name: 'Cantinetta',                            mainCat: 'scatole', subCat: 'portabottiglia-kraft' },
+  // ── SCATOLE PORTABOTTIGLIA ONDA ─────────────────────────────────────────
+  { key: 'pbo-1bott', name: '1 Bott. Onda', mainCat: 'scatole', subCat: 'portabottiglia-onda' },
+  { key: 'pbo-2bott', name: '2 Bott. Onda', mainCat: 'scatole', subCat: 'portabottiglia-onda' },
+  { key: 'pbo-3bott', name: '3 Bott. Onda', mainCat: 'scatole', subCat: 'portabottiglia-onda' },
+  // ── SCATOLE PORTABOTTIGLIA GOFFRATE ─────────────────────────────────────
+  { key: 'pbg-1bott',          name: '1 Bott. Seta Nero',              mainCat: 'scatole', subCat: 'portabottiglia-goffrate' },
+  { key: 'pbg-2bott',          name: '2 Bott. Seta Nero',              mainCat: 'scatole', subCat: 'portabottiglia-goffrate' },
+  { key: 'pbg-3bott',          name: '3 Bott. Seta Nero',              mainCat: 'scatole', subCat: 'portabottiglia-goffrate' },
+  { key: 'pbg-bordolese',      name: '1 Bott. Seta Nero Bordolese',    mainCat: 'scatole', subCat: 'portabottiglia-goffrate' },
+  { key: 'pbg-champagne',      name: '1 Bott. Seta Nero Champagne',    mainCat: 'scatole', subCat: 'portabottiglia-goffrate' },
+  { key: 'pbg-magnum',         name: '1 Bott. Seta Nero Magnum',       mainCat: 'scatole', subCat: 'portabottiglia-goffrate' },
+  { key: 'pbg-cantinetta',     name: 'Cantinetta',                     mainCat: 'scatole', subCat: 'portabottiglia-goffrate' },
+  { key: 'pbg-gift-1bott',     name: 'Gift 1 Bott. Seta Nero',         mainCat: 'scatole', subCat: 'portabottiglia-goffrate' },
+  { key: 'pbg-gift-2bott',     name: 'Gift 2 Bott. Seta Nero',         mainCat: 'scatole', subCat: 'portabottiglia-goffrate' },
+  { key: 'pbg-gift-3bott',     name: 'Gift 3 Bott. Seta Nero',         mainCat: 'scatole', subCat: 'portabottiglia-goffrate' },
+  // ── SCATOLE E CESTI REGALO ──────────────────────────────────────────────
+  { key: 'sr-segreto-cordini', name: 'Segreto con Cordini Kraft Avana Liscio',     mainCat: 'scatole', subCat: 'cesti-regalo' },
+  { key: 'sr-portapanettone',  name: 'Portapanettone + Bott. Kraft Avana',         mainCat: 'scatole', subCat: 'cesti-regalo' },
+  { key: 'sr-segreto-kraft',   name: 'Segreto Kraft Avana Liscio',                mainCat: 'scatole', subCat: 'cesti-regalo' },
+  { key: 'sr-cesto-incastro',  name: 'Cesto a Incastro c/Maniglie Onda Avana',    mainCat: 'scatole', subCat: 'cesti-regalo' },
+]
+
+export const SCATOLE_SUBCATS: SubCat[] = [
+  { key: 'portabottiglia-kraft',    label: 'Portabottiglia Kraft',    mainCat: 'scatole' },
+  { key: 'portabottiglia-onda',     label: 'Portabottiglia Onda',     mainCat: 'scatole' },
+  { key: 'portabottiglia-goffrate', label: 'Portabottiglia Goffrate', mainCat: 'scatole' },
+  { key: 'cesti-regalo',            label: 'Scatole e Cesti Regalo',  mainCat: 'scatole' },
 ]
