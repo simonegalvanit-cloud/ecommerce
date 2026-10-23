@@ -5,7 +5,6 @@ import NavWrapper from '@/components/NavWrapper'
 import CartDrawer from '@/components/CartDrawer'
 import { useCart } from '@/lib/cart-context'
 import { MAIN_CATS, SHOPPER_SUBCATS, SCATOLE_SUBCATS, CATALOG_ITEMS, PRODUCT_SPECS } from '@/lib/products'
-import { ProductConfigurator } from '@/components/ProductConfigurator'
 
 const scrollRevealCSS = `.scroll-reveal{opacity:0;transform:translateY(22px);transition:opacity .55s ease,transform .55s ease}.scroll-reveal.revealed{opacity:1;transform:translateY(0)}`
 
@@ -15,7 +14,6 @@ export default function StorefrontPage() {
   const router = useRouter()
   const [activeMain, setActiveMain]         = useState<string | null>(null)
   const [activeSub,  setActiveSub]          = useState<string | null>(null)
-  const [configuratorKey, setConfiguratorKey] = useState<string | null>(null)
   const [heroSearch, setHeroSearch] = useState('')
   const [heroFocused, setHeroFocused] = useState(false)
   const [suggestionsOpen, setSuggestionsOpen] = useState(false)
@@ -371,7 +369,7 @@ export default function StorefrontPage() {
                                     <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.4 }}>{p.name}</div>
                                     <button
                                       onClick={() => hasSpec
-                                        ? setConfiguratorKey(p.key)
+                                        ? router.push(`/configure/${p.key}`)
                                         : window.dispatchEvent(new CustomEvent('open-preventivo'))
                                       }
                                       style={{
@@ -579,13 +577,6 @@ export default function StorefrontPage() {
       {/* ── CART DRAWER ── */}
       <CartDrawer />
 
-      {/* ── PRODUCT CONFIGURATOR ── */}
-      {configuratorKey && (
-        <ProductConfigurator
-          productKey={configuratorKey}
-          onClose={() => setConfiguratorKey(null)}
-        />
-      )}
 
     </>
   )
