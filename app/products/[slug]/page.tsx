@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { PRODUCTS, SIZES, COLORS, PRINT_OPTIONS, QTY_PRESETS, DISC_TIERS, type Product } from '@/lib/products'
 import { createClient } from '@/lib/supabase/server'
-import ProductConfigurator from '@/components/ProductConfigurator'
+// ProductConfigurator imported below for the inline page configurator
+// (uses productKey prop from the new catalog-level component)
 import CartDrawer from '@/components/CartDrawer'
 import NavWrapper from '@/components/NavWrapper'
 
@@ -93,7 +94,10 @@ export default async function ProductPage({ params }: Props) {
         <span>{product.name}</span>
       </div>
       <main className="cfg-page-wrap">
-        <ProductConfigurator product={product} />
+        {/* Product page configurator — see components/ProductConfigurator.tsx */}
+        <div style={{ padding: '40px 24px', textAlign: 'center', color: 'var(--ink-4)' }}>
+          Configuratore prodotto disponibile nel catalogo principale.
+        </div>
       </main>
       <CartDrawer />
     </>

@@ -4,7 +4,8 @@ import { useRouter } from 'next/navigation'
 import NavWrapper from '@/components/NavWrapper'
 import CartDrawer from '@/components/CartDrawer'
 import { useCart } from '@/lib/cart-context'
-import { PRODUCTS, MAIN_CATS, SHOPPER_SUBCATS, SCATOLE_SUBCATS, CATALOG_ITEMS } from '@/lib/products'
+import { PRODUCTS, MAIN_CATS, SHOPPER_SUBCATS, SCATOLE_SUBCATS, CATALOG_ITEMS, PRODUCT_SPECS } from '@/lib/products'
+import { ProductConfigurator } from '@/components/ProductConfigurator'
 
 function fmt(n: number) { return n.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
 
@@ -22,8 +23,9 @@ const scrollRevealCSS = `.scroll-reveal{opacity:0;transform:translateY(22px);tra
 export default function StorefrontPage() {
   const { setCartOpen, cartCount } = useCart()
   const router = useRouter()
-  const [activeMain, setActiveMain] = useState<string | null>(null)
-  const [activeSub,  setActiveSub]  = useState<string | null>(null)
+  const [activeMain, setActiveMain]         = useState<string | null>(null)
+  const [activeSub,  setActiveSub]          = useState<string | null>(null)
+  const [configuratorKey, setConfiguratorKey] = useState<string | null>(null)
   const [heroSearch, setHeroSearch] = useState('')
   const [heroFocused, setHeroFocused] = useState(false)
   const [suggestionsOpen, setSuggestionsOpen] = useState(false)
@@ -375,26 +377,47 @@ export default function StorefrontPage() {
                               </div>
 
                               {/* Body */}
-                              <div style={{ padding: '16px 18px 20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-                                <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.4 }}>{p.name}</div>
-                                <button
-                                  onClick={() => window.dispatchEvent(new CustomEvent('open-preventivo'))}
-                                  style={{
-                                    alignSelf: 'flex-start', background: 'none', border: 'none',
-                                    padding: 0, fontFamily: 'var(--f)', fontSize: 12.5,
-                                    fontWeight: 600, color: 'var(--accent)', cursor: 'pointer',
-                                    display: 'inline-flex', alignItems: 'center', gap: 5,
-                                    transition: 'gap .15s',
-                                  }}
-                                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.gap = '9px' }}
-                                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.gap = '5px' }}
-                                >
-                                  Richiedi preventivo
-                                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.2" width="11" height="11">
-                                    <path d="M3 8h10M9 4l4 4-4 4"/>
-                                  </svg>
-                                </button>
-                              </div>
+                              {(() => {
+                                const hasSpec = PRODUCT_SPECS.some(s => s.productKey === p.key)
+                                return (
+                                  <div style={{ padding: '14px 16px 18px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                                    <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.4 }}>{p.name}</div>
+                                    <button
+                                      onClick={() => hasSpec
+                                        ? setConfiguratorKey(p.key)
+                                        : window.dispatchEvent(new CustomEvent('open-preventivo'))
+                                      }
+                                      style={{
+                                        alignSelf: 'flex-start',
+                                        padding: '7px 13px', borderRadius: 8,
+                                        border: '1.5px solid rgba(232,114,26,0.45)',
+                                        background: 'transparent',
+                                        color: 'var(--accent)',
+                                        fontFamily: 'var(--f)', fontSize: 12, fontWeight: 700,
+                                        cursor: 'pointer', transition: 'all .15s',
+                                        display: 'inline-flex', alignItems: 'center', gap: 5,
+                                      }}
+                                      onMouseEnter={e => {
+                                        const el = e.currentTarget as HTMLElement
+                                        el.style.background = 'var(--accent)'
+                                        el.style.color = '#fff'
+                                        el.style.borderColor = 'var(--accent)'
+                                      }}
+                                      onMouseLeave={e => {
+                                        const el = e.currentTarget as HTMLElement
+                                        el.style.background = 'transparent'
+                                        el.style.color = 'var(--accent)'
+                                        el.style.borderColor = 'rgba(232,114,26,0.45)'
+                                      }}
+                                    >
+                                      {hasSpec ? 'Configura' : 'Richiedi preventivo'}
+                                      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.2" width="10" height="10">
+                                        <path d="M3 8h10M9 4l4 4-4 4" />
+                                      </svg>
+                                    </button>
+                                  </div>
+                                )
+                              })()}
                             </div>
                           ))}
                         </div>
@@ -575,6 +598,14 @@ export default function StorefrontPage() {
 
       {/* ── CART DRAWER ── */}
       <CartDrawer />
+
+      {/* ── PRODUCT CONFIGURATOR ── */}
+      {configuratorKey && (
+        <ProductConfigurator
+          productKey={configuratorKey}
+          onClose={() => setConfiguratorKey(null)}
+        />
+      )}
 
     </>
   )
