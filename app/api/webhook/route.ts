@@ -31,16 +31,13 @@ export async function POST(req: NextRequest) {
   }
 
   if (event.type === 'payment_intent.payment_failed') {
-    console.log('Payment failed:', event.data.object.id)
+    const pi = event.data.object as Stripe.PaymentIntent
+    await handlePaymentFailed(pi)
   }
 
   if (event.type === 'charge.refunded') {
     const charge = event.data.object as Stripe.Charge
-    try {
-      const { createClient } = await import('@/lib/supabase/server')
-      const sb = await createClient()
-      await sb.from('orders').update({ status: 'refunded' }).eq('stripe_payment_intent', charge.payment_intent as string)
-    } catch {}
+    await handleRefunded(charge)
   }
 
   return NextResponse.json({ ok: true })
@@ -88,13 +85,13 @@ async function handleOrderPaid(pi: Stripe.PaymentIntent) {
   }
 
   const resendKey = process.env.RESEND_API_KEY
-  const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'
+  const fromEmail = process.env.RESEND_FROM_EMAIL
   const siteUrl   = process.env.NEXT_PUBLIC_SITE_URL ?? ''
   const total     = (pi.amount / 100).toLocaleString('it-IT', { minimumFractionDigits: 2 })
   const ref       = pi.id.slice(-12).toUpperCase()
 
-  if (!resendKey) {
-    console.error('RESEND_API_KEY not set — emails not sent')
+  if (!resendKey || !fromEmail) {
+    console.error('RESEND_API_KEY or RESEND_FROM_EMAIL not set — emails not sent')
     return
   }
 
@@ -130,6 +127,94 @@ async function handleOrderPaid(pi: Stripe.PaymentIntent) {
     if (error) console.error('Owner email failed:', JSON.stringify(error))
     else console.log('Owner email sent:', data?.id)
   }
+}
+
+async function handlePaymentFailed(pi: Stripe.PaymentIntent) {
+  const m = pi.metadata ?? {}
+  const toEmail = m.customer_email
+  if (!toEmail) return
+
+  const resendKey = process.env.RESEND_API_KEY
+  const fromEmail = process.env.RESEND_FROM_EMAIL
+  if (!resendKey || !fromEmail) return
+
+  const resend = new Resend(resendKey)
+  const ref    = pi.id.slice(-12).toUpperCase()
+
+  await resend.emails.send({
+    from:    `Briopack <${fromEmail}>`,
+    to:      [toEmail],
+    subject: `Pagamento non riuscito — Briopack #${ref}`,
+    html:    emailWrap(`
+      <div style="background:linear-gradient(135deg,#b91c1c 0%,#ef4444 100%);padding:36px 36px 32px;">
+        <div style="width:52px;height:52px;background:rgba(255,255,255,0.2);border-radius:50%;margin:0 0 18px;text-align:center;line-height:52px;font-size:28px;color:#fff;">✕</div>
+        <div style="color:#fff;font-size:24px;font-weight:800;letter-spacing:-0.5px;margin-bottom:6px;">Pagamento non riuscito</div>
+        <div style="color:rgba(255,255,255,0.85);font-size:14px;">Non siamo riusciti ad addebitare il tuo metodo di pagamento.</div>
+      </div>
+      <div style="padding:32px 36px 36px;">
+        <p style="font-size:15px;color:#111827;margin:0 0 6px;font-weight:600;">Ciao ${m.customer_name || ''},</p>
+        <p style="font-size:14px;color:#6b7280;line-height:1.7;margin:0 0 24px;">
+          Il pagamento per il tuo ordine <strong>#${ref}</strong> non è andato a buon fine.
+          Nessun importo è stato addebitato. Per riprovare, torna sul sito e completa l'acquisto.
+        </p>
+        <a href="${process.env.NEXT_PUBLIC_SITE_URL ?? ''}" style="display:inline-block;padding:13px 28px;background:#e8721a;color:#fff;text-decoration:none;border-radius:10px;font-weight:700;font-size:14px;">
+          Riprova l'acquisto
+        </a>
+        <p style="font-size:13px;color:#9ca3af;margin:24px 0 0;line-height:1.6;">
+          Se il problema persiste contatta il tuo istituto bancario o scrivi a
+          <a href="mailto:info@briopack.com" style="color:#e8721a;text-decoration:none;">info@briopack.com</a>.
+        </p>
+      </div>
+    `, process.env.NEXT_PUBLIC_SITE_URL ?? ''),
+  }).catch(err => console.error('Payment-failed email error:', err))
+}
+
+async function handleRefunded(charge: Stripe.Charge) {
+  try {
+    const { createClient } = await import('@/lib/supabase/server')
+    const sb = await createClient()
+    await sb.from('orders').update({ status: 'refunded' }).eq('stripe_payment_intent', charge.payment_intent as string)
+  } catch (err) {
+    console.error('Failed to update order status to refunded:', err)
+  }
+
+  const resendKey = process.env.RESEND_API_KEY
+  const fromEmail = process.env.RESEND_FROM_EMAIL
+  if (!resendKey || !fromEmail) return
+
+  // Fetch customer email from the charge
+  const customerEmail = (charge as any).billing_details?.email ?? (charge.metadata?.customer_email as string | undefined)
+  const customerName  = (charge as any).billing_details?.name  ?? (charge.metadata?.customer_name  as string | undefined) ?? ''
+  if (!customerEmail) return
+
+  const resend = new Resend(resendKey)
+  const total  = (charge.amount_refunded / 100).toLocaleString('it-IT', { minimumFractionDigits: 2 })
+  const ref    = String(charge.payment_intent ?? charge.id).slice(-12).toUpperCase()
+
+  await resend.emails.send({
+    from:    `Briopack <${fromEmail}>`,
+    to:      [customerEmail],
+    subject: `Rimborso confermato #${ref} — Briopack`,
+    html:    emailWrap(`
+      <div style="background:linear-gradient(135deg,#065f46 0%,#10b981 100%);padding:36px 36px 32px;">
+        <div style="width:52px;height:52px;background:rgba(255,255,255,0.2);border-radius:50%;margin:0 0 18px;text-align:center;line-height:52px;font-size:28px;color:#fff;">↩</div>
+        <div style="color:#fff;font-size:24px;font-weight:800;letter-spacing:-0.5px;margin-bottom:6px;">Rimborso elaborato</div>
+        <div style="color:rgba(255,255,255,0.85);font-size:14px;">Il rimborso è stato inviato al tuo metodo di pagamento.</div>
+      </div>
+      <div style="padding:32px 36px 36px;">
+        <p style="font-size:15px;color:#111827;margin:0 0 6px;font-weight:600;">Ciao ${customerName},</p>
+        <p style="font-size:14px;color:#6b7280;line-height:1.7;margin:0 0 20px;">
+          Abbiamo elaborato un rimborso di <strong style="color:#10b981;font-size:15px;">€${total}</strong>
+          per il tuo ordine <strong>#${ref}</strong>.
+          I tempi di accredito dipendono dalla tua banca (di solito 3–5 giorni lavorativi).
+        </p>
+        <p style="font-size:13px;color:#9ca3af;margin:0;line-height:1.6;">
+          Per qualsiasi domanda scrivi a
+          <a href="mailto:info@briopack.com" style="color:#e8721a;text-decoration:none;">info@briopack.com</a>.
+        </p>
+      </div>
+    `, process.env.NEXT_PUBLIC_SITE_URL ?? ''),
+  }).catch(err => console.error('Refund email error:', err))
 }
 
 /* ─── Email helpers ───────────────────────────────────────────────────────── */

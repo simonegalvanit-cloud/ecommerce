@@ -39,7 +39,7 @@ export default function PrivacyPage() {
 
           {/* 1 */}
           <h2 style={S.h2}>1. Titolare del trattamento</h2>
-          <p style={S.p}><strong>Briopack Srl</strong><br />C.da Sodera, 38 — 66030 Poggiofiorito (CH), Italia<br />P.IVA 02540090699 — REA CH-186673<br />Email: <a href="mailto:info@briopack.com" style={{ color: 'var(--accent)' }}>info@briopack.com</a><br />Tel: +39 0871 869378</p>
+          <p style={S.p}><strong>Briopack Srl</strong><br />C.da Sodera, 38 — 66030 Poggiofiorito (CH), Italia<br />P.IVA 02540090699 — REA CH-186673<br />Email: <a href="mailto:info@briopack.com" style={{ color: 'var(--accent)' }}>info@briopack.com</a><br />PEC: briopack@pec.it<br />Tel: +39 0871 869378</p>
 
           <hr style={S.divider} />
 

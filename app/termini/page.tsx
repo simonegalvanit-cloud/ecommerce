@@ -40,7 +40,8 @@ export default function TerminiPage() {
             <strong>Briopack Srl</strong><br />
             C.da Sodera, 38 — 66030 Poggiofiorito (CH), Italia<br />
             P.IVA 02540090699 — REA CH-186673<br />
-            Email: <a href="mailto:info@briopack.com" style={{ color: 'var(--accent)' }}>info@briopack.com</a> · Tel: +39 0871 869378
+            Email: <a href="mailto:info@briopack.com" style={{ color: 'var(--accent)' }}>info@briopack.com</a> · Tel: +39 0871 869378<br />
+            PEC: briopack@pec.it
           </p>
           <p style={S.p}>
             Il sito è destinato esclusivamente a operatori professionali (B2B). L&apos;acquisto implica che il cliente agisca nell&apos;esercizio della propria attività imprenditoriale, commerciale o professionale.
@@ -83,12 +84,28 @@ export default function TerminiPage() {
 
           <hr style={S.divider} />
 
-          <h2 style={S.h2}>5. Resi e reclami</h2>
+          <h2 style={S.h2}>5. Diritto di recesso</h2>
           <p style={S.p}>
-            Data la natura personalizzata della maggior parte dei prodotti, il diritto di recesso previsto per i consumatori (D.Lgs. 206/2005) non si applica agli ordini B2B né ai beni realizzati su specifica del cliente.
+            Il sito è destinato esclusivamente a operatori professionali (B2B). Il diritto di recesso di 14 giorni previsto dal Codice del Consumo (D.Lgs. 206/2005, artt. 52–59) è riservato ai consumatori finali e <strong>non si applica</strong> agli acquisti effettuati nell&apos;esercizio di un&apos;attività imprenditoriale, commerciale, artigianale o professionale.
           </p>
           <p style={S.p}>
-            Eventuali vizi o difetti del prodotto devono essere contestati entro <strong>8 giorni dalla ricezione</strong> della merce, con descrizione dettagliata e documentazione fotografica, all&apos;indirizzo <a href="mailto:info@briopack.com" style={{ color: 'var(--accent)' }}>info@briopack.com</a>. Oltre tale termine la merce si intende accettata.
+            Qualora un consumatore finale acceda eccezionalmente al sito e concluda un acquisto, gli si riconosce il diritto di recedere dal contratto entro <strong>14 giorni</strong> dalla ricezione della merce, senza necessità di motivazione, fatto salvo che i prodotti non siano stati realizzati su misura o personalizzati (art. 59 lett. c D.Lgs. 206/2005). Per esercitare il recesso il consumatore deve inviare comunicazione scritta prima della scadenza del termine a <a href="mailto:info@briopack.com" style={{ color: 'var(--accent)' }}>info@briopack.com</a>. Il rimborso è effettuato entro 14 giorni dal ricevimento dei beni o della prova di spedizione, con lo stesso mezzo di pagamento usato per l&apos;acquisto.
+          </p>
+
+          <hr style={S.divider} />
+
+          <h2 style={S.h2}>5a. Garanzia legale</h2>
+          <p style={S.p}>
+            <strong>Clienti B2B (operatori professionali):</strong> si applica la garanzia per vizi della cosa venduta ai sensi degli artt. 1490–1495 del Codice Civile. I vizi devono essere denunciati entro <strong>8 giorni dalla scoperta</strong> (art. 1495 c.c.) e l&apos;azione si prescrive in un anno dalla consegna. La denuncia deve essere inviata con descrizione dettagliata e documentazione fotografica a <a href="mailto:info@briopack.com" style={{ color: 'var(--accent)' }}>info@briopack.com</a>.
+          </p>
+          <p style={S.p}>
+            <strong>Consumatori finali:</strong> si applica la garanzia legale di conformità prevista dagli artt. 128–135 del Codice del Consumo (D.Lgs. 206/2005). In caso di difetto di conformità manifestatosi entro <strong>2 anni</strong> dalla consegna, il consumatore ha diritto — a sua scelta — al ripristino della conformità, alla sostituzione, a una riduzione del prezzo o alla risoluzione del contratto, alle condizioni previste dalla legge. I difetti devono essere segnalati entro 2 mesi dalla scoperta.</p>
+
+          <hr style={S.divider} />
+
+          <h2 style={S.h2}>5b. Reclami</h2>
+          <p style={S.p}>
+            Per qualsiasi contestazione relativa a prodotti difettosi o non conformi contattare <a href="mailto:info@briopack.com" style={{ color: 'var(--accent)' }}>info@briopack.com</a> allegando documentazione fotografica della merce ricevuta. Risponderemo entro 5 giorni lavorativi con una proposta di risoluzione.
           </p>
 
           <hr style={S.divider} />
@@ -123,7 +140,7 @@ export default function TerminiPage() {
           </p>
 
           <p style={S.updated}>
-            Ultimo aggiornamento: gennaio 2025 · Per domande: <a href="mailto:info@briopack.com" style={{ color: 'var(--accent)' }}>info@briopack.com</a>
+            Ultimo aggiornamento: ottobre 2025 · Per domande: <a href="mailto:info@briopack.com" style={{ color: 'var(--accent)' }}>info@briopack.com</a>
           </p>
         </div>
       </div>
