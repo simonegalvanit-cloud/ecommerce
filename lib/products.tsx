@@ -734,3 +734,87 @@ export const DISC_TIERS = [
   { min: 1000, max: 4999,     label: '1.000–4.999', disc: '-20%' },
   { min: 5000, max: Infinity, label: '5.000+',      disc: '-32%' },
 ]
+
+/* ─── New hierarchical catalog ───────────────────────────────────────────────
+   Two top-level families: SHOPPER and SCATOLE (coming soon).
+   Each family has subcategories; each subcategory lists its products.
+   Product config (sizes, print, prices) will be added per-item later.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+export interface MainCat {
+  key: string
+  label: string
+  desc: string
+  comingSoon?: boolean
+}
+
+export interface SubCat {
+  key: string
+  label: string
+  mainCat: string
+}
+
+export interface CatalogItem {
+  key: string
+  name: string
+  mainCat: string
+  subCat: string
+}
+
+export const MAIN_CATS: MainCat[] = [
+  { key: 'shopper', label: 'Shopper', desc: 'Shopper in carta personalizzabili: neutro, fantasia, colorati, lusso, take away, e-commerce e portabottiglie.' },
+  { key: 'scatole', label: 'Scatole', desc: 'Scatole, packaging rigido e fustellati su misura per prodotti, spedizioni e confezioni regalo.', comingSoon: true },
+]
+
+export const SHOPPER_SUBCATS: SubCat[] = [
+  { key: 'neutro',          label: 'Neutro',          mainCat: 'shopper' },
+  { key: 'fantasia',        label: 'Fantasia',         mainCat: 'shopper' },
+  { key: 'colorati',        label: 'Colorati',         mainCat: 'shopper' },
+  { key: 'colorati-elite',  label: 'Colorati Elite',   mainCat: 'shopper' },
+  { key: 'manuali-lusso',   label: 'Manuali Lusso',    mainCat: 'shopper' },
+  { key: 'take-away',       label: 'Take Away',        mainCat: 'shopper' },
+  { key: 'ecommerce',       label: 'E-Commerce',       mainCat: 'shopper' },
+  { key: 'portabottiglie',  label: 'Portabottiglie',   mainCat: 'shopper' },
+]
+
+export const CATALOG_ITEMS: CatalogItem[] = [
+  // ── NEUTRO ──────────────────────────────────────────────────────────────
+  { key: 'neutro-maniglia-piatta',         name: 'Maniglia Piatta',         mainCat: 'shopper', subCat: 'neutro' },
+  { key: 'neutro-maniglia-ritorta',        name: 'Maniglia Ritorta',        mainCat: 'shopper', subCat: 'neutro' },
+  { key: 'neutro-maniglia-ritorta-neutro', name: 'Maniglia Ritorta Neutro', mainCat: 'shopper', subCat: 'neutro' },
+  { key: 'neutro-j-fold',                  name: 'J-Fold',                  mainCat: 'shopper', subCat: 'neutro' },
+  // ── FANTASIA ────────────────────────────────────────────────────────────
+  { key: 'fantasia-duo-italy',   name: 'Maniglia Ritorta Duo Italy',     mainCat: 'shopper', subCat: 'fantasia' },
+  { key: 'fantasia-argento-oro', name: 'Maniglia Ritorta Argento & Oro', mainCat: 'shopper', subCat: 'fantasia' },
+  // ── COLORATI ────────────────────────────────────────────────────────────
+  { key: 'colorati-pastello',  name: 'Maniglia Ritorta Colorati Pastello', mainCat: 'shopper', subCat: 'colorati' },
+  { key: 'colorati-sealing',   name: 'Maniglia Ritorta Colorati Sealing',  mainCat: 'shopper', subCat: 'colorati' },
+  { key: 'colorati-j-fold',    name: 'J-Fold Colorati',                   mainCat: 'shopper', subCat: 'colorati' },
+  // ── COLORATI ELITE ──────────────────────────────────────────────────────
+  { key: 'elite-j-fold-bronzo-platino', name: 'J-Fold Bronzo & Platino', mainCat: 'shopper', subCat: 'colorati-elite' },
+  { key: 'elite-j-fold-bicolor',        name: 'J-Fold Bicolor',          mainCat: 'shopper', subCat: 'colorati-elite' },
+  // ── MANUALI LUSSO ───────────────────────────────────────────────────────
+  { key: 'lusso-natural',             name: 'Shopper Lusso Natural',             mainCat: 'shopper', subCat: 'manuali-lusso' },
+  { key: 'lusso-monopatinato-opaco',  name: 'Shopper Lusso Monopatinato Opaco',  mainCat: 'shopper', subCat: 'manuali-lusso' },
+  { key: 'lusso-monopatinato-lucido', name: 'Shopper Lusso Monopatinato Lucido', mainCat: 'shopper', subCat: 'manuali-lusso' },
+  // ── TAKE AWAY ───────────────────────────────────────────────────────────
+  { key: 'ta-maniglia-piatta',          name: 'Maniglia Piatta',              mainCat: 'shopper', subCat: 'take-away' },
+  { key: 'ta-maniglia-piatta-colorati', name: 'Maniglia Piatta Colorati',     mainCat: 'shopper', subCat: 'take-away' },
+  { key: 'ta-flat-maxi-bags',           name: 'Flat Maxi / Flat Maxi Plus Bags', mainCat: 'shopper', subCat: 'take-away' },
+  { key: 'ta-maniglia-ritorta',         name: 'Maniglia Ritorta',             mainCat: 'shopper', subCat: 'take-away' },
+  { key: 'ta-surf-bags',                name: 'Surf Large / X-Large Bags',    mainCat: 'shopper', subCat: 'take-away' },
+  { key: 'ta-food-delivery-kraft',      name: 'Shopper Food Delivery Kraft',  mainCat: 'shopper', subCat: 'take-away' },
+  // ── E-COMMERCE ──────────────────────────────────────────────────────────
+  { key: 'ec-light',            name: 'E-Commerce Light',             mainCat: 'shopper', subCat: 'ecommerce' },
+  { key: 'ec-premium-envelopes',name: 'Premium E-Commerce Envelopes', mainCat: 'shopper', subCat: 'ecommerce' },
+  { key: 'ec-basic-envelopes',  name: 'Basic E-Commerce Envelopes',   mainCat: 'shopper', subCat: 'ecommerce' },
+  // ── PORTABOTTIGLIE ──────────────────────────────────────────────────────
+  { key: 'pb-sealing-120g',    name: 'Buste in Carta Sealing 120g',        mainCat: 'shopper', subCat: 'portabottiglie' },
+  { key: 'pb-finestra-pvc',    name: 'Sacchetti con Finestra in PVC',      mainCat: 'shopper', subCat: 'portabottiglie' },
+  { key: 'pb-sacchetti-lusso', name: 'Sacchetti Lusso',                    mainCat: 'shopper', subCat: 'portabottiglie' },
+  { key: 'pb-sacchetti-lusso-nero', name: 'Sacchetti Lusso Nero',          mainCat: 'shopper', subCat: 'portabottiglie' },
+  { key: 'pb-kraft-liscio',    name: 'Buste in Carta Kraft Liscio',        mainCat: 'shopper', subCat: 'portabottiglie' },
+  { key: 'pb-kraft-lusso',     name: 'Buste Carta Kraft Lusso',            mainCat: 'shopper', subCat: 'portabottiglie' },
+  { key: 'pb-lusso-lucida',    name: 'Buste Lusso Plastificazione Lucida', mainCat: 'shopper', subCat: 'portabottiglie' },
+  { key: 'pb-lusso-opaca',     name: 'Buste Lusso Plastificazione Opaca',  mainCat: 'shopper', subCat: 'portabottiglie' },
+]

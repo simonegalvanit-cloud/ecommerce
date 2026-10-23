@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import NavWrapper from '@/components/NavWrapper'
 import CartDrawer from '@/components/CartDrawer'
 import { useCart } from '@/lib/cart-context'
-import { PRODUCTS, CATEGORIES } from '@/lib/products'
+import { PRODUCTS, MAIN_CATS, SHOPPER_SUBCATS, CATALOG_ITEMS } from '@/lib/products'
 
 function fmt(n: number) { return n.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
 
@@ -22,8 +22,8 @@ const scrollRevealCSS = `.scroll-reveal{opacity:0;transform:translateY(22px);tra
 export default function StorefrontPage() {
   const { setCartOpen, cartCount } = useCart()
   const router = useRouter()
-  const [activeCat, setActiveCat] = useState('all')
-  const [search, setSearch]   = useState('')
+  const [activeMain, setActiveMain] = useState<string | null>(null)
+  const [activeSub,  setActiveSub]  = useState<string | null>(null)
   const [heroSearch, setHeroSearch] = useState('')
   const [heroFocused, setHeroFocused] = useState(false)
   const [suggestionsOpen, setSuggestionsOpen] = useState(false)
@@ -133,12 +133,7 @@ export default function StorefrontPage() {
     requestAnimationFrame(() => {
       document.querySelectorAll('.scroll-reveal:not(.revealed)').forEach(el => observerRef.current?.observe(el))
     })
-  }, [activeCat, search])
-
-  const filteredProducts = PRODUCTS.filter(p =>
-    (activeCat === 'all' || p.catKey === activeCat) &&
-    (!search || p.name.toLowerCase().includes(search.toLowerCase()) || p.desc.toLowerCase().includes(search.toLowerCase()))
-  )
+  }, [activeMain, activeSub])
 
   return (
     <>
@@ -199,100 +194,203 @@ export default function StorefrontPage() {
         </div>
       </section>
 
-      {/* ── CATALOG ZONE ── */}
-      <div className="catalog-zone">
-        <div className="catalog-cats">
-          {CATEGORIES.map(c => {
-            const count = c.key === 'all' ? PRODUCTS.length : PRODUCTS.filter(p => p.catKey === c.key).length
+      {/* ── CATALOG ── */}
+      <section className="section" id="catalogo">
+        <div className="section-head scroll-reveal">
+          <div>
+            <div className="section-title"><span className="section-title-gradient">Catalogo Prodotti</span></div>
+            <div className="section-sub">Seleziona una categoria per esplorare i prodotti disponibili</div>
+          </div>
+        </div>
+
+        {/* ─ Main category cards ─ */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: 16, marginBottom: 28 }}>
+          {MAIN_CATS.map((mc, i) => {
+            const isActive = activeMain === mc.key
             return (
-              <button key={c.key} className={`catalog-pill${activeCat === c.key ? ' active' : ''}`} onClick={() => setActiveCat(c.key)}>
-                {c.label}
-                <span className="cpill-count">{count}</span>
+              <button
+                key={mc.key}
+                className="scroll-reveal"
+                style={{ transitionDelay: `${i * 0.08}s` }}
+                onClick={() => {
+                  if (mc.comingSoon) return
+                  setActiveMain(isActive ? null : mc.key)
+                  setActiveSub(null)
+                }}
+                disabled={mc.comingSoon}
+              >
+                <div style={{
+                  border: isActive ? '2.5px solid var(--accent)' : '1.5px solid var(--border-2)',
+                  background: isActive ? 'rgba(232,114,26,0.04)' : 'var(--card)',
+                  borderRadius: 16, padding: '24px 28px', textAlign: 'left', transition: 'all .2s',
+                  display: 'flex', alignItems: 'center', gap: 20,
+                  boxShadow: isActive ? '0 0 0 4px rgba(232,114,26,0.08)' : 'var(--shadow-sm)',
+                  opacity: mc.comingSoon ? 0.6 : 1, cursor: mc.comingSoon ? 'default' : 'pointer',
+                }}>
+                  <div style={{
+                    width: 52, height: 52, borderRadius: 13, flexShrink: 0,
+                    background: isActive ? 'rgba(232,114,26,0.1)' : 'var(--surface)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    border: `1.5px solid ${isActive ? 'rgba(232,114,26,0.3)' : 'var(--border)'}`,
+                  }}>
+                    {mc.key === 'shopper' ? (
+                      <svg width="26" height="26" fill="none" stroke={isActive ? '#e8721a' : 'var(--ink-3)'} strokeWidth="1.7" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <path d="M16 10a4 4 0 01-8 0"/>
+                      </svg>
+                    ) : (
+                      <svg width="26" height="26" fill="none" stroke="var(--ink-4)" strokeWidth="1.7" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="21 8 21 21 3 21 3 8"/>
+                        <rect x="1" y="3" width="22" height="5"/>
+                        <line x1="10" y1="12" x2="14" y2="12"/>
+                      </svg>
+                    )}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 19, fontWeight: 800, color: isActive ? 'var(--accent)' : 'var(--ink)', letterSpacing: '-0.3px', marginBottom: 4 }}>
+                      {mc.label}
+                    </div>
+                    <div style={{ fontSize: 12.5, color: 'var(--ink-4)', lineHeight: 1.55 }}>{mc.desc}</div>
+                    {mc.comingSoon ? (
+                      <div style={{ marginTop: 8, fontSize: 10.5, fontWeight: 700, color: 'var(--ink-4)', letterSpacing: '0.8px', textTransform: 'uppercase' }}>Prossimamente</div>
+                    ) : (
+                      <div style={{ marginTop: 8, fontSize: 12, color: isActive ? 'var(--accent)' : 'var(--ink-5)', fontWeight: 500 }}>
+                        {CATALOG_ITEMS.filter(p => p.mainCat === mc.key).length} prodotti disponibili
+                      </div>
+                    )}
+                  </div>
+                  {!mc.comingSoon && (
+                    <svg width="18" height="18" fill="none" stroke={isActive ? 'var(--accent)' : 'var(--ink-4)'} strokeWidth="2.2" viewBox="0 0 24 24"
+                      style={{ flexShrink: 0, transform: isActive ? 'rotate(180deg)' : 'none', transition: 'transform .25s' }}>
+                      <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                  )}
+                </div>
               </button>
             )
           })}
         </div>
-      </div>
 
-
-      {/* ── PRODUCTS ── */}
-      <section className="section">
-        <div className="section-head">
-          <div>
-            <div className="section-title"><span className="section-title-gradient">Catalogo Prodotti</span></div>
-            <div className="section-sub">{filteredProducts.length} prodott{filteredProducts.length === 1 ? 'o' : 'i'} trovati</div>
-          </div>
-        </div>
-        <div className="pgrid">
-          {filteredProducts.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '64px 20px', gridColumn: '1/-1' }}>
-              <div style={{ fontSize: 48, marginBottom: 16 }}>🔍</div>
-              <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>Nessun prodotto trovato</div>
-              <div style={{ fontSize: 14, color: 'var(--ink-3)', marginBottom: 24 }}>Prova con un&apos;altra categoria o parola chiave</div>
-              <button
-                style={{
-                  background: 'var(--accent)', color: '#fff', border: 'none',
-                  fontFamily: 'var(--f)', fontSize: 14, fontWeight: 700,
-                  padding: '11px 24px', borderRadius: 'var(--r)', cursor: 'pointer',
-                  boxShadow: 'var(--shadow-accent)', transition: 'all .2s',
-                }}
-                onClick={() => { setSearch(''); setActiveCat('all') }}
-              >
-                Mostra tutti i prodotti
-              </button>
+        {/* ─ Subcategory pills (SHOPPER) ─ */}
+        {activeMain === 'shopper' && (
+          <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, padding: '18px 20px', marginBottom: 28 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-5)', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: 12 }}>Linee</div>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              {SHOPPER_SUBCATS.map(s => {
+                const count = CATALOG_ITEMS.filter(p => p.subCat === s.key).length
+                const isOn = activeSub === s.key
+                return (
+                  <button
+                    key={s.key}
+                    onClick={() => setActiveSub(isOn ? null : s.key)}
+                    style={{
+                      padding: '7px 14px', borderRadius: 100, fontSize: 13, fontWeight: 600,
+                      fontFamily: 'var(--f)', cursor: 'pointer', transition: 'all .15s',
+                      border: isOn ? '2px solid var(--accent)' : '1.5px solid var(--border-2)',
+                      background: isOn ? 'var(--accent)' : 'var(--card)',
+                      color: isOn ? '#fff' : 'var(--ink-3)',
+                      display: 'inline-flex', alignItems: 'center', gap: 6,
+                    }}
+                  >
+                    {s.label}
+                    <span style={{
+                      fontSize: 11, lineHeight: 1,
+                      background: isOn ? 'rgba(255,255,255,0.22)' : 'var(--surface)',
+                      color: isOn ? '#fff' : 'var(--ink-4)',
+                      padding: '2px 6px', borderRadius: 100,
+                    }}>{count}</span>
+                  </button>
+                )
+              })}
             </div>
-          ) : (
-            filteredProducts.map((p, i) => (
-              <div
-                key={p.key}
-                className="pcard scroll-reveal"
-                style={{ transitionDelay: `${i * 0.06}s`, cursor: 'pointer' }}
-                onClick={() => router.push(`/products/${p.key}`)}
-                onMouseMove={e => {
-                  const r = e.currentTarget.getBoundingClientRect()
-                  const x = (e.clientX - r.left) / r.width - 0.5
-                  const y = (e.clientY - r.top) / r.height - 0.5
-                  const el = e.currentTarget as HTMLElement
-                  el.style.transition = 'transform .08s ease, box-shadow .28s, border-color .28s'
-                  el.style.transform = `perspective(900px) rotateY(${x * 9}deg) rotateX(${-y * 9}deg) translateY(-6px) scale(1.01)`
-                  const glow = el.querySelector<HTMLElement>('.pcard-glow')
-                  if (glow) { glow.style.setProperty('--mx', `${(e.clientX - r.left) / r.width * 100}%`); glow.style.setProperty('--my', `${(e.clientY - r.top) / r.height * 100}%`) }
-                }}
-                onMouseLeave={e => {
-                  const el = e.currentTarget as HTMLElement
-                  el.style.transition = 'transform .55s var(--ease-out), box-shadow .28s, border-color .28s'
-                  el.style.transform = ''
-                }}
-              >
-                <div className="pcard-glow" />
-                {p.badge && <div className={`pcard-badge ${p.badge.type}`}>{p.badge.label}</div>}
-                <div className="pcard-img" style={p.catKey === 'eco' ? { background: '#edf3ee' } : undefined}>
-                  <div style={{ transition: 'transform .3s var(--ease-out)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} className="pcard-svg-wrap">
-                    <PCardImage p={p} />
+          </div>
+        )}
+
+        {/* ─ SCATOLE coming soon ─ */}
+        {activeMain === 'scatole' && (
+          <div style={{ textAlign: 'center', padding: '52px 24px', background: 'var(--surface)', borderRadius: 16, border: '1.5px dashed var(--border-2)', marginBottom: 28 }}>
+            <svg width="48" height="48" fill="none" stroke="var(--ink-4)" strokeWidth="1.4" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: 16 }}>
+              <polyline points="21 8 21 21 3 21 3 8"/>
+              <rect x="1" y="3" width="22" height="5"/>
+              <line x1="10" y1="12" x2="14" y2="12"/>
+            </svg>
+            <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--ink)', marginBottom: 8, letterSpacing: '-0.3px' }}>Scatole — In arrivo</div>
+            <div style={{ fontSize: 14, color: 'var(--ink-4)', maxWidth: 400, margin: '0 auto', lineHeight: 1.7 }}>
+              Stiamo preparando il catalogo completo di scatole, fustellati e packaging rigido.<br/>
+              Nel frattempo contattaci per un preventivo su misura.
+            </div>
+            <button
+              onClick={() => window.dispatchEvent(new CustomEvent('open-preventivo'))}
+              style={{ marginTop: 24, padding: '12px 28px', background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 700, fontFamily: 'var(--f)', cursor: 'pointer', boxShadow: 'var(--shadow-accent)' }}
+            >
+              Richiedi preventivo →
+            </button>
+          </div>
+        )}
+
+        {/* ─ Prompt to pick subcategory ─ */}
+        {activeMain === 'shopper' && !activeSub && (
+          <div style={{ textAlign: 'center', padding: '28px 24px', color: 'var(--ink-4)', fontSize: 13.5 }}>
+            Scegli una linea per vedere i prodotti disponibili
+          </div>
+        )}
+
+        {/* ─ Product cards ─ */}
+        {activeMain === 'shopper' && activeSub && (() => {
+          const items = CATALOG_ITEMS.filter(p => p.subCat === activeSub)
+          return (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(200px,1fr))', gap: 14 }}>
+              {items.map((p, i) => (
+                <div
+                  key={p.key}
+                  className="scroll-reveal"
+                  style={{
+                    transitionDelay: `${i * 0.04}s`,
+                    background: 'var(--card)', borderRadius: 14,
+                    border: '1.5px solid var(--border)',
+                    padding: '22px 18px', display: 'flex', flexDirection: 'column', gap: 14,
+                    transition: 'box-shadow .2s, border-color .2s',
+                  }}
+                  onMouseEnter={e => {
+                    const el = e.currentTarget as HTMLElement
+                    el.style.boxShadow = '0 4px 20px rgba(0,0,0,0.09)'
+                    el.style.borderColor = 'rgba(232,114,26,0.35)'
+                  }}
+                  onMouseLeave={e => {
+                    const el = e.currentTarget as HTMLElement
+                    el.style.boxShadow = ''
+                    el.style.borderColor = ''
+                  }}
+                >
+                  <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(232,114,26,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <svg width="20" height="20" fill="none" stroke="#e8721a" strokeWidth="1.8" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+                      <line x1="3" y1="6" x2="21" y2="6"/>
+                      <path d="M16 10a4 4 0 01-8 0"/>
+                    </svg>
                   </div>
-                  <div className="pcard-img-overlay">
-                    <button className="overlay-btn">Personalizza</button>
-                  </div>
+                  <div style={{ fontSize: 14.5, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.35, flex: 1 }}>{p.name}</div>
+                  <button
+                    onClick={() => window.dispatchEvent(new CustomEvent('open-preventivo'))}
+                    style={{
+                      padding: '8px 14px', background: 'transparent',
+                      border: '1.5px solid rgba(232,114,26,0.5)', color: 'var(--accent)',
+                      borderRadius: 8, fontSize: 12.5, fontWeight: 700,
+                      fontFamily: 'var(--f)', cursor: 'pointer', transition: 'all .15s',
+                      display: 'inline-flex', alignItems: 'center', gap: 6,
+                    }}
+                    onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.background = 'var(--accent)'; el.style.color = '#fff'; el.style.borderColor = 'var(--accent)' }}
+                    onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.background = 'transparent'; el.style.color = 'var(--accent)'; el.style.borderColor = 'rgba(232,114,26,0.5)' }}
+                  >
+                    Richiedi preventivo
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.2" width="11" height="11"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
+                  </button>
                 </div>
-                <div className="pcard-body">
-                  <div className="pcard-cat">{p.cat}</div>
-                  <div className="pcard-name">{p.name}</div>
-                  <div className="pcard-desc">{p.desc}</div>
-                  <div className="pcard-foot">
-                    <div>
-                      <div className="pcard-price"><sup>€</sup>{p.price.toFixed(2).replace('.', ',')}<sub> / pz</sub></div>
-                      <div className="pcard-moq">MOQ {p.moq} pz</div>
-                    </div>
-                    <button className="btn-config" onClick={e => { e.stopPropagation(); router.push(`/products/${p.key}`) }}>
-                      Configura
-                      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M3 8h10M9 4l4 4-4 4"/></svg>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
+              ))}
+            </div>
+          )
+        })()}
       </section>
 
       {/* ── ECO BAND ── */}
