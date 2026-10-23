@@ -56,21 +56,31 @@ export default function CartDrawer() {
                   </div>
                   <div className="cart-item-right">
                     <div className="cart-item-qty">
-                      <button onClick={() => updateQty(item.id, -1)} aria-label="Diminuisci">−</button>
+                      <button
+                        onClick={() => {
+                          const next = item.qty - item.moq
+                          if (next >= item.moq) updateQty(item.id, -item.moq)
+                        }}
+                        disabled={item.qty <= item.moq}
+                        aria-label="Diminuisci"
+                        style={{ opacity: item.qty <= item.moq ? 0.35 : 1 }}
+                      >−</button>
                       <input
                         key={item.qty}
-                        type="number"
+                        type="text"
+                        inputMode="numeric"
                         defaultValue={item.qty}
-                        min={1}
-                        style={{ width: 52, textAlign: 'center', border: '1px solid var(--border-2)', borderRadius: 6, padding: '3px 6px', fontFamily: 'var(--f)', fontSize: 13, fontWeight: 600, background: 'var(--surface)', color: 'var(--ink)', outline: 'none' }}
+                        style={{ width: 56, textAlign: 'center', border: '1px solid var(--border-2)', borderRadius: 6, padding: '3px 6px', fontFamily: 'var(--f)', fontSize: 13, fontWeight: 600, background: 'var(--surface)', color: 'var(--ink)', outline: 'none' }}
                         onBlur={e => {
-                          const v = Math.max(1, parseInt(e.target.value) || item.qty)
-                          const delta = v - item.qty
+                          const raw = parseInt(e.target.value) || item.qty
+                          const snapped = Math.max(item.moq, Math.round(raw / item.moq) * item.moq)
+                          const delta = snapped - item.qty
                           if (delta !== 0) updateQty(item.id, delta)
+                          e.target.value = String(snapped)
                         }}
                         onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur() }}
                       />
-                      <button onClick={() => updateQty(item.id, 1)} aria-label="Aumenta">+</button>
+                      <button onClick={() => updateQty(item.id, item.moq)} aria-label="Aumenta">+</button>
                     </div>
                     <div className="cart-item-price">€{fmt(item.unitPrice * item.qty + item.setupCost)}</div>
                     <button className="cart-item-remove" onClick={() => removeItem(item.id)} aria-label="Rimuovi">

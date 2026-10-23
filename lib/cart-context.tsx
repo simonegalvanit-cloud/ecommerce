@@ -13,6 +13,7 @@ export interface CartItem {
   unitPrice: number
   setupCost: number
   artworkUrl?: string
+  moq: number
 }
 
 interface CartCtx {

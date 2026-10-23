@@ -163,6 +163,7 @@ export default function ConfigurePage() {
   const [artworkLater, setArtworkLater] = useState(false)
   const [fileName, setFileName]         = useState<string | null>(null)
   const [qty, setQty]                   = useState(0)
+  const [qtyInput, setQtyInput]         = useState('')
   const [infoModal, setInfoModal]       = useState<'digital' | 'hot-foil' | null>(null)
   const [addedFlash, setAddedFlash]     = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
@@ -186,7 +187,12 @@ export default function ConfigurePage() {
   const animTotal = useAnimatedNumber(selectedSize && qty >= moq ? totalPrice : 0)
   const animSetup = useAnimatedNumber(setupCost)
 
-  useEffect(() => { if (selectedSize) setQty(selectedSize.moq) }, [sizeIdx])
+  useEffect(() => {
+    if (selectedSize) {
+      setQty(selectedSize.moq)
+      setQtyInput(String(selectedSize.moq))
+    }
+  }, [sizeIdx])
   useEffect(() => {
     if (!showPrint) { setPlacement(null); setFileName(null); setArtworkLater(false) }
     if (!showFoil) setFoilKey(null)
@@ -195,7 +201,7 @@ export default function ConfigurePage() {
   function adjustQty(dir: 1 | -1) {
     if (!moq) return
     const next = qty + dir * moq
-    if (next >= moq) setQty(next)
+    if (next >= moq) { setQty(next); setQtyInput(String(next)) }
   }
 
   const artworkOk = !needArtwork || artworkLater || !!fileName
@@ -218,6 +224,7 @@ export default function ConfigurePage() {
       unitPrice: parseFloat(unitPrice.toFixed(4)),
       setupCost,
       artworkUrl: fileName ?? undefined,
+      moq,
     })
     setAddedFlash(true)
     setTimeout(() => setAddedFlash(false), 1800)
@@ -527,13 +534,30 @@ export default function ConfigurePage() {
                     background: 'var(--white)', cursor: qty <= moq ? 'not-allowed' : 'pointer',
                     fontSize: 24, color: qty <= moq ? 'var(--border-2)' : 'var(--ink)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center', userSelect: 'none',
+                    transition: 'color .15s',
                   }}>−</button>
                   <div style={{
                     flex: 1, maxWidth: 200, height: 52, border: '1.5px solid var(--border)', borderLeft: 'none', borderRight: 'none',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                    fontSize: 20, fontWeight: 900, color: 'var(--ink)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4,
                   }}>
-                    {qty.toLocaleString('it-IT')}
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      value={qtyInput}
+                      onChange={e => setQtyInput(e.target.value.replace(/[^0-9]/g, ''))}
+                      onBlur={() => {
+                        const raw = parseInt(qtyInput) || moq
+                        const snapped = Math.max(moq, Math.round(raw / moq) * moq)
+                        setQty(snapped)
+                        setQtyInput(String(snapped))
+                      }}
+                      onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur() }}
+                      style={{
+                        width: 80, textAlign: 'center', border: 'none', outline: 'none',
+                        fontSize: 20, fontWeight: 900, color: 'var(--ink)',
+                        fontFamily: 'var(--f)', background: 'transparent',
+                      }}
+                    />
                     <span style={{ fontSize: 12, fontWeight: 400, color: 'var(--ink-4)' }}>pz</span>
                   </div>
                   <button onClick={() => adjustQty(1)} style={{
@@ -545,7 +569,7 @@ export default function ConfigurePage() {
                   }}>+</button>
                 </div>
                 <div style={{ fontSize: 12, color: 'var(--ink-5)' }}>
-                  Minimo {moq.toLocaleString('it-IT')} pz · multipli di {moq.toLocaleString('it-IT')} pz
+                  Minimo {moq.toLocaleString('it-IT')} pz · multipli di {moq.toLocaleString('it-IT')} pz · digita una quantità o usa i tasti
                 </div>
               </>
             )}

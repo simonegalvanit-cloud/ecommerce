@@ -6,6 +6,7 @@ import ScrollToTop from '@/components/ScrollToTop'
 import PageTransition from '@/components/PageTransition'
 import Screensaver from '@/components/Screensaver'
 import PreventivoDrawer from '@/components/PreventivoDrawer'
+import { SnowEffect } from '@/components/SnowEffect'
 
 export const metadata: Metadata = {
   title: 'Briopack — Packaging su Misura',
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ScrollToTop />
           <Screensaver />
           <PreventivoDrawer />
+          <SnowEffect />
         </CartProvider>
       </body>
     </html>
