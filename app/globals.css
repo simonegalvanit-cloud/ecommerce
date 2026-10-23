@@ -2169,3 +2169,82 @@ tbody tr:hover td { background: var(--surface); }
 .page-transition {
   animation: pageFadeIn 0.18s ease both;
 }
+
+/* ─── MOBILE COMPREHENSIVE ──────────────────────────────────────────────── */
+
+/* Trust strip — 2×2 grid on phones */
+@media (max-width: 640px) {
+  .trust-strip { padding: 0 16px; }
+  .trust-strip-inner { flex-wrap: wrap; }
+  .trust-item { flex: 0 0 50%; border-right: none !important; border-bottom: 1px solid var(--border); justify-content: flex-start; font-size: 12px; padding: 14px 4px 14px 8px; }
+  .trust-item:nth-child(odd) { border-right: 1px solid var(--border) !important; }
+  .trust-item:nth-child(3), .trust-item:nth-child(4) { border-bottom: none; }
+}
+
+/* Cart toast — full-width on very small screens */
+@media (max-width: 480px) {
+  .cart-toast { right: 12px; left: 12px; bottom: 16px; max-width: calc(100% - 24px); min-width: unset; font-size: 12.5px; }
+  .cart-toast-name { font-size: 12.5px; }
+}
+
+/* Orb chat window — clamp width on phones */
+@media (max-width: 480px) {
+  .orb-chat-window { right: 16px !important; width: calc(100vw - 32px) !important; bottom: 148px !important; }
+}
+
+/* Scroll-to-top button — avoid overlap with orb on mobile */
+@media (max-width: 640px) {
+  .scroll-top-btn { bottom: 20px; left: 16px; width: 38px; height: 38px; }
+}
+
+/* Configurator page — mobile refinements */
+@media (max-width: 760px) {
+  /* Title */
+  .cfg-two-col h1 { font-size: 22px !important; letter-spacing: -0.4px !important; }
+  /* Price panel: no sticky on single col */
+  .cfg-two-col > div:last-child { position: static !important; }
+  /* Foil color row: smaller buttons */
+  .cfg-foil-row { gap: 6px !important; }
+}
+
+/* Eco band — reduce font on phones */
+@media (max-width: 400px) {
+  .eco-title { font-size: 28px !important; letter-spacing: -0.8px !important; }
+  .eco-grid { grid-template-columns: 1fr !important; }
+}
+
+/* Footer — single col on phones */
+@media (max-width: 480px) {
+  .footer-top { padding: 32px 16px 28px !important; }
+  .footer-bottom { padding: 14px 16px !important; flex-direction: column; align-items: flex-start; gap: 4px; }
+}
+
+/* Hero search — compact on small phones */
+@media (max-width: 380px) {
+  .hero-center { padding: 36px 16px 32px !important; }
+  .hero-headline { font-size: 26px !important; letter-spacing: -0.8px !important; }
+  .hero-subline { font-size: 13.5px !important; }
+  .hero-search-bar { padding: 8px 8px 8px 14px !important; }
+  .hero-popular { gap: 5px !important; }
+  .hero-popular-link { padding: 4px 10px !important; font-size: 11.5px !important; }
+}
+
+/* Prevent double-tap zoom on buttons (iOS) */
+button, a, input, select, textarea {
+  touch-action: manipulation;
+}
+
+/* Bigger tap targets on mobile */
+@media (max-width: 640px) {
+  .nav-link, .mobile-nav-link { min-height: 44px; display: flex; align-items: center; }
+  .cart-pill { min-height: 44px; }
+  .hero-popular-link { min-height: 36px; }
+}
+
+/* Section paddings already handled at 1024px and 640px above */
+/* Cat filter bar — full bleed padding on phones */
+@media (max-width: 380px) {
+  .cat-filter-inner { padding: 0 12px !important; }
+  .cat-main { padding: 16px 12px 48px !important; }
+  .cat-hero-inner { padding: 20px 12px 16px !important; }
+}

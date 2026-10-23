@@ -140,9 +140,9 @@ export function OrbChat() {
 
       {/* ── Chat window ── */}
       {open && (
-        <div style={{
+        <div className="orb-chat-window" style={{
           position: 'fixed', bottom: 152, right: 22, zIndex: 9979,
-          width: 334, maxHeight: 490,
+          width: 334, maxWidth: 'calc(100vw - 32px)', maxHeight: 490,
           background: 'var(--white)', borderRadius: 20,
           boxShadow: '0 12px 60px rgba(0,0,0,0.18)',
           display: 'flex', flexDirection: 'column',

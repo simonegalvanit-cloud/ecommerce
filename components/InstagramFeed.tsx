@@ -102,7 +102,7 @@ export function InstagramFeed() {
       </div>
 
       {/* Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 20 }}>
+      <div className="ig-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 20 }}>
         {showPlaceholders
           ? [0,1,2].map(i => <PlaceholderCard key={i} />)
           : data.posts.slice(0,3).map(post => (
@@ -137,7 +137,14 @@ export function InstagramFeed() {
         }
       </div>
 
-      <style>{`@media(max-width:640px){.ig-grid{grid-template-columns:1fr!important}}`}</style>
+      <style>{`
+        @media(max-width:640px){
+          .ig-grid { grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+        }
+        @media(max-width:400px){
+          .ig-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </div>
   )
 }

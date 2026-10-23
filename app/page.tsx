@@ -127,6 +127,23 @@ export default function StorefrontPage() {
     <>
       {/* ── Scroll-reveal styles ── */}
       <style>{scrollRevealCSS}</style>
+      <style>{`
+        /* Catalog responsive */
+        @media (max-width: 640px) {
+          .catalog-main-hero button { height: 130px !important; }
+          .catalog-pgrid { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+          .catalog-pgrid > div > div:first-child { height: 140px !important; }
+        }
+        @media (max-width: 380px) {
+          .catalog-main-hero { grid-template-columns: 1fr !important; }
+          .catalog-main-hero button { height: 110px !important; }
+          .catalog-pgrid { grid-template-columns: 1fr !important; }
+        }
+        /* Hero search bar mobile */
+        @media (max-width: 480px) {
+          .hero-search-btn { padding: 9px 14px !important; font-size: 13px !important; }
+        }
+      `}</style>
 
       <NavWrapper activeLink="home" />
 
@@ -190,7 +207,7 @@ export default function StorefrontPage() {
         </div>
 
         {/* ── Category selector: two image cards ── */}
-        <div className="scroll-reveal" style={{
+        <div className="scroll-reveal catalog-main-hero" style={{
           display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 36,
         }}>
           {MAIN_CATS.map(mc => {
@@ -311,7 +328,7 @@ export default function StorefrontPage() {
             : 'linear-gradient(140deg,#faf0e6 0%,#f0e0cc 100%)'
           const iconColor = isBox ? 'rgba(80,105,145,0.18)' : 'rgba(160,95,30,0.18)'
           return (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(240px,1fr))', gap: 18 }}>
+            <div className="catalog-pgrid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(240px,1fr))', gap: 18 }}>
               {items.map((p, pi) => {
                 const hasSpec = PRODUCT_SPECS.some(s => s.productKey === p.key)
                 const subLabel = (activeMain === 'shopper' ? SHOPPER_SUBCATS : SCATOLE_SUBCATS)

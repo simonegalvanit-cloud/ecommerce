@@ -722,6 +722,23 @@ export default function ConfigurePage() {
       <style>{`
         @media (max-width: 760px) {
           .cfg-two-col { grid-template-columns: 1fr !important; }
+          /* Reorder: price panel goes below config on mobile */
+          .cfg-two-col > div:last-child { order: 2; }
+          .cfg-two-col > div:first-child { order: 1; }
+        }
+        @media (max-width: 640px) {
+          /* Compact breadcrumb */
+          .cfg-breadcrumb-wrap { padding: 14px 0 20px !important; font-size: 12px !important; }
+          /* Compact title */
+          .cfg-title-h1 { font-size: 22px !important; }
+          /* Sticky price panel: not sticky in single col */
+          .cfg-price-panel { position: static !important; }
+          /* Size grid: 2 columns */
+          .cfg-size-grid { grid-template-columns: 1fr 1fr !important; }
+          /* Reduce foil button size */
+          .cfg-foil-btn { width: 58px !important; }
+          /* Quantity: larger touch targets */
+          .cfg-qty-btn { width: 48px !important; height: 48px !important; font-size: 20px !important; }
         }
         @keyframes snap-in {
           from { opacity: 0; transform: translateY(-4px); }
