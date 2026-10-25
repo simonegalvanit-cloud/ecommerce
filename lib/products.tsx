@@ -144,6 +144,37 @@ export interface ProductSpec {
 
 export const PRODUCT_SPECS: ProductSpec[] = [
   {
+    productKey: 'neutro-maniglia-ritorta',
+    name: 'Shopper Maniglia Ritorta',
+    subtitle: 'Carta avana, bianca e sealing avana',
+    sizes: [
+      { format: '14+8,5×21',    weightGr: 100, moq: 400 },
+      { format: '14+8,5×39,5',  weightGr: 110, moq: 250 },
+      { format: '18+8×24',      weightGr: 100, moq: 250 },
+      { format: '22+10×29',     weightGr: 100, moq: 250 },
+      { format: '27+12×37',     weightGr: 100, moq: 200 },
+      { format: '32+13×41',     weightGr: 100, moq: 200 },
+      { format: '36+12×41',     weightGr: 100, moq: 150 },
+      { format: '45+15×49',     weightGr: 110, moq: 200 },
+      { format: '55+15×49',     weightGr: 110, moq: 150 },
+    ],
+    colors: [
+      { key: 'avana',         label: 'Avana',        hex: '#C4956A', ref: '34' },
+      { key: 'bianca',        label: 'Bianca',        hex: '#FFFFFF', ref: '35' },
+      { key: 'sealing-avana', label: 'Sealing Avana', hex: '#D4AA82', ref: '36' },
+    ],
+    foilColors: [
+      { key: 'oro',     label: 'Oro',     hex: '#C9A227' },
+      { key: 'argento', label: 'Argento', hex: '#A8A9AD' },
+      { key: 'rame',    label: 'Rame',    hex: '#B87333' },
+      { key: 'bianco',  label: 'Bianco',  hex: '#F2F2F2' },
+      { key: 'nero',    label: 'Nero',    hex: '#1C1C1C' },
+      { key: 'rosso',   label: 'Rosso',   hex: '#C0392B' },
+      { key: 'bordo',   label: 'Bordò',   hex: '#722F37' },
+      { key: 'verde',   label: 'Verde',   hex: '#2E7D32' },
+    ],
+  },
+  {
     productKey: 'neutro-maniglia-piatta',
     name: 'Shopper Maniglia Piatta',
     subtitle: 'Carta avana, bianca e sealing avana',
