@@ -148,6 +148,37 @@ export interface ProductSpec {
 
 export const PRODUCT_SPECS: ProductSpec[] = [
   {
+    productKey: 'lusso-monopatinato-opaco',
+    name: 'Shopper Lusso Monopatinato Opaco',
+    subtitle: 'Bordo risvoltato · Plastificazione opaca · Maniglia di cotone in tinta',
+    sizes: [
+      { format: '16+08×24', weightGr: 190, moq: 100, availableColors: ['nero', 'marrone'] },
+      { format: '24+10×32', weightGr: 190, moq: 100, availableColors: ['nero', 'marrone'] },
+      { format: '32+10×27', weightGr: 190, moq: 100 },
+      { format: '42+13×36', weightGr: 190, moq: 100 },
+      { format: '54+13×45', weightGr: 190, moq: 100 },
+      { format: '60+15×50', weightGr: 190, moq: 100, availableColors: ['nero'] },
+      { format: '60+20×50', weightGr: 190, moq: 100, availableColors: ['nero'] },
+    ],
+    colors: [
+      { key: 'bianco',  label: 'Bianco',  hex: '#FFFFFF'  },
+      { key: 'nero',    label: 'Nero',    hex: '#1C1C1C'  },
+      { key: 'giallo',  label: 'Giallo',  hex: '#F5D000'  },
+      { key: 'arancio', label: 'Arancio', hex: '#E8521A'  },
+      { key: 'marrone', label: 'Marrone', hex: '#6B3A2A'  },
+    ],
+    foilColors: [
+      { key: 'oro',     label: 'Oro',     hex: '#C9A227' },
+      { key: 'argento', label: 'Argento', hex: '#A8A9AD' },
+      { key: 'rame',    label: 'Rame',    hex: '#B87333' },
+      { key: 'bianco',  label: 'Bianco',  hex: '#F2F2F2' },
+      { key: 'nero',    label: 'Nero',    hex: '#1C1C1C' },
+      { key: 'rosso',   label: 'Rosso',   hex: '#C0392B' },
+      { key: 'bordo',   label: 'Bordò',   hex: '#722F37' },
+      { key: 'verde',   label: 'Verde',   hex: '#2E7D32' },
+    ],
+  },
+  {
     productKey: 'lusso-natural',
     name: 'Shopper Lusso Natural',
     subtitle: 'Bordo risvoltato · Carta bianca fondo pieno · Maniglia in tinta',
