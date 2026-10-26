@@ -148,6 +148,36 @@ export interface ProductSpec {
 
 export const PRODUCT_SPECS: ProductSpec[] = [
   {
+    productKey: 'lusso-monopatinato-lucido',
+    name: 'Shopper Lusso Monopatinato Lucido',
+    subtitle: 'Bordo risvoltato · Plastificazione lucida · Maniglia di cotone in tinta',
+    sizes: [
+      { format: '11+11×40', weightGr: 190, moq: 100, availableColors: ['bianco', 'rosso', 'nero'] },
+      { format: '16+08×24', weightGr: 190, moq: 100, availableColors: ['bianco', 'rosso', 'nero'] },
+      { format: '24+10×32', weightGr: 190, moq: 100, availableColors: ['bianco', 'rosso', 'nero'] },
+      { format: '32+10×27', weightGr: 190, moq: 100 },
+      { format: '42+13×36', weightGr: 190, moq: 100 },
+      { format: '54+13×45', weightGr: 190, moq: 100 },
+    ],
+    colors: [
+      { key: 'bianco',  label: 'Bianco',  hex: '#FFFFFF' },
+      { key: 'nero',    label: 'Nero',    hex: '#1C1C1C' },
+      { key: 'tortora', label: 'Tortora', hex: '#B8A898' },
+      { key: 'rosso',   label: 'Rosso',   hex: '#D32F2F' },
+    ],
+    foilColors: [
+      { key: 'oro',     label: 'Oro',     hex: '#C9A227' },
+      { key: 'argento', label: 'Argento', hex: '#A8A9AD' },
+      { key: 'rame',    label: 'Rame',    hex: '#B87333' },
+      { key: 'bianco',  label: 'Bianco',  hex: '#F2F2F2' },
+      { key: 'nero',    label: 'Nero',    hex: '#1C1C1C' },
+      { key: 'rosso',   label: 'Rosso',   hex: '#C0392B' },
+      { key: 'bordo',   label: 'Bordò',   hex: '#722F37' },
+      { key: 'verde',   label: 'Verde',   hex: '#2E7D32' },
+    ],
+    printModes: ['none', 'hot-foil'],
+  },
+  {
     productKey: 'lusso-monopatinato-opaco',
     name: 'Shopper Lusso Monopatinato Opaco',
     subtitle: 'Bordo risvoltato · Plastificazione opaca · Maniglia di cotone in tinta',
