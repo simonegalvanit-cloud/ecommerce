@@ -146,6 +146,36 @@ export interface ProductSpec {
 
 export const PRODUCT_SPECS: ProductSpec[] = [
   {
+    productKey: 'colorati-j-fold',
+    name: 'Shopper J-Fold Colorati',
+    subtitle: 'Bordo risvoltato · Carta bianca fondo pieno · Maniglia di cotone',
+    sizes: [
+      { format: '19+9×25+6',  weightGr: 100, moq: 250 },
+      { format: '22+10×27+6', weightGr: 100, moq: 200 },
+      { format: '27+12×31+6', weightGr: 110, moq: 150 },
+      { format: '35+13×31+6', weightGr: 110, moq: 150 },
+      { format: '45+15×33+6', weightGr: 120, moq: 150 },
+      { format: '54+16×43+6', weightGr: 130, moq: 100 },
+    ],
+    colors: [
+      { key: 'rosso', label: 'Rosso', hex: '#D32F2F', ref: '106' },
+      { key: 'blu',   label: 'Blu',   hex: '#1A3A6B', ref: '140' },
+      { key: 'caffe', label: 'Caffè', hex: '#6D4C41', ref: '107' },
+      { key: 'nero',  label: 'Nero',  hex: '#1C1C1C', ref: '105' },
+    ],
+    foilColors: [
+      { key: 'oro',     label: 'Oro',     hex: '#C9A227' },
+      { key: 'argento', label: 'Argento', hex: '#A8A9AD' },
+      { key: 'rame',    label: 'Rame',    hex: '#B87333' },
+      { key: 'bianco',  label: 'Bianco',  hex: '#F2F2F2' },
+      { key: 'nero',    label: 'Nero',    hex: '#1C1C1C' },
+      { key: 'rosso',   label: 'Rosso',   hex: '#C0392B' },
+      { key: 'bordo',   label: 'Bordò',   hex: '#722F37' },
+      { key: 'verde',   label: 'Verde',   hex: '#2E7D32' },
+    ],
+    printModes: ['none', 'hot-foil'],
+  },
+  {
     productKey: 'colorati-sealing',
     name: 'Shopper Maniglia Ritorta Colorati Sealing',
     subtitle: 'Carta sealing avana · Fondo pieno · Maniglia colorata',
