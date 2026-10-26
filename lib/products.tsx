@@ -202,6 +202,33 @@ export const PRODUCT_SPECS: ProductSpec[] = [
     ],
   },
   {
+    productKey: 'neutro-j-fold',
+    name: 'Shopper J-Fold Neutro Elite',
+    subtitle: 'Bordo risvoltato · Carta bianca e avana · Maniglia in cotone',
+    sizes: [
+      { format: '19+9×25+6',  weightGr: 100, moq: 250 },
+      { format: '22+10×27+6', weightGr: 100, moq: 200 },
+      { format: '27+12×31+6', weightGr: 110, moq: 150 },
+      { format: '35+13×31+6', weightGr: 110, moq: 150 },
+      { format: '45+15×33+6', weightGr: 120, moq: 150 },
+      { format: '54+16×43+6', weightGr: 130, moq: 100 },
+    ],
+    colors: [
+      { key: 'avana',  label: 'Avana',  hex: '#C4956A', ref: '235' },
+      { key: 'bianca', label: 'Bianca', hex: '#FFFFFF',  ref: '84'  },
+    ],
+    foilColors: [
+      { key: 'oro',     label: 'Oro',     hex: '#C9A227' },
+      { key: 'argento', label: 'Argento', hex: '#A8A9AD' },
+      { key: 'rame',    label: 'Rame',    hex: '#B87333' },
+      { key: 'bianco',  label: 'Bianco',  hex: '#F2F2F2' },
+      { key: 'nero',    label: 'Nero',    hex: '#1C1C1C' },
+      { key: 'rosso',   label: 'Rosso',   hex: '#C0392B' },
+      { key: 'bordo',   label: 'Bordò',   hex: '#722F37' },
+      { key: 'verde',   label: 'Verde',   hex: '#2E7D32' },
+    ],
+  },
+  {
     productKey: 'neutro-maniglia-piatta',
     name: 'Shopper Maniglia Piatta',
     subtitle: 'Carta avana, bianca e sealing avana',
