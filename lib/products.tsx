@@ -146,6 +146,60 @@ export interface ProductSpec {
 
 export const PRODUCT_SPECS: ProductSpec[] = [
   {
+    productKey: 'elite-j-fold-bronzo-platino',
+    name: 'J-Fold Bronzo & Platino',
+    subtitle: 'Bordo risvoltato · Carta bianca fondo pieno · Maniglia di cotone colorata',
+    sizes: [
+      { format: '19+9×25+6',  weightGr: 100, moq: 250 },
+      { format: '22+10×27+6', weightGr: 100, moq: 200 },
+      { format: '27+12×31+6', weightGr: 110, moq: 150 },
+      { format: '35+13×31+6', weightGr: 110, moq: 150 },
+      { format: '45+15×33+6', weightGr: 120, moq: 150 },
+      { format: '54+16×43+6', weightGr: 130, moq: 100 },
+    ],
+    colors: [
+      { key: 'bronzo',  label: 'Bronzo',  hex: '#B87333', ref: '104' },
+      { key: 'platino', label: 'Platino', hex: '#B8B8A8', ref: '236' },
+    ],
+    foilColors: [
+      { key: 'oro',     label: 'Oro',     hex: '#C9A227' },
+      { key: 'argento', label: 'Argento', hex: '#A8A9AD' },
+      { key: 'rame',    label: 'Rame',    hex: '#B87333' },
+      { key: 'bianco',  label: 'Bianco',  hex: '#F2F2F2' },
+      { key: 'nero',    label: 'Nero',    hex: '#1C1C1C' },
+      { key: 'rosso',   label: 'Rosso',   hex: '#C0392B' },
+      { key: 'bordo',   label: 'Bordò',   hex: '#722F37' },
+      { key: 'verde',   label: 'Verde',   hex: '#2E7D32' },
+    ],
+    printModes: ['none', 'hot-foil'],
+  },
+  {
+    productKey: 'elite-j-fold-bicolor',
+    name: 'J-Fold Bicolor',
+    subtitle: 'Bordo risvoltato · Carta bianca bicolor · Maniglia di carta colorata',
+    sizes: [
+      { format: '22+10×27+6', weightGr: 100, moq: 200 },
+      { format: '35+13×31+6', weightGr: 110, moq: 150 },
+      { format: '45+15×33+6', weightGr: 120, moq: 150 },
+      { format: '54+16×43+6', weightGr: 130, moq: 125 },
+    ],
+    colors: [
+      { key: 'nocciola', label: 'Nocciola / Beige', hex: '#C8A882', ref: '108' },
+      { key: 'grigio',   label: 'Grigio / Nero',    hex: '#7A7A7A', ref: '141' },
+    ],
+    foilColors: [
+      { key: 'oro',     label: 'Oro',     hex: '#C9A227' },
+      { key: 'argento', label: 'Argento', hex: '#A8A9AD' },
+      { key: 'rame',    label: 'Rame',    hex: '#B87333' },
+      { key: 'bianco',  label: 'Bianco',  hex: '#F2F2F2' },
+      { key: 'nero',    label: 'Nero',    hex: '#1C1C1C' },
+      { key: 'rosso',   label: 'Rosso',   hex: '#C0392B' },
+      { key: 'bordo',   label: 'Bordò',   hex: '#722F37' },
+      { key: 'verde',   label: 'Verde',   hex: '#2E7D32' },
+    ],
+    printModes: ['none', 'hot-foil'],
+  },
+  {
     productKey: 'colorati-j-fold',
     name: 'Shopper J-Fold Colorati',
     subtitle: 'Bordo risvoltato · Carta bianca fondo pieno · Maniglia di cotone',
