@@ -146,6 +146,36 @@ export interface ProductSpec {
 
 export const PRODUCT_SPECS: ProductSpec[] = [
   {
+    productKey: 'colorati-sealing',
+    name: 'Shopper Maniglia Ritorta Colorati Sealing',
+    subtitle: 'Carta sealing avana · Fondo pieno · Maniglia colorata',
+    sizes: [
+      { format: '14+8,5×21,5', weightGr: 100, moq: 400 },
+      { format: '18+8×24',     weightGr: 100, moq: 250 },
+      { format: '22+10×29',    weightGr: 100, moq: 250 },
+      { format: '27+12×37',    weightGr: 100, moq: 250 },
+      { format: '36+12×41',    weightGr: 100, moq: 150 },
+      { format: '45+15×49',    weightGr: 110, moq: 200 },
+      { format: '55+15×49',    weightGr: 110, moq: 150 },
+    ],
+    colors: [
+      { key: 'verde-scuro', label: 'Verde Scuro', hex: '#1B5E20', ref: '40' },
+      { key: 'bordeaux',    label: 'Bordeaux',    hex: '#7B1C2A', ref: '41' },
+      { key: 'blu-notte',   label: 'Blu Notte',   hex: '#1A237E', ref: '51' },
+    ],
+    foilColors: [
+      { key: 'oro',     label: 'Oro',     hex: '#C9A227' },
+      { key: 'argento', label: 'Argento', hex: '#A8A9AD' },
+      { key: 'rame',    label: 'Rame',    hex: '#B87333' },
+      { key: 'bianco',  label: 'Bianco',  hex: '#F2F2F2' },
+      { key: 'nero',    label: 'Nero',    hex: '#1C1C1C' },
+      { key: 'rosso',   label: 'Rosso',   hex: '#C0392B' },
+      { key: 'bordo',   label: 'Bordò',   hex: '#722F37' },
+      { key: 'verde',   label: 'Verde',   hex: '#2E7D32' },
+    ],
+    printModes: ['none', 'hot-foil'],
+  },
+  {
     productKey: 'colorati-pastello',
     name: 'Shopper Maniglia Ritorta Colorati Pastello',
     subtitle: 'Carta bianca · Fondo pieno · Maniglia colorata',
