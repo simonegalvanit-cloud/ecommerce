@@ -148,6 +148,55 @@ export interface ProductSpec {
 
 export const PRODUCT_SPECS: ProductSpec[] = [
   {
+    productKey: 'ta-maniglia-piatta',
+    name: 'Shopper Take Away Maniglia Piatta',
+    subtitle: 'Carta bianca e avana',
+    sizes: [
+      { format: '27+17×29', weightGr: 90, moq: 300 },
+      { format: '32+17×29', weightGr: 90, moq: 300 },
+      { format: '32+22×34', weightGr: 90, moq: 250 },
+      { format: '35+25×27', weightGr: 90, moq: 250 },
+    ],
+    colors: [
+      { key: 'bianca', label: 'Bianca', hex: '#FFFFFF', ref: '216' },
+      { key: 'avana',  label: 'Avana',  hex: '#C4956A', ref: '215' },
+    ],
+    foilColors: [
+      { key: 'oro',     label: 'Oro',     hex: '#C9A227' },
+      { key: 'argento', label: 'Argento', hex: '#A8A9AD' },
+      { key: 'rame',    label: 'Rame',    hex: '#B87333' },
+      { key: 'bianco',  label: 'Bianco',  hex: '#F2F2F2' },
+      { key: 'nero',    label: 'Nero',    hex: '#1C1C1C' },
+      { key: 'rosso',   label: 'Rosso',   hex: '#C0392B' },
+      { key: 'bordo',   label: 'Bordò',   hex: '#722F37' },
+      { key: 'verde',   label: 'Verde',   hex: '#2E7D32' },
+    ],
+  },
+  {
+    productKey: 'ta-maniglia-piatta-colorati',
+    name: 'Shopper Take Away Maniglia Piatta Colorati',
+    subtitle: 'Carta bianca · Rosso e nero · Maniglia colorata',
+    sizes: [
+      { format: '27+17×29', weightGr: 90, moq: 300 },
+      { format: '32+22×34', weightGr: 90, moq: 250 },
+      { format: '35+25×27', weightGr: 90, moq: 250 },
+    ],
+    colors: [
+      { key: 'rosso', label: 'Rosso', hex: '#C0392B', ref: '285' },
+      { key: 'nero',  label: 'Nero',  hex: '#1C1C1C', ref: '276' },
+    ],
+    foilColors: [
+      { key: 'oro',     label: 'Oro',     hex: '#C9A227' },
+      { key: 'argento', label: 'Argento', hex: '#A8A9AD' },
+      { key: 'rame',    label: 'Rame',    hex: '#B87333' },
+      { key: 'bianco',  label: 'Bianco',  hex: '#F2F2F2' },
+      { key: 'nero',    label: 'Nero',    hex: '#1C1C1C' },
+      { key: 'rosso',   label: 'Rosso',   hex: '#C0392B' },
+      { key: 'bordo',   label: 'Bordò',   hex: '#722F37' },
+      { key: 'verde',   label: 'Verde',   hex: '#2E7D32' },
+    ],
+  },
+  {
     productKey: 'lusso-monopatinato-lucido',
     name: 'Shopper Lusso Monopatinato Lucido',
     subtitle: 'Bordo risvoltato · Plastificazione lucida · Maniglia di cotone in tinta',
