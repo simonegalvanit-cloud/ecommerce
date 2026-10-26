@@ -140,9 +140,37 @@ export interface ProductSpec {
   sizes: SpecSize[]
   colors: SpecColor[]
   foilColors: FoilColor[]
+  /** If set, only these print modes are offered. Default: all three. */
+  printModes?: ('none' | 'digital' | 'hot-foil')[]
 }
 
 export const PRODUCT_SPECS: ProductSpec[] = [
+  {
+    productKey: 'fantasia-duo-italy',
+    name: 'Shopper Maniglia Ritorta Duo Italy',
+    subtitle: 'Carta bianca · Stampa nero e grigio',
+    sizes: [
+      { format: '24+11×21', weightGr: 100, moq: 250 },
+      { format: '32+13×28', weightGr: 100, moq: 250 },
+      { format: '40+12×31', weightGr: 100, moq: 200 },
+      { format: '55+15×39', weightGr: 110, moq: 150 },
+    ],
+    colors: [
+      { key: 'bianca-nero', label: 'Bianca / Nero',   hex: '#1C1C1C', ref: '251' },
+      { key: 'grigio',      label: 'Bianca / Grigio', hex: '#9E9E9E', ref: '252' },
+    ],
+    foilColors: [
+      { key: 'oro',     label: 'Oro',     hex: '#C9A227' },
+      { key: 'argento', label: 'Argento', hex: '#A8A9AD' },
+      { key: 'rame',    label: 'Rame',    hex: '#B87333' },
+      { key: 'bianco',  label: 'Bianco',  hex: '#F2F2F2' },
+      { key: 'nero',    label: 'Nero',    hex: '#1C1C1C' },
+      { key: 'rosso',   label: 'Rosso',   hex: '#C0392B' },
+      { key: 'bordo',   label: 'Bordò',   hex: '#722F37' },
+      { key: 'verde',   label: 'Verde',   hex: '#2E7D32' },
+    ],
+    printModes: ['none', 'hot-foil'],
+  },
   {
     productKey: 'neutro-maniglia-ritorta',
     name: 'Shopper Maniglia Ritorta',

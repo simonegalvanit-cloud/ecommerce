@@ -357,7 +357,7 @@ export default function ConfigurePage() {
                   icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" stroke="currentColor"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg> },
                 { key: 'hot-foil' as PrintType, label: 'Stampa a Caldo', sub: `Foil metallizzato · Setup €${HOT_FOIL_SETUP}`, info: 'hot-foil' as const,
                   icon: <svg width="17" height="17" viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" stroke="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> },
-              ]).map(opt => {
+              ].filter(opt => !spec?.printModes || spec.printModes.includes(opt.key))).map(opt => {
                 const on = printType === opt.key
                 return (
                   <button key={opt.key} onClick={() => setPrintType(opt.key)} style={{
