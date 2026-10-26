@@ -192,6 +192,10 @@ export default function ConfigurePage() {
     if (selectedSize) {
       setQty(selectedSize.moq)
       setQtyInput(String(selectedSize.moq))
+      // reset color if it's no longer available for this size
+      if (selectedSize.availableColors && colorKey && !selectedSize.availableColors.includes(colorKey)) {
+        setColorKey(null)
+      }
     }
   }, [sizeIdx])
   useEffect(() => {
@@ -319,7 +323,9 @@ export default function ConfigurePage() {
             {/* 2. COLOR */}
             <SLabel n={2} label="Colore carta" done={!!colorKey} />
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-              {spec.colors.map((c: SpecColor) => {
+              {spec.colors.filter((c: SpecColor) =>
+                !selectedSize?.availableColors || selectedSize.availableColors.includes(c.key)
+              ).map((c: SpecColor) => {
                 const on = colorKey === c.key
                 const isWhite = c.hex === '#FFFFFF' || c.hex === '#F2F2F2'
                 return (
