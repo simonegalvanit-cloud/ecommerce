@@ -146,6 +146,35 @@ export interface ProductSpec {
 
 export const PRODUCT_SPECS: ProductSpec[] = [
   {
+    productKey: 'fantasia-argento-oro',
+    name: 'Shopper Maniglia Ritorta Argento e Oro',
+    subtitle: 'Carta bianca · Maniglia colorata',
+    sizes: [
+      { format: '14+8,5×21,5', weightGr: 100, moq: 400 },
+      { format: '18+8×24',     weightGr: 100, moq: 250 },
+      { format: '22+10×29',    weightGr: 100, moq: 250 },
+      { format: '27+12×37',    weightGr: 100, moq: 250 },
+      { format: '36+12×41',    weightGr: 100, moq: 200 },
+      { format: '45+15×49',    weightGr: 110, moq: 200 },
+      { format: '55+15×49',    weightGr: 110, moq: 150 },
+    ],
+    colors: [
+      { key: 'argento', label: 'Argento', hex: '#A8A9AD', ref: '123' },
+      { key: 'oro',     label: 'Oro',     hex: '#C9A227', ref: '122' },
+    ],
+    foilColors: [
+      { key: 'oro',     label: 'Oro',     hex: '#C9A227' },
+      { key: 'argento', label: 'Argento', hex: '#A8A9AD' },
+      { key: 'rame',    label: 'Rame',    hex: '#B87333' },
+      { key: 'bianco',  label: 'Bianco',  hex: '#F2F2F2' },
+      { key: 'nero',    label: 'Nero',    hex: '#1C1C1C' },
+      { key: 'rosso',   label: 'Rosso',   hex: '#C0392B' },
+      { key: 'bordo',   label: 'Bordò',   hex: '#722F37' },
+      { key: 'verde',   label: 'Verde',   hex: '#2E7D32' },
+    ],
+    printModes: ['none', 'hot-foil'],
+  },
+  {
     productKey: 'fantasia-duo-italy',
     name: 'Shopper Maniglia Ritorta Duo Italy',
     subtitle: 'Carta bianca · Stampa nero e grigio',
