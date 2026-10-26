@@ -175,6 +175,33 @@ export const PRODUCT_SPECS: ProductSpec[] = [
     ],
   },
   {
+    productKey: 'neutro-maniglia-ritorta-neutro',
+    name: 'Shopper Maniglia Ritorta Italy',
+    subtitle: 'Carta avana e bianca',
+    sizes: [
+      { format: '24+11×21', weightGr: 100, moq: 250 },
+      { format: '24+11×31', weightGr: 100, moq: 300 },
+      { format: '32+13×28', weightGr: 100, moq: 250 },
+      { format: '40+12×31', weightGr: 100, moq: 200 },
+      { format: '42+13×37', weightGr: 100, moq: 200 },
+      { format: '55+15×39', weightGr: 110, moq: 150 },
+    ],
+    colors: [
+      { key: 'avana',  label: 'Avana',  hex: '#C4956A', ref: '220' },
+      { key: 'bianca', label: 'Bianca', hex: '#FFFFFF',  ref: '219' },
+    ],
+    foilColors: [
+      { key: 'oro',     label: 'Oro',     hex: '#C9A227' },
+      { key: 'argento', label: 'Argento', hex: '#A8A9AD' },
+      { key: 'rame',    label: 'Rame',    hex: '#B87333' },
+      { key: 'bianco',  label: 'Bianco',  hex: '#F2F2F2' },
+      { key: 'nero',    label: 'Nero',    hex: '#1C1C1C' },
+      { key: 'rosso',   label: 'Rosso',   hex: '#C0392B' },
+      { key: 'bordo',   label: 'Bordò',   hex: '#722F37' },
+      { key: 'verde',   label: 'Verde',   hex: '#2E7D32' },
+    ],
+  },
+  {
     productKey: 'neutro-maniglia-piatta',
     name: 'Shopper Maniglia Piatta',
     subtitle: 'Carta avana, bianca e sealing avana',
