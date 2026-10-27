@@ -148,6 +148,52 @@ export interface ProductSpec {
 
 export const PRODUCT_SPECS: ProductSpec[] = [
   {
+    productKey: 'ta-flat-maxi-bags',
+    name: 'Flat Maxi / Flat Maxi Plus Bags',
+    subtitle: 'Shopper fondo largo · Maniglia piattina · Avana kraft',
+    sizes: [
+      { format: '36×32×36', weightGr: 120, moq: 150 },
+      { format: '40×35×35', weightGr: 120, moq: 100 },
+    ],
+    colors: [
+      { key: 'avana-kraft', label: 'Avana Kraft', hex: '#C4956A' },
+    ],
+    foilColors: [
+      { key: 'oro',     label: 'Oro',     hex: '#C9A227' },
+      { key: 'argento', label: 'Argento', hex: '#A8A9AD' },
+      { key: 'rame',    label: 'Rame',    hex: '#B87333' },
+      { key: 'bianco',  label: 'Bianco',  hex: '#F2F2F2' },
+      { key: 'nero',    label: 'Nero',    hex: '#1C1C1C' },
+      { key: 'rosso',   label: 'Rosso',   hex: '#C0392B' },
+      { key: 'bordo',   label: 'Bordò',   hex: '#722F37' },
+      { key: 'verde',   label: 'Verde',   hex: '#2E7D32' },
+    ],
+  },
+  {
+    productKey: 'ta-maniglia-ritorta',
+    name: 'Shopper Take Away Maniglia Ritorta',
+    subtitle: 'Carta bianca e avana',
+    sizes: [
+      { format: '27+17×29', weightGr: 100, moq: 250 },
+      { format: '36+22×33', weightGr: 100, moq: 150 },
+      { format: '35+35×40', weightGr: 120, moq: 150 },
+    ],
+    colors: [
+      { key: 'bianca', label: 'Bianca', hex: '#FFFFFF', ref: '233' },
+      { key: 'avana',  label: 'Avana',  hex: '#C4956A', ref: '232' },
+    ],
+    foilColors: [
+      { key: 'oro',     label: 'Oro',     hex: '#C9A227' },
+      { key: 'argento', label: 'Argento', hex: '#A8A9AD' },
+      { key: 'rame',    label: 'Rame',    hex: '#B87333' },
+      { key: 'bianco',  label: 'Bianco',  hex: '#F2F2F2' },
+      { key: 'nero',    label: 'Nero',    hex: '#1C1C1C' },
+      { key: 'rosso',   label: 'Rosso',   hex: '#C0392B' },
+      { key: 'bordo',   label: 'Bordò',   hex: '#722F37' },
+      { key: 'verde',   label: 'Verde',   hex: '#2E7D32' },
+    ],
+  },
+  {
     productKey: 'ta-maniglia-piatta',
     name: 'Shopper Take Away Maniglia Piatta',
     subtitle: 'Carta bianca e avana',
