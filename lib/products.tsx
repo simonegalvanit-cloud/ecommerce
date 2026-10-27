@@ -148,6 +148,56 @@ export interface ProductSpec {
 
 export const PRODUCT_SPECS: ProductSpec[] = [
   {
+    productKey: 'ta-surf-bags',
+    name: 'Surf Large / X-Large Bags',
+    subtitle: 'Shopper fondo largo · Bordo risvoltato',
+    sizes: [
+      { format: '25×15×24', weightGr: 110, moq: 195 },
+      { format: '35×22×32', weightGr: 110, moq: 120 },
+    ],
+    colors: [
+      { key: 'bianco-kraft', label: 'Bianco Kraft',   hex: '#FFFFFF'  },
+      { key: 'avana-biokraft', label: 'Avana BioKraft', hex: '#C4956A' },
+    ],
+    foilColors: [
+      { key: 'oro',     label: 'Oro',     hex: '#C9A227' },
+      { key: 'argento', label: 'Argento', hex: '#A8A9AD' },
+      { key: 'rame',    label: 'Rame',    hex: '#B87333' },
+      { key: 'bianco',  label: 'Bianco',  hex: '#F2F2F2' },
+      { key: 'nero',    label: 'Nero',    hex: '#1C1C1C' },
+      { key: 'rosso',   label: 'Rosso',   hex: '#C0392B' },
+      { key: 'bordo',   label: 'Bordò',   hex: '#722F37' },
+      { key: 'verde',   label: 'Verde',   hex: '#2E7D32' },
+    ],
+  },
+  {
+    productKey: 'ta-food-delivery-kraft',
+    name: 'Shopper Food Delivery Kraft',
+    subtitle: 'Carta kraft · Cordino in cotone in tinta',
+    sizes: [
+      { format: '35+28×31 avana',  weightGr: 170, moq: 100, availableColors: ['avana']  },
+      { format: '23+24×34 avana',  weightGr: 170, moq: 80,  availableColors: ['avana']  },
+      { format: '27+16×31 avana',  weightGr: 170, moq: 100, availableColors: ['avana']  },
+      { format: '35+28×31 bianco', weightGr: 180, moq: 100, availableColors: ['bianco'] },
+      { format: '23+24×34 bianco', weightGr: 180, moq: 100, availableColors: ['bianco'] },
+      { format: '27+16×31 bianco', weightGr: 180, moq: 100, availableColors: ['bianco'] },
+    ],
+    colors: [
+      { key: 'bianco', label: 'Bianco', hex: '#FFFFFF' },
+      { key: 'avana',  label: 'Avana',  hex: '#C4956A' },
+    ],
+    foilColors: [
+      { key: 'oro',     label: 'Oro',     hex: '#C9A227' },
+      { key: 'argento', label: 'Argento', hex: '#A8A9AD' },
+      { key: 'rame',    label: 'Rame',    hex: '#B87333' },
+      { key: 'bianco',  label: 'Bianco',  hex: '#F2F2F2' },
+      { key: 'nero',    label: 'Nero',    hex: '#1C1C1C' },
+      { key: 'rosso',   label: 'Rosso',   hex: '#C0392B' },
+      { key: 'bordo',   label: 'Bordò',   hex: '#722F37' },
+      { key: 'verde',   label: 'Verde',   hex: '#2E7D32' },
+    ],
+  },
+  {
     productKey: 'ta-flat-maxi-bags',
     name: 'Flat Maxi / Flat Maxi Plus Bags',
     subtitle: 'Shopper fondo largo · Maniglia piattina · Avana kraft',
