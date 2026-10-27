@@ -148,6 +148,73 @@ export interface ProductSpec {
 
 export const PRODUCT_SPECS: ProductSpec[] = [
   {
+    productKey: 'pb-kraft-lusso',
+    name: 'Buste Carta Kraft Lusso',
+    subtitle: 'Con manici cotone in tinta · Ideali per birre e distillati',
+    sizes: [
+      { format: '1 bott. nero 12×10×30',  weightGr: 170, moq: 100, availableColors: ['nero']        },
+      { format: '1 bott. avana 12×10×30', weightGr: 130, moq: 100, availableColors: ['avana-kraft'] },
+    ],
+    colors: [
+      { key: 'avana-kraft', label: 'Avana Kraft', hex: '#C4956A' },
+      { key: 'nero',        label: 'Nero',        hex: '#1C1C1C' },
+    ],
+    foilColors: [
+      { key: 'oro',     label: 'Oro',     hex: '#C9A227' },
+      { key: 'argento', label: 'Argento', hex: '#A8A9AD' },
+      { key: 'rame',    label: 'Rame',    hex: '#B87333' },
+      { key: 'bianco',  label: 'Bianco',  hex: '#F2F2F2' },
+      { key: 'nero',    label: 'Nero',    hex: '#1C1C1C' },
+      { key: 'rosso',   label: 'Rosso',   hex: '#C0392B' },
+      { key: 'bordo',   label: 'Bordò',   hex: '#722F37' },
+      { key: 'verde',   label: 'Verde',   hex: '#2E7D32' },
+    ],
+  },
+  {
+    productKey: 'pb-lusso-lucida',
+    name: 'Buste Lusso Plastificazione Lucida',
+    subtitle: 'Con manici cotone in tinta',
+    sizes: [
+      { format: '1 bott. 12×10×41', weightGr: 210, moq: 100 },
+    ],
+    colors: [
+      { key: 'bianco', label: 'Bianco', hex: '#FFFFFF' },
+      { key: 'nero',   label: 'Nero',   hex: '#1C1C1C' },
+    ],
+    foilColors: [
+      { key: 'oro',     label: 'Oro',     hex: '#C9A227' },
+      { key: 'argento', label: 'Argento', hex: '#A8A9AD' },
+      { key: 'rame',    label: 'Rame',    hex: '#B87333' },
+      { key: 'bianco',  label: 'Bianco',  hex: '#F2F2F2' },
+      { key: 'nero',    label: 'Nero',    hex: '#1C1C1C' },
+      { key: 'rosso',   label: 'Rosso',   hex: '#C0392B' },
+      { key: 'bordo',   label: 'Bordò',   hex: '#722F37' },
+      { key: 'verde',   label: 'Verde',   hex: '#2E7D32' },
+    ],
+  },
+  {
+    productKey: 'pb-lusso-opaca',
+    name: 'Buste Lusso Plastificazione Opaca',
+    subtitle: 'Con manici cotone in tinta',
+    sizes: [
+      { format: '1 bott. 10×9×39',  weightGr: 210, moq: 150 },
+      { format: '2 bott. 17,5×9×39', weightGr: 210, moq: 70  },
+    ],
+    colors: [
+      { key: 'bianco', label: 'Bianco', hex: '#FFFFFF' },
+    ],
+    foilColors: [
+      { key: 'oro',     label: 'Oro',     hex: '#C9A227' },
+      { key: 'argento', label: 'Argento', hex: '#A8A9AD' },
+      { key: 'rame',    label: 'Rame',    hex: '#B87333' },
+      { key: 'bianco',  label: 'Bianco',  hex: '#F2F2F2' },
+      { key: 'nero',    label: 'Nero',    hex: '#1C1C1C' },
+      { key: 'rosso',   label: 'Rosso',   hex: '#C0392B' },
+      { key: 'bordo',   label: 'Bordò',   hex: '#722F37' },
+      { key: 'verde',   label: 'Verde',   hex: '#2E7D32' },
+    ],
+  },
+  {
     productKey: 'pb-kraft-liscio',
     name: 'Buste in Carta Kraft Liscio',
     subtitle: 'Con rinforzi e manico a fagiolo',
