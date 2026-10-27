@@ -148,6 +148,29 @@ export interface ProductSpec {
 
 export const PRODUCT_SPECS: ProductSpec[] = [
   {
+    productKey: 'pb-kraft-liscio',
+    name: 'Buste in Carta Kraft Liscio',
+    subtitle: 'Con rinforzi e manico a fagiolo',
+    sizes: [
+      { format: '1 bott. 11×9×42',              weightGr: 210, moq: 100 },
+      { format: '2 bott. 18×9×42',              weightGr: 210, moq: 100 },
+      { format: '1 bott. orizz./barattoli 35×10×18', weightGr: 210, moq: 50  },
+    ],
+    colors: [
+      { key: 'carta-kraft', label: 'Carta Kraft', hex: '#C4956A' },
+    ],
+    foilColors: [
+      { key: 'oro',     label: 'Oro',     hex: '#C9A227' },
+      { key: 'argento', label: 'Argento', hex: '#A8A9AD' },
+      { key: 'rame',    label: 'Rame',    hex: '#B87333' },
+      { key: 'bianco',  label: 'Bianco',  hex: '#F2F2F2' },
+      { key: 'nero',    label: 'Nero',    hex: '#1C1C1C' },
+      { key: 'rosso',   label: 'Rosso',   hex: '#C0392B' },
+      { key: 'bordo',   label: 'Bordò',   hex: '#722F37' },
+      { key: 'verde',   label: 'Verde',   hex: '#2E7D32' },
+    ],
+  },
+  {
     productKey: 'pb-finestra-pvc',
     name: 'Sacchetti con Finestra in PVC',
     subtitle: 'Carta kraft avana',
