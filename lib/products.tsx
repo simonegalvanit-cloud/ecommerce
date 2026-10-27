@@ -148,6 +148,48 @@ export interface ProductSpec {
 
 export const PRODUCT_SPECS: ProductSpec[] = [
   {
+    productKey: 'ec-light',
+    name: 'E-Commerce Light',
+    subtitle: 'Carta avana · Vernice impermeabile · 2 bande adesive · Apertura facilitata',
+    sizes: [
+      { format: '30+06×40+8', weightGr: 100, moq: 400 },
+      { format: '45+06×50+8', weightGr: 100, moq: 250 },
+    ],
+    colors: [
+      { key: 'avana', label: 'Avana', hex: '#C4956A' },
+    ],
+    foilColors: [],
+    printModes: ['none', 'digital'],
+  },
+  {
+    productKey: 'ec-premium-envelopes',
+    name: 'Premium E-Commerce Envelopes',
+    subtitle: 'Carta duplex avana · 2 bande adesive · Apertura facilitata',
+    sizes: [
+      { format: '26×08×35+8', weightGr: 135, moq: 200 },
+      { format: '34×08×41+8', weightGr: 135, moq: 200 },
+    ],
+    colors: [
+      { key: 'avana', label: 'Avana', hex: '#C4956A' },
+    ],
+    foilColors: [],
+    printModes: ['none', 'digital'],
+  },
+  {
+    productKey: 'ec-basic-envelopes',
+    name: 'Basic E-Commerce Envelopes',
+    subtitle: 'Carta duplex avana · 2 bande adesive · Apertura facilitata',
+    sizes: [
+      { format: '26×08×35+8', weightGr: 110, moq: 200 },
+      { format: '34×08×41+8', weightGr: 110, moq: 200 },
+    ],
+    colors: [
+      { key: 'avana', label: 'Avana', hex: '#C4956A' },
+    ],
+    foilColors: [],
+    printModes: ['none', 'digital'],
+  },
+  {
     productKey: 'ta-surf-bags',
     name: 'Surf Large / X-Large Bags',
     subtitle: 'Shopper fondo largo · Bordo risvoltato',
