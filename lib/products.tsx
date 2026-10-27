@@ -148,6 +148,46 @@ export interface ProductSpec {
 
 export const PRODUCT_SPECS: ProductSpec[] = [
   {
+    productKey: 'pb-sealing-120g',
+    name: 'Buste in Carta Sealing 120gr',
+    subtitle: 'Stampa fondo pieno · Maniglia ritorta in carta',
+    sizes: [
+      {
+        format: '1 bott. 14+8,5×39,5', weightGr: 110, moq: 250,
+        availableColors: ['nero', 'cipria', 'rosso', 'verde-scuro', 'blu-notte', 'bordeaux', 'marrone'],
+      },
+      {
+        format: '2 bott. 18+8×40', weightGr: 120, moq: 300,
+        availableColors: ['bordeaux', 'avana-kraft-sealing'],
+      },
+      {
+        format: '1 bott. automatica 14×8,5×38', weightGr: 120, moq: 300,
+        availableColors: ['avana-erba'],
+      },
+    ],
+    colors: [
+      { key: 'nero',              label: 'Nero',              hex: '#1C1C1C', ref: '143' },
+      { key: 'cipria',            label: 'Cipria',            hex: '#E8CCBA', ref: '296' },
+      { key: 'rosso',             label: 'Rosso',             hex: '#C0392B', ref: '144' },
+      { key: 'verde-scuro',       label: 'Verde Scuro',       hex: '#1B5E20', ref: '160' },
+      { key: 'blu-notte',         label: 'Blu Notte',         hex: '#1A237E', ref: '145' },
+      { key: 'bordeaux',          label: 'Bordeaux',          hex: '#7B1C2A', ref: '146' },
+      { key: 'marrone',           label: 'Marrone',           hex: '#6B3A2A', ref: '295' },
+      { key: 'avana-kraft-sealing', label: 'Avana Kraft/Sealing', hex: '#C4956A' },
+      { key: 'avana-erba',        label: 'Avana Carta Erba',  hex: '#B8A878' },
+    ],
+    foilColors: [
+      { key: 'oro',     label: 'Oro',     hex: '#C9A227' },
+      { key: 'argento', label: 'Argento', hex: '#A8A9AD' },
+      { key: 'rame',    label: 'Rame',    hex: '#B87333' },
+      { key: 'bianco',  label: 'Bianco',  hex: '#F2F2F2' },
+      { key: 'nero',    label: 'Nero',    hex: '#1C1C1C' },
+      { key: 'rosso',   label: 'Rosso',   hex: '#C0392B' },
+      { key: 'bordo',   label: 'Bordò',   hex: '#722F37' },
+      { key: 'verde',   label: 'Verde',   hex: '#2E7D32' },
+    ],
+  },
+  {
     productKey: 'ec-light',
     name: 'E-Commerce Light',
     subtitle: 'Carta avana · Vernice impermeabile · 2 bande adesive · Apertura facilitata',
