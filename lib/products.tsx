@@ -148,6 +148,76 @@ export interface ProductSpec {
 
 export const PRODUCT_SPECS: ProductSpec[] = [
   {
+    productKey: 'pb-finestra-pvc',
+    name: 'Sacchetti con Finestra in PVC',
+    subtitle: 'Carta kraft avana',
+    sizes: [
+      { format: '1 bott. 7,2×6,8×31',   weightGr: 210, moq: 100 },
+      { format: '1 bott. 9×8,5×37',     weightGr: 210, moq: 100 },
+      { format: '2 bott. 17,5×8,5×37',  weightGr: 210, moq: 100 },
+    ],
+    colors: [
+      { key: 'avana-kraft', label: 'Avana Kraft', hex: '#C4956A' },
+    ],
+    foilColors: [
+      { key: 'oro',     label: 'Oro',     hex: '#C9A227' },
+      { key: 'argento', label: 'Argento', hex: '#A8A9AD' },
+      { key: 'rame',    label: 'Rame',    hex: '#B87333' },
+      { key: 'bianco',  label: 'Bianco',  hex: '#F2F2F2' },
+      { key: 'nero',    label: 'Nero',    hex: '#1C1C1C' },
+      { key: 'rosso',   label: 'Rosso',   hex: '#C0392B' },
+      { key: 'bordo',   label: 'Bordò',   hex: '#722F37' },
+      { key: 'verde',   label: 'Verde',   hex: '#2E7D32' },
+    ],
+  },
+  {
+    productKey: 'pb-sacchetti-lusso',
+    name: 'Sacchetti Lusso',
+    subtitle: 'Carta uso mano naturale · Fondo avana liscio',
+    sizes: [
+      { format: '1 bott. 10×9×39',              weightGr: 210, moq: 150 },
+      { format: '2 bott. 17,5×9×39',            weightGr: 210, moq: 70  },
+      { format: '1 bott. Magnum 11,5×11,5×42',  weightGr: 210, moq: 100 },
+      { format: '1 bott. kraft avana 7,2×6,8×31', weightGr: 210, moq: 100 },
+    ],
+    colors: [
+      { key: 'avana-kraft', label: 'Avana Kraft', hex: '#C4956A' },
+    ],
+    foilColors: [
+      { key: 'oro',     label: 'Oro',     hex: '#C9A227' },
+      { key: 'argento', label: 'Argento', hex: '#A8A9AD' },
+      { key: 'rame',    label: 'Rame',    hex: '#B87333' },
+      { key: 'bianco',  label: 'Bianco',  hex: '#F2F2F2' },
+      { key: 'nero',    label: 'Nero',    hex: '#1C1C1C' },
+      { key: 'rosso',   label: 'Rosso',   hex: '#C0392B' },
+      { key: 'bordo',   label: 'Bordò',   hex: '#722F37' },
+      { key: 'verde',   label: 'Verde',   hex: '#2E7D32' },
+    ],
+  },
+  {
+    productKey: 'pb-sacchetti-lusso-nero',
+    name: 'Sacchetti Lusso Nero',
+    subtitle: 'Carta uso mano naturale · Fondo pieno colore nero',
+    sizes: [
+      { format: '1 bott. 10×9×39',             weightGr: 210, moq: 150 },
+      { format: '2 bott. 17,5×9×39',           weightGr: 210, moq: 70  },
+      { format: '1 bott. Magnum 11,5×11,5×42', weightGr: 210, moq: 100 },
+    ],
+    colors: [
+      { key: 'nero', label: 'Nero', hex: '#1C1C1C' },
+    ],
+    foilColors: [
+      { key: 'oro',     label: 'Oro',     hex: '#C9A227' },
+      { key: 'argento', label: 'Argento', hex: '#A8A9AD' },
+      { key: 'rame',    label: 'Rame',    hex: '#B87333' },
+      { key: 'bianco',  label: 'Bianco',  hex: '#F2F2F2' },
+      { key: 'nero',    label: 'Nero',    hex: '#1C1C1C' },
+      { key: 'rosso',   label: 'Rosso',   hex: '#C0392B' },
+      { key: 'bordo',   label: 'Bordò',   hex: '#722F37' },
+      { key: 'verde',   label: 'Verde',   hex: '#2E7D32' },
+    ],
+  },
+  {
     productKey: 'pb-sealing-120g',
     name: 'Buste in Carta Sealing 120gr',
     subtitle: 'Stampa fondo pieno · Maniglia ritorta in carta',
